@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  /* --- CSS เดิมของคุณทั้งหมด --- */
   :root { --bg: #0d0f14; --surface: #161920; --surface2: #1e2230; --border: #2a2f3d; --accent: #ff5c3a; --accent2: #ffb830; --text: #e8eaf0; --text2: #8b90a0; --green: #2dd98f; --red: #ff4444; --yellow: #ffb830; --font: 'IBM Plex Sans Thai', sans-serif; --mono: 'IBM Plex Mono', monospace; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px; min-height: 100vh; line-height: 1.6; }
@@ -47,17 +46,21 @@
   .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; margin-top: 12px; }
   .preview-item { aspect-ratio: 1; border-radius: 7px; overflow: hidden; position: relative; border: 1px solid var(--border); }
   .preview-item img { width: 100%; height: 100%; object-fit: cover; }
-  .preview-item .remove-btn { position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; background: rgba(0,0,0,0.7); border: none; border-radius: 50%; color: white; cursor: pointer; }
-  .submit-btn { width: 100%; padding: 14px 20px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .preview-item .remove-btn { position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; background: rgba(0,0,0,0.7); border: none; border-radius: 50%; color: white; cursor: pointer; font-size: 14px; line-height: 1; }
+  .submit-btn { width: 100%; padding: 14px 20px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .progress-bar { width: 100%; height: 4px; background: var(--surface2); border-radius: 4px; margin-top: 10px; display: none; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 0.3s; width: 0%; }
   .success-overlay { display: none; position: fixed; inset: 0; background: rgba(13,15,20,0.92); z-index: 100; align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(6px); }
   .success-overlay.show { display: flex; }
   .success-box { background: var(--surface); border: 1px solid var(--green); border-radius: 14px; padding: 32px 40px; text-align: center; max-width: 360px; }
+  .success-box button { margin-top: 20px; padding: 10px 24px; cursor: pointer; background: var(--green); border: none; border-radius: 7px; color: #000; font-weight: 600; font-size: 14px; }
   .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface2); padding: 10px 20px; border-radius: 8px; transition: transform 0.3s; z-index: 50; }
-  .toast.show { transform: translateX(-50%) translateY(0); }
+  .status-msg { font-size: 12px; color: var(--text2); font-family: var(--mono); margin-top: 8px; text-align: center; min-height: 18px; }
   .field-error { font-size: 11px; color: var(--red); display: none; }
-  .field.error input { border-color: var(--red); }
+  .field.error .field-error { display: block; }
+  .field.error input, .field.error select { border-color: var(--red); }
 </style>
 </head>
 <body>
@@ -66,7 +69,10 @@
   <header class="header">
     <div class="header-top">
       <div class="logo-box">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
       </div>
       <div>
         <h1>แจ้งจุดเสี่ยง</h1>
@@ -80,6 +86,8 @@
   </header>
 
   <form id="riskForm" novalidate>
+
+    <!-- 01 ข้อมูลผู้แจ้ง -->
     <div class="section">
       <div class="section-label">01 — ข้อมูลผู้แจ้ง</div>
       <div class="grid-2">
@@ -92,13 +100,16 @@
           <label>หน่วยงาน / แผนก <span>*</span></label>
           <select id="dept">
             <option value="">— เลือกหน่วยงาน —</option>
-            <option>ฝ่ายผลิต</option><option>ฝ่ายวิศวกรรม</option><option>ฝ่ายซ่อมบำรุง</option>
+            <option>ฝ่ายผลิต</option>
+            <option>ฝ่ายวิศวกรรม</option>
+            <option>ฝ่ายซ่อมบำรุง</option>
           </select>
           <span class="field-error">กรุณาเลือกหน่วยงาน</span>
         </div>
       </div>
     </div>
 
+    <!-- 02 สถานที่ -->
     <div class="section">
       <div class="section-label">02 — สถานที่และเครื่องจักร</div>
       <div class="grid-2">
@@ -106,7 +117,9 @@
           <label>พื้นที่ / โซน <span>*</span></label>
           <select id="area">
             <option value="">— เลือกพื้นที่ —</option>
-            <option>โรงงาน A</option><option>โรงงาน B</option><option>คลังสินค้า</option>
+            <option>โรงงาน A</option>
+            <option>โรงงาน B</option>
+            <option>คลังสินค้า</option>
           </select>
           <span class="field-error">กรุณาเลือกพื้นที่</span>
         </div>
@@ -117,19 +130,20 @@
       </div>
     </div>
 
+    <!-- 03 ประเภทความเสี่ยง -->
     <div class="section">
       <div class="section-label">03 — ประเภทความเสี่ยง</div>
       <div class="risk-grid">
-        <button type="button" class="risk-btn" data-val="ความปลอดภัย">⚠️ ความปลอดภัย</button>
-        <button type="button" class="risk-btn" data-val="ไฟไหม้">🔥 ไฟไหม้</button>
-        <button type="button" class="risk-btn" data-val="เครื่องจักร">⚙️ เครื่องจักร</button>
+        <button type="button" class="risk-btn" data-val="ความปลอดภัย">⚠️<br>ความปลอดภัย</button>
+        <button type="button" class="risk-btn" data-val="ไฟไหม้">🔥<br>ไฟไหม้</button>
+        <button type="button" class="risk-btn" data-val="เครื่องจักร">⚙️<br>เครื่องจักร</button>
       </div>
       <input type="hidden" id="riskType">
-      <span id="riskTypeError" class="field-error">กรุณาเลือกประเภทความเสี่ยง</span>
+      <span id="riskTypeError" class="field-error" style="display:none;">กรุณาเลือกประเภทความเสี่ยง</span>
 
       <div style="margin-top:14px;">
-        <label style="font-size:12px;">ระดับความรุนแรง <span>*</span></label>
-        <div class="severity-row" id="sevGrid">
+        <label style="font-size:12px; color:var(--text2);">ระดับความรุนแรง <span style="color:var(--accent)">*</span></label>
+        <div class="severity-row" style="margin-top:8px;">
           <button type="button" class="sev-btn" data-val="ต่ำ" data-cls="active-low">🟢 ต่ำ</button>
           <button type="button" class="sev-btn" data-val="ปานกลาง" data-cls="active-med">🟡 ปานกลาง</button>
           <button type="button" class="sev-btn" data-val="สูง" data-cls="active-high">🟠 สูง</button>
@@ -139,53 +153,78 @@
       </div>
     </div>
 
+    <!-- 04 ภาพหลักฐาน -->
     <div class="section">
       <div class="section-label">04 — ภาพหลักฐาน</div>
-      <div class="upload-zone">
+      <div class="upload-zone" id="uploadZone">
         <input type="file" id="fileInput" accept="image/*" multiple>
-        <p>แตะเพื่อเลือกภาพ (สูงสุด 5 ภาพ)</p>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="1.5" style="margin-bottom:8px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <p style="color:var(--text2); font-size:13px;">แตะเพื่อเลือกภาพ</p>
+        <p style="color:var(--text2); font-size:11px; margin-top:4px; font-family:var(--mono);">สูงสุด 5 ภาพ • JPG, PNG</p>
       </div>
       <div class="preview-grid" id="previewGrid"></div>
     </div>
 
+    <!-- 05 หมายเหตุ -->
     <div class="section">
       <div class="section-label">05 — หมายเหตุเพิ่มเติม</div>
-      <textarea id="note" style="width:100%; height:80px; padding:10px;" placeholder="ระบุรายละเอียด..."></textarea>
+      <div class="field">
+        <textarea id="note" placeholder="ระบุรายละเอียดเพิ่มเติม..."></textarea>
+      </div>
     </div>
 
     <button type="submit" class="submit-btn" id="submitBtn">
       <div class="spinner" id="spinner"></div>
-      <span id="submitIcon">📤 ส่งรายงาน</span>
+      <span id="submitText">📤 ส่งรายงาน</span>
     </button>
+    <div class="progress-bar" id="progressBar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <p class="status-msg" id="statusMsg"></p>
+
   </form>
 </div>
 
+<!-- Success Overlay -->
 <div class="success-overlay" id="successOverlay">
   <div class="success-box">
-    <div style="font-size:40px; color:var(--green); margin-bottom:10px;">✓</div>
-    <h2>ส่งรายงานสำเร็จ</h2>
-    <p>ข้อมูลและรูปภาพถูกบันทึกแล้ว</p>
-    <button onclick="location.reload()" style="margin-top:20px; padding:10px 20px; cursor:pointer;">แจ้งเรื่องใหม่</button>
+    <div style="font-size:48px; margin-bottom:12px;">✅</div>
+    <h2 style="color:var(--green); margin-bottom:8px;">ส่งรายงานสำเร็จ</h2>
+    <p style="color:var(--text2); font-size:13px;" id="successDetail">ข้อมูลและรูปภาพถูกบันทึกแล้ว</p>
+    <button onclick="location.reload()">แจ้งเรื่องใหม่</button>
   </div>
 </div>
 
-<div id="toast" class="toast"></div>
-
 <script>
-// --- JavaScript Logic ---
+// =============================================
+// CONFIG — เปลี่ยน URL ตรงนี้อย่างเดียว
+// =============================================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw5bhdAdDF28Ga2uSWVoy90j9KGc3brXzcSm35VWNiPEn_r2U5dPB2z1JnF3jwccvEc/exec';
+
+// =============================================
+// Clock
+// =============================================
 function updateClock() {
   document.getElementById('datetime').textContent = new Date().toLocaleString('th-TH');
 }
-updateClock(); setInterval(updateClock, 30000);
+updateClock();
+setInterval(updateClock, 30000);
 
+// =============================================
+// Risk Type Buttons
+// =============================================
 document.querySelectorAll('.risk-btn').forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll('.risk-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('riskType').value = btn.dataset.val;
+    document.getElementById('riskTypeError').style.display = 'none';
   };
 });
 
+// =============================================
+// Severity Buttons
+// =============================================
 document.querySelectorAll('.sev-btn').forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll('.sev-btn').forEach(b => b.className = 'sev-btn');
@@ -194,80 +233,174 @@ document.querySelectorAll('.sev-btn').forEach(btn => {
   };
 });
 
+// =============================================
+// Image Upload & Preview
+// =============================================
 let imageFiles = [];
+
 document.getElementById('fileInput').onchange = function(e) {
   const files = Array.from(e.target.files);
-  files.slice(0, 5 - imageFiles.length).forEach(file => {
-    imageFiles.push({ blob: file });
+  const remaining = 5 - imageFiles.length;
+  files.slice(0, remaining).forEach(file => {
+    imageFiles.push(file);
   });
   renderPreviews();
+  e.target.value = ''; // reset input so same file can be re-added
 };
 
 function renderPreviews() {
   const grid = document.getElementById('previewGrid');
   grid.innerHTML = '';
-  imageFiles.forEach((f, i) => {
+  imageFiles.forEach((file, i) => {
     const div = document.createElement('div');
     div.className = 'preview-item';
     const img = document.createElement('img');
-    img.src = URL.createObjectURL(f.blob);
+    img.src = URL.createObjectURL(file);
     const btn = document.createElement('button');
-    btn.className = 'remove-btn'; btn.innerHTML = '×';
+    btn.className = 'remove-btn';
+    btn.innerHTML = '×';
+    btn.type = 'button';
     btn.onclick = () => { imageFiles.splice(i, 1); renderPreviews(); };
-    div.append(img, btn); grid.append(div);
+    div.append(img, btn);
+    grid.append(div);
   });
 }
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyXBejAYQpzvBXGB06yHIv35NUmW9hk-zHGGIoJo5UwbrsBqGerWpGZvW5mUBGpZsZe/exec';
-document.getElementById('riskForm').onsubmit = async function(e) {
-  e.preventDefault();
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  document.getElementById('spinner').style.display = 'block';
-  document.getElementById('submitIcon').style.display = 'none';
+// =============================================
+// Convert File to Base64
+// =============================================
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      // reader.result = "data:image/jpeg;base64,/9j/4AAQ..."
+      // เอาแค่ส่วน base64 หลัง comma
+      const base64 = reader.result.split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
 
-  // แปลงภาพเป็น Base64
-  const imagesBase64 = [];
-  for (const f of imageFiles) {
-    const base64 = await new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result.split(',')[1]); // เอาแค่ data ไม่เอา prefix
-      reader.readAsDataURL(f.blob);
-    });
-    imagesBase64.push({
-      data: base64,
-      name: f.blob.name || 'image.jpg',
-      mimeType: f.blob.type || 'image/jpeg'
-    });
+// =============================================
+// Validate Form
+// =============================================
+function validate() {
+  let ok = true;
+
+  const name = document.getElementById('reporter-name').value.trim();
+  const fName = document.getElementById('f-name');
+  if (!name) { fName.classList.add('error'); ok = false; }
+  else { fName.classList.remove('error'); }
+
+  const dept = document.getElementById('dept').value;
+  const fDept = document.getElementById('f-dept');
+  if (!dept) { fDept.classList.add('error'); ok = false; }
+  else { fDept.classList.remove('error'); }
+
+  const area = document.getElementById('area').value;
+  const fArea = document.getElementById('f-area');
+  if (!area) { fArea.classList.add('error'); ok = false; }
+  else { fArea.classList.remove('error'); }
+
+  const riskType = document.getElementById('riskType').value;
+  if (!riskType) {
+    document.getElementById('riskTypeError').style.display = 'block';
+    ok = false;
   }
 
-  const payload = {
-    timestamp: new Date().toLocaleString('th-TH'),
-    reporter: document.getElementById('reporter-name').value,
-    dept: document.getElementById('dept').value,
-    area: document.getElementById('area').value,
-    machine: document.getElementById('machine').value,
-    riskType: document.getElementById('riskType').value,
-    severity: document.getElementById('severity').value,
-    note: document.getElementById('note').value,
-    images: imagesBase64  // ← ฝังภาพใน payload เลย
-  };
+  return ok;
+}
+
+// =============================================
+// Submit
+// =============================================
+document.getElementById('riskForm').onsubmit = async function(e) {
+  e.preventDefault();
+
+  if (!validate()) return;
+
+  const btn = document.getElementById('submitBtn');
+  const spinner = document.getElementById('spinner');
+  const submitText = document.getElementById('submitText');
+  const progressBar = document.getElementById('progressBar');
+  const progressFill = document.getElementById('progressFill');
+  const statusMsg = document.getElementById('statusMsg');
+
+  btn.disabled = true;
+  spinner.style.display = 'block';
+  submitText.style.display = 'none';
+  progressBar.style.display = 'block';
+  progressFill.style.width = '10%';
+  statusMsg.textContent = 'กำลังเตรียมข้อมูล...';
 
   try {
+    // --- แปลงภาพเป็น Base64 ทั้งหมด ---
+    statusMsg.textContent = `กำลังแปลงภาพ (${imageFiles.length} ภาพ)...`;
+    progressFill.style.width = '30%';
+
+    const imagesBase64 = [];
+    for (let i = 0; i < imageFiles.length; i++) {
+      const file = imageFiles[i];
+      const b64 = await fileToBase64(file);
+      imagesBase64.push({
+        data: b64,
+        name: file.name || ('image_' + i + '.jpg'),
+        mimeType: file.type || 'image/jpeg'
+      });
+    }
+
+    progressFill.style.width = '60%';
+    statusMsg.textContent = 'กำลังส่งข้อมูล...';
+
+    // --- สร้าง payload ---
+    const payload = {
+      timestamp: new Date().toLocaleString('th-TH'),
+      reporter: document.getElementById('reporter-name').value.trim(),
+      dept: document.getElementById('dept').value,
+      area: document.getElementById('area').value,
+      machine: document.getElementById('machine').value.trim() || '-',
+      riskType: document.getElementById('riskType').value,
+      severity: document.getElementById('severity').value || '-',
+      note: document.getElementById('note').value.trim() || '-',
+      images: imagesBase64
+    };
+
+    // --- ส่งแบบ URL-encoded (หลีกเลี่ยง CORS preflight) ---
+    const body = 'data=' + encodeURIComponent(JSON.stringify(payload));
+
     const response = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },  // ← เปลี่ยนเป็น JSON
-      body: JSON.stringify(payload)
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: body
     });
+
+    progressFill.style.width = '90%';
+
     const result = await response.json();
+
+    progressFill.style.width = '100%';
+
     if (result.status === 'ok') {
+      const imgCount = imagesBase64.length;
+      document.getElementById('successDetail').textContent =
+        `บันทึกข้อมูลเรียบร้อย${imgCount > 0 ? ` พร้อมภาพ ${imgCount} ภาพ` : ''}`;
       document.getElementById('successOverlay').classList.add('show');
+    } else {
+      throw new Error(result.message || 'Apps Script ตอบกลับ error');
     }
+
   } catch (err) {
-    alert('เกิดข้อผิดพลาด: ' + err.message);
+    console.error('Submit error:', err);
+    statusMsg.textContent = '❌ เกิดข้อผิดพลาด: ' + err.message;
+    statusMsg.style.color = 'var(--red)';
     btn.disabled = false;
-    document.getElementById('spinner').style.display = 'none';
-    document.getElementById('submitIcon').style.display = 'block';
+    spinner.style.display = 'none';
+    submitText.style.display = 'block';
+    progressBar.style.display = 'none';
   }
 };
 </script>
