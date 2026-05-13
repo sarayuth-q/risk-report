@@ -3,9 +3,15 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>รายงานจุดเสี่ยง โรงงานอาหารสัตว์ศรีราชา</title>
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+/>
+
+<title>
+รายงานจุดเสี่ยง โรงงานอาหารสัตว์ศรีราชา
+</title>
 
 <style>
 
@@ -17,18 +23,21 @@
 body{
 
   margin:0;
+
   min-height:100vh;
 
   background:
     linear-gradient(
       135deg,
       #0f766e,
-      #062b2b,
+      #052727,
       #000000
     );
 
   display:flex;
+
   justify-content:center;
+
   align-items:center;
 
   padding:20px;
@@ -39,18 +48,20 @@ body{
 .container{
 
   width:100%;
+
   max-width:720px;
 
-  background:rgba(255,255,255,0.08);
+  background:
+    rgba(255,255,255,0.08);
 
-  backdrop-filter:blur(10px);
+  backdrop-filter:blur(12px);
 
   border-radius:24px;
 
   padding:30px;
 
   box-shadow:
-    0 0 30px rgba(0,0,0,0.5);
+    0 0 30px rgba(0,0,0,0.4);
 }
 
 h1{
@@ -93,24 +104,11 @@ textarea{
   border-radius:14px;
 
   font-size:1rem;
-
-  background:white;
-
-  color:black;
 }
 
 textarea{
 
   min-height:120px;
-
-  resize:vertical;
-}
-
-input[type=file]{
-
-  background:rgba(255,255,255,0.1);
-
-  color:white;
 }
 
 button{
@@ -123,7 +121,7 @@ button{
 
   border-radius:14px;
 
-  font-size:1.2rem;
+  font-size:1.1rem;
 
   font-weight:bold;
 
@@ -137,35 +135,17 @@ button{
     );
 
   color:white;
-
-  transition:0.3s;
-}
-
-button:hover{
-
-  transform:scale(1.02);
-}
-
-#status{
-
-  margin-top:20px;
-
-  text-align:center;
-
-  color:#8fffe0;
-
-  font-size:1rem;
 }
 
 .preview{
-
-  margin-top:10px;
 
   display:flex;
 
   flex-wrap:wrap;
 
   gap:10px;
+
+  margin-top:10px;
 }
 
 .preview img{
@@ -179,18 +159,22 @@ button:hover{
   border-radius:12px;
 }
 
-@media(max-width:600px){
+#status{
 
-  h1{
-    font-size:1.5rem;
-  }
+  margin-top:20px;
 
-  input,
-  select,
-  textarea{
+  text-align:center;
 
-    font-size:1rem;
-  }
+  color:#8fffe0;
+
+  font-weight:bold;
+}
+
+.loading{
+
+  opacity:0.7;
+
+  pointer-events:none;
 }
 
 </style>
@@ -209,7 +193,7 @@ button:hover{
 
 <label>หน่วยงาน</label>
 
-<select id="department" required>
+<select id="department">
 <option value="">กำลังโหลด...</option>
 </select>
 
@@ -219,7 +203,7 @@ button:hover{
 
 <label>ชื่อพนักงาน</label>
 
-<select id="employee" required>
+<select id="employee">
 <option value="">เลือกพนักงาน</option>
 </select>
 
@@ -230,7 +214,7 @@ button:hover{
 <label>จุดพบความเสี่ยง</label>
 
 <textarea
-  id="location"
+  id="locationText"
   placeholder="แจ้งสถานที่หรือจุดเสี่ยง"
 ></textarea>
 
@@ -275,7 +259,7 @@ button:hover{
 
 </div>
 
-<button onclick="submitForm()">
+<button id="submitBtn">
 บันทึกข้อมูล
 </button>
 
@@ -286,7 +270,7 @@ button:hover{
 <script>
 
 const API_URL =
-"https://script.google.com/macros/s/AKfycbyylZ0FfpPWqZj-Rl-dLDlWF3NonI9qz8-b1col2ShyMfsAcgXtEHDP218ixxDCRnlw/exec";
+"https://script.google.com/macros/s/AKfycbwqNKqzuuuLRKTkcBPJy0m3LR8o7R0MAU75VVjPaDM0Cex6n_ldx-pM_vK8xl8qlSv4/exec";
 
 let masterData = {};
 
@@ -306,25 +290,33 @@ async function loadMasterData(){
         API_URL + "?action=master"
       );
 
-    const data = await response.json();
+    const data =
+      await response.json();
 
     if(!data.success){
 
-      alert(data.message);
+      alert(
+        "โหลดข้อมูลไม่สำเร็จ"
+      );
+
       return;
     }
 
     masterData = data;
 
     loadDepartments();
+
     loadRiskTypes();
+
     loadRiskLevels();
 
   } catch(err){
 
     console.error(err);
 
-    alert("โหลดข้อมูลไม่สำเร็จ");
+    alert(
+      "ไม่สามารถโหลดข้อมูลได้"
+    );
   }
 }
 
@@ -336,17 +328,21 @@ async function loadMasterData(){
 function loadDepartments(){
 
   const dept =
-    document.getElementById("department");
+    document.getElementById(
+      "department"
+    );
 
   dept.innerHTML =
     '<option value="">เลือกหน่วยงาน</option>';
 
-  masterData.departments.forEach(d=>{
+  masterData.departments
+    .forEach(d=>{
 
-    dept.innerHTML +=
-      `<option value="${d}">${d}</option>`;
-
-  });
+      dept.innerHTML +=
+        `<option value="${d}">
+          ${d}
+        </option>`;
+    });
 
   dept.addEventListener(
     "change",
@@ -362,40 +358,53 @@ function loadDepartments(){
 function loadEmployees(){
 
   const dept =
-    document.getElementById("department").value;
+    document.getElementById(
+      "department"
+    ).value;
 
   const emp =
-    document.getElementById("employee");
+    document.getElementById(
+      "employee"
+    );
 
   emp.innerHTML =
     '<option value="">เลือกพนักงาน</option>';
 
   const filtered =
-    masterData.staffs.filter(
-      s => s.department === dept
+    masterData.staffs
+    .filter(
+      s=>s.department===dept
     );
 
   filtered.forEach(s=>{
 
     emp.innerHTML += `
+
       <option
         value="${s.name}"
         data-id="${s.empId}"
       >
         ${s.name}
       </option>
+
     `;
   });
 
-  emp.addEventListener("change",()=>{
+  emp.addEventListener(
+    "change",
+    ()=>{
 
-    const selected =
-      emp.options[emp.selectedIndex];
+      const selected =
+        emp.options[
+          emp.selectedIndex
+        ];
 
-    selectedEmpId =
-      selected.getAttribute("data-id");
-
-  });
+      selectedEmpId =
+        selected.getAttribute(
+          "data-id"
+        );
+    }
+  );
 }
 
 /**
@@ -406,16 +415,21 @@ function loadEmployees(){
 function loadRiskTypes(){
 
   const risk =
-    document.getElementById("riskType");
+    document.getElementById(
+      "riskType"
+    );
 
   risk.innerHTML =
     '<option value="">เลือกประเภท</option>';
 
-  masterData.riskTypes.forEach(r=>{
+  masterData.riskTypes
+    .forEach(r=>{
 
-    risk.innerHTML +=
-      `<option value="${r}">${r}</option>`;
-  });
+      risk.innerHTML +=
+        `<option value="${r}">
+          ${r}
+        </option>`;
+    });
 }
 
 /**
@@ -426,16 +440,21 @@ function loadRiskTypes(){
 function loadRiskLevels(){
 
   const risk =
-    document.getElementById("riskLevel");
+    document.getElementById(
+      "riskLevel"
+    );
 
   risk.innerHTML =
     '<option value="">เลือกระดับ</option>';
 
-  masterData.riskLevels.forEach(r=>{
+  masterData.riskLevels
+    .forEach(r=>{
 
-    risk.innerHTML +=
-      `<option value="${r}">${r}</option>`;
-  });
+      risk.innerHTML +=
+        `<option value="${r}">
+          ${r}
+        </option>`;
+    });
 }
 
 /**
@@ -445,30 +464,40 @@ function loadRiskLevels(){
  */
 document
 .getElementById("images")
-.addEventListener("change",function(){
+.addEventListener(
+  "change",
+  function(){
 
-  const preview =
-    document.getElementById("preview");
+    const preview =
+      document.getElementById(
+        "preview"
+      );
 
-  preview.innerHTML = "";
+    preview.innerHTML = "";
 
-  [...this.files].forEach(file=>{
+    [...this.files]
+    .forEach(file=>{
 
-    const reader = new FileReader();
+      const reader =
+        new FileReader();
 
-    reader.onload = e=>{
+      reader.onload = e=>{
 
-      const img =
-        document.createElement("img");
+        const img =
+          document.createElement(
+            "img"
+          );
 
-      img.src = e.target.result;
+        img.src =
+          e.target.result;
 
-      preview.appendChild(img);
-    };
+        preview.appendChild(img);
+      };
 
-    reader.readAsDataURL(file);
-  });
-});
+      reader.readAsDataURL(file);
+    });
+  }
+);
 
 /**
  * =========================
@@ -480,54 +509,78 @@ function generateImageId(){
   const now = new Date();
 
   const dd =
-    String(now.getDate()).padStart(2,'0');
+    String(
+      now.getDate()
+    ).padStart(2,'0');
 
   const mm =
-    String(now.getMonth()+1).padStart(2,'0');
+    String(
+      now.getMonth()+1
+    ).padStart(2,'0');
 
   const yy =
-    String(now.getFullYear()).slice(-2);
+    String(
+      now.getFullYear()
+    ).slice(-2);
 
-  return selectedEmpId + dd + mm + yy;
+  return (
+    selectedEmpId +
+    dd +
+    mm +
+    yy
+  );
 }
 
 /**
  * =========================
- * Compress Image
+ * Compress
  * =========================
  */
 async function compressImage(file){
 
   return new Promise(resolve=>{
 
-    const img = new Image();
+    const img =
+      new Image();
 
-    const reader = new FileReader();
+    const reader =
+      new FileReader();
 
     reader.onload = e=>{
 
-      img.src = e.target.result;
+      img.src =
+        e.target.result;
     };
 
     img.onload = ()=>{
 
       const canvas =
-        document.createElement("canvas");
+        document.createElement(
+          "canvas"
+        );
 
-      let width = img.width;
-      let height = img.height;
+      let width =
+        img.width;
 
-      const maxWidth = 1600;
+      let height =
+        img.height;
+
+      const maxWidth =
+        1600;
 
       if(width > maxWidth){
 
-        height *= maxWidth / width;
+        height *=
+          maxWidth / width;
 
         width = maxWidth;
       }
 
-      canvas.width = width;
-      canvas.height = height;
+      canvas.width =
+        width;
+
+      canvas.height =
+        height;
 
       const ctx =
         canvas.getContext("2d");
@@ -553,19 +606,21 @@ async function compressImage(file){
 
 /**
  * =========================
- * Blob to Base64
+ * Base64
  * =========================
  */
 function blobToBase64(blob){
 
   return new Promise(resolve=>{
 
-    const reader = new FileReader();
+    const reader =
+      new FileReader();
 
     reader.onloadend = ()=>{
 
       resolve(
-        reader.result.split(',')[1]
+        reader.result
+        .split(',')[1]
       );
     };
 
@@ -575,82 +630,140 @@ function blobToBase64(blob){
 
 /**
  * =========================
- * Submit Form
+ * VALIDATION
  * =========================
  */
+function validateForm(){
+
+  const errors = [];
+
+  if(
+    !document
+    .getElementById(
+      "department"
+    ).value
+  ){
+    errors.push(
+      "กรุณาเลือกหน่วยงาน"
+    );
+  }
+
+  if(
+    !document
+    .getElementById(
+      "employee"
+    ).value
+  ){
+    errors.push(
+      "กรุณาเลือกพนักงาน"
+    );
+  }
+
+  if(
+    !document
+    .getElementById(
+      "locationText"
+    ).value
+  ){
+    errors.push(
+      "กรุณากรอกจุดเสี่ยง"
+    );
+  }
+
+  if(
+    !document
+    .getElementById(
+      "riskType"
+    ).value
+  ){
+    errors.push(
+      "กรุณาเลือกประเภทความเสี่ยง"
+    );
+  }
+
+  if(
+    !document
+    .getElementById(
+      "riskLevel"
+    ).value
+  ){
+    errors.push(
+      "กรุณาเลือกระดับความเสี่ยง"
+    );
+  }
+
+  if(
+    document
+    .getElementById(
+      "images"
+    ).files.length === 0
+  ){
+    errors.push(
+      "กรุณาแนบรูปภาพ"
+    );
+  }
+
+  return errors;
+}
+
+/**
+ * =========================
+ * SUBMIT
+ * =========================
+ */
+document
+.getElementById("submitBtn")
+.addEventListener(
+  "click",
+  submitForm
+);
+
 async function submitForm(){
 
+  const errors =
+    validateForm();
+
+  if(errors.length > 0){
+
+    alert(
+      errors.join("\n")
+    );
+
+    return;
+  }
+
   const status =
-    document.getElementById("status");
+    document.getElementById(
+      "status"
+    );
 
-  const reporter =
-    document.getElementById("employee").value;
+  const btn =
+    document.getElementById(
+      "submitBtn"
+    );
 
-  const department =
-    document.getElementById("department").value;
+  btn.classList.add(
+    "loading"
+  );
 
-  const location =
-    document.getElementById("location").value;
-
-  const riskType =
-    document.getElementById("riskType").value;
-
-  const riskLevel =
-    document.getElementById("riskLevel").value;
-
-  const note =
-    document.getElementById("note").value;
-
-  const images =
-    document.getElementById("images").files;
-
-  if(!department){
-
-    alert("กรุณาเลือกหน่วยงาน");
-    return;
-  }
-
-  if(!reporter){
-
-    alert("กรุณาเลือกพนักงาน");
-    return;
-  }
-
-  if(!location){
-
-    alert("กรุณากรอกจุดเสี่ยง");
-    return;
-  }
-
-  if(!riskType){
-
-    alert("กรุณาเลือกประเภท");
-    return;
-  }
-
-  if(!riskLevel){
-
-    alert("กรุณาเลือกระดับ");
-    return;
-  }
-
-  if(images.length === 0){
-
-    alert("กรุณาแนบรูป");
-    return;
-  }
+  btn.disabled = true;
 
   try {
 
     status.innerHTML =
       "กำลังบันทึกข้อมูล...";
 
+    const images =
+      document
+      .getElementById(
+        "images"
+      ).files;
+
     const imageId =
       generateImageId();
 
     /**
      * STEP 1
-     * SAVE FORM
      */
     const saveResponse =
       await fetch(API_URL,{
@@ -661,12 +774,41 @@ async function submitForm(){
 
           action:"saveForm",
 
-          reporter,
-          department,
-          location,
-          riskType,
-          riskLevel,
-          note,
+          reporter:
+            document
+            .getElementById(
+              "employee"
+            ).value,
+
+          department:
+            document
+            .getElementById(
+              "department"
+            ).value,
+
+          location:
+            document
+            .getElementById(
+              "locationText"
+            ).value,
+
+          riskType:
+            document
+            .getElementById(
+              "riskType"
+            ).value,
+
+          riskLevel:
+            document
+            .getElementById(
+              "riskLevel"
+            ).value,
+
+          note:
+            document
+            .getElementById(
+              "note"
+            ).value,
 
           totalImages:
             images.length,
@@ -680,12 +822,10 @@ async function submitForm(){
 
     if(!saveResult.success){
 
-      alert("บันทึกข้อมูลไม่สำเร็จ");
-      return;
+      throw new Error(
+        "บันทึกข้อมูลไม่สำเร็จ"
+      );
     }
-
-    const rowNumber =
-      saveResult.rowNumber;
 
     /**
      * STEP 2
@@ -694,13 +834,22 @@ async function submitForm(){
     for(let i=0;i<images.length;i++){
 
       status.innerHTML =
-        `กำลังอัปโหลดรูป ${i+1}/${images.length}`;
+
+        `กำลังอัปโหลดรูป ${
+          i+1
+        } / ${
+          images.length
+        }`;
 
       const compressed =
-        await compressImage(images[i]);
+        await compressImage(
+          images[i]
+        );
 
       const base64 =
-        await blobToBase64(compressed);
+        await blobToBase64(
+          compressed
+        );
 
       const uploadResponse =
         await fetch(API_URL,{
@@ -719,22 +868,24 @@ async function submitForm(){
             mimeType:
               compressed.type,
 
-            rowNumber
+            rowNumber:
+              saveResult.rowNumber,
+
+            imageId,
+
+            imageIndex:i+1
           })
         });
 
       const uploadResult =
-        await uploadResponse.json();
+        await uploadResponse
+        .json();
 
       if(!uploadResult.success){
 
-        console.error(uploadResult);
-
-        alert(
+        throw new Error(
           "Upload รูปไม่สำเร็จ"
         );
-
-        return;
       }
     }
 
@@ -745,13 +896,22 @@ async function submitForm(){
 
       location.reload();
 
-    },1500);
+    },1200);
 
   } catch(err){
 
     console.error(err);
 
-    alert("เกิดข้อผิดพลาด");
+    status.innerHTML =
+      "❌ " + err.message;
+
+  } finally {
+
+    btn.classList.remove(
+      "loading"
+    );
+
+    btn.disabled = false;
   }
 }
 
