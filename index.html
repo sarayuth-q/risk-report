@@ -218,14 +218,28 @@ function renderPreviews() {
   });
 }
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzuP-hlcjlro_zOd7U3kV85_YLlkDeXVDgNmwUyhYwK6vNBmZA5Nvn77ZdistxfY4Tp/exec';
-
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyXBejAYQpzvBXGB06yHIv35NUmW9hk-zHGGIoJo5UwbrsBqGerWpGZvW5mUBGpZsZe/exec';
 document.getElementById('riskForm').onsubmit = async function(e) {
   e.preventDefault();
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   document.getElementById('spinner').style.display = 'block';
   document.getElementById('submitIcon').style.display = 'none';
+
+  // แปลงภาพเป็น Base64
+  const imagesBase64 = [];
+  for (const f of imageFiles) {
+    const base64 = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]); // เอาแค่ data ไม่เอา prefix
+      reader.readAsDataURL(f.blob);
+    });
+    imagesBase64.push({
+      data: base64,
+      name: f.blob.name || 'image.jpg',
+      mimeType: f.blob.type || 'image/jpeg'
+    });
+  }
 
   const payload = {
     timestamp: new Date().toLocaleString('th-TH'),
@@ -236,22 +250,15 @@ document.getElementById('riskForm').onsubmit = async function(e) {
     riskType: document.getElementById('riskType').value,
     severity: document.getElementById('severity').value,
     note: document.getElementById('note').value,
-    imageCount: imageFiles.length
+    images: imagesBase64  // ← ฝังภาพใน payload เลย
   };
 
-  const formData = new FormData();
-  formData.append('data', JSON.stringify(payload));
-  imageFiles.forEach((f, i) => {
-    formData.append('image_' + i, f.blob);
-  });
-
   try {
-    // *** สำคัญ: ห้ามใส่ mode: 'no-cors' ***
     const response = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
-      body: formData
+      headers: { 'Content-Type': 'application/json' },  // ← เปลี่ยนเป็น JSON
+      body: JSON.stringify(payload)
     });
-    
     const result = await response.json();
     if (result.status === 'ok') {
       document.getElementById('successOverlay').classList.add('show');
