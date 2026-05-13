@@ -1,1 +1,847 @@
 
+<!DOCTYPE html>
+<html lang="th">
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+/>
+
+<title>
+รายงานจุดเสี่ยง โรงงานอาหารสัตว์ศรีราชา
+</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+  font-family:'Segoe UI',sans-serif;
+}
+
+body{
+
+  margin:0;
+
+  min-height:100vh;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0f766e,
+      #042424,
+      #000000
+    );
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+  padding:20px;
+
+  color:white;
+}
+
+.container{
+
+  width:100%;
+  max-width:720px;
+
+  background:
+    rgba(255,255,255,0.08);
+
+  backdrop-filter:blur(12px);
+
+  border-radius:24px;
+
+  padding:30px;
+
+  box-shadow:
+    0 0 30px rgba(0,0,0,0.5);
+}
+
+h1{
+
+  text-align:center;
+
+  color:#8fffe0;
+
+  margin-bottom:30px;
+
+  font-size:2rem;
+}
+
+.form-group{
+
+  margin-bottom:20px;
+}
+
+label{
+
+  display:block;
+
+  margin-bottom:8px;
+
+  font-size:1.05rem;
+
+  font-weight:bold;
+}
+
+input,
+select,
+textarea{
+
+  width:100%;
+
+  padding:16px;
+
+  border:none;
+
+  border-radius:14px;
+
+  font-size:1rem;
+}
+
+textarea{
+
+  min-height:120px;
+  resize:vertical;
+}
+
+button{
+
+  width:100%;
+
+  padding:18px;
+
+  border:none;
+
+  border-radius:14px;
+
+  font-size:1.1rem;
+
+  font-weight:bold;
+
+  cursor:pointer;
+
+  background:
+    linear-gradient(
+      90deg,
+      #00c9a7,
+      #00e5ff
+    );
+
+  color:white;
+}
+
+button:disabled{
+
+  opacity:0.6;
+}
+
+.preview{
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  margin-top:10px;
+}
+
+.preview img{
+
+  width:100px;
+  height:100px;
+
+  object-fit:cover;
+
+  border-radius:12px;
+}
+
+#status{
+
+  margin-top:20px;
+
+  text-align:center;
+
+  font-weight:bold;
+
+  color:#8fffe0;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>
+รายงานจุดเสี่ยง โรงงานอาหารสัตว์ศรีราชา
+</h1>
+
+<div class="form-group">
+
+<label>หน่วยงาน</label>
+
+<select id="department">
+<option value="">
+กำลังโหลด...
+</option>
+</select>
+
+</div>
+
+<div class="form-group">
+
+<label>ชื่อพนักงาน</label>
+
+<select id="employee">
+
+<option value="">
+เลือกพนักงาน
+</option>
+
+</select>
+
+</div>
+
+<div class="form-group">
+
+<label>จุดพบความเสี่ยง</label>
+
+<textarea
+  id="locationText"
+  placeholder="แจ้งสถานที่หรือจุดเสี่ยง"
+></textarea>
+
+</div>
+
+<div class="form-group">
+
+<label>ประเภทความเสี่ยง</label>
+
+<select id="riskType"></select>
+
+</div>
+
+<div class="form-group">
+
+<label>ระดับความเสี่ยง</label>
+
+<select id="riskLevel"></select>
+
+</div>
+
+<div class="form-group">
+
+<label>แนบรูปภาพ</label>
+
+<input
+  type="file"
+  id="images"
+  multiple
+  accept="image/*"
+/>
+
+<div
+  class="preview"
+  id="preview"
+></div>
+
+</div>
+
+<div class="form-group">
+
+<label>หมายเหตุ</label>
+
+<textarea id="note"></textarea>
+
+</div>
+
+<button id="submitBtn">
+บันทึกข้อมูล
+</button>
+
+<div id="status"></div>
+
+</div>
+
+<script>
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyRrX0z4NuMWOZaBE_NL16c9c4XkGUIAZAGH5w3hWdz7iUu9T9G68IBGJcuh0XJ6jUG/exec";
+
+let masterData = {};
+let selectedEmpId = "";
+
+/**
+ * =====================================
+ * LOAD MASTER
+ * =====================================
+ */
+async function loadMasterData(){
+
+  try {
+
+    const response =
+      await fetch(
+        API_URL + "?action=master"
+      );
+
+    const data =
+      await response.json();
+
+    if(!data.success){
+
+      alert(
+        "โหลดข้อมูลไม่สำเร็จ"
+      );
+
+      return;
+    }
+
+    masterData = data;
+
+    loadDepartments();
+    loadRiskTypes();
+    loadRiskLevels();
+
+  } catch(err){
+
+    console.error(err);
+
+    alert(
+      "ไม่สามารถโหลดข้อมูลได้"
+    );
+  }
+}
+
+/**
+ * =====================================
+ * LOAD DEPARTMENT
+ * =====================================
+ */
+function loadDepartments(){
+
+  const dept =
+    document.getElementById(
+      "department"
+    );
+
+  dept.innerHTML =
+    '<option value="">เลือกหน่วยงาน</option>';
+
+  masterData.departments
+    .forEach(d=>{
+
+      dept.innerHTML +=
+      `<option value="${d}">
+        ${d}
+      </option>`;
+    });
+
+  dept.addEventListener(
+    "change",
+    loadEmployees
+  );
+}
+
+/**
+ * =====================================
+ * LOAD EMPLOYEE
+ * =====================================
+ */
+function loadEmployees(){
+
+  const dept =
+    document.getElementById(
+      "department"
+    ).value;
+
+  const emp =
+    document.getElementById(
+      "employee"
+    );
+
+  emp.innerHTML =
+    '<option value="">เลือกพนักงาน</option>';
+
+  const filtered =
+    masterData.staffs.filter(
+      s=>s.department===dept
+    );
+
+  filtered.forEach(s=>{
+
+    emp.innerHTML +=
+    `
+      <option
+        value="${s.name}"
+        data-id="${s.empId}"
+      >
+        ${s.name}
+      </option>
+    `;
+  });
+
+  emp.onchange = ()=>{
+
+    const selected =
+      emp.options[
+        emp.selectedIndex
+      ];
+
+    selectedEmpId =
+      selected.getAttribute(
+        "data-id"
+      );
+  };
+}
+
+/**
+ * =====================================
+ * RISK TYPE
+ * =====================================
+ */
+function loadRiskTypes(){
+
+  const risk =
+    document.getElementById(
+      "riskType"
+    );
+
+  risk.innerHTML =
+    '<option value="">เลือกประเภท</option>';
+
+  masterData.riskTypes
+    .forEach(r=>{
+
+      risk.innerHTML +=
+      `<option value="${r}">
+        ${r}
+      </option>`;
+    });
+}
+
+/**
+ * =====================================
+ * RISK LEVEL
+ * =====================================
+ */
+function loadRiskLevels(){
+
+  const risk =
+    document.getElementById(
+      "riskLevel"
+    );
+
+  risk.innerHTML =
+    '<option value="">เลือกระดับ</option>';
+
+  masterData.riskLevels
+    .forEach(r=>{
+
+      risk.innerHTML +=
+      `<option value="${r}">
+        ${r}
+      </option>`;
+    });
+}
+
+/**
+ * =====================================
+ * IMAGE PREVIEW
+ * =====================================
+ */
+document
+.getElementById("images")
+.addEventListener(
+  "change",
+  function(){
+
+    const preview =
+      document.getElementById(
+        "preview"
+      );
+
+    preview.innerHTML = "";
+
+    [...this.files]
+    .forEach(file=>{
+
+      const reader =
+        new FileReader();
+
+      reader.onload = e=>{
+
+        const img =
+          document.createElement(
+            "img"
+          );
+
+        img.src =
+          e.target.result;
+
+        preview.appendChild(img);
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+);
+
+/**
+ * =====================================
+ * GENERATE IMAGE ID
+ * =====================================
+ */
+function generateImageId(){
+
+  const now = new Date();
+
+  const hh =
+    String(now.getHours())
+    .padStart(2,'0');
+
+  const mi =
+    String(now.getMinutes())
+    .padStart(2,'0');
+
+  const dd =
+    String(now.getDate())
+    .padStart(2,'0');
+
+  const yy =
+    String(now.getFullYear())
+    .slice(-2);
+
+  return (
+    selectedEmpId +
+    hh +
+    mi +
+    dd +
+    yy
+  );
+}
+
+/**
+ * =====================================
+ * COMPRESS IMAGE
+ * =====================================
+ */
+async function compressImage(file){
+
+  return new Promise(resolve=>{
+
+    const img =
+      new Image();
+
+    const reader =
+      new FileReader();
+
+    reader.onload = e=>{
+
+      img.src =
+        e.target.result;
+    };
+
+    img.onload = ()=>{
+
+      const canvas =
+        document.createElement(
+          "canvas"
+        );
+
+      let width =
+        img.width;
+
+      let height =
+        img.height;
+
+      const maxWidth = 1600;
+
+      if(width > maxWidth){
+
+        height *=
+          maxWidth / width;
+
+        width = maxWidth;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx =
+        canvas.getContext("2d");
+
+      ctx.drawImage(
+        img,
+        0,
+        0,
+        width,
+        height
+      );
+
+      canvas.toBlob(blob=>{
+
+        resolve(blob);
+
+      },"image/jpeg",0.8);
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * =====================================
+ * BLOB TO BASE64
+ * =====================================
+ */
+function blobToBase64(blob){
+
+  return new Promise(resolve=>{
+
+    const reader =
+      new FileReader();
+
+    reader.onloadend = ()=>{
+
+      resolve(
+        reader.result
+        .split(',')[1]
+      );
+    };
+
+    reader.readAsDataURL(blob);
+  });
+}
+
+/**
+ * =====================================
+ * VALIDATE
+ * =====================================
+ */
+function validateForm(){
+
+  const errors = [];
+
+  if(!department.value)
+    errors.push("กรุณาเลือกหน่วยงาน");
+
+  if(!employee.value)
+    errors.push("กรุณาเลือกพนักงาน");
+
+  if(!locationText.value)
+    errors.push("กรุณากรอกจุดเสี่ยง");
+
+  if(!riskType.value)
+    errors.push("กรุณาเลือกประเภท");
+
+  if(!riskLevel.value)
+    errors.push("กรุณาเลือกระดับ");
+
+  if(images.files.length===0)
+    errors.push("กรุณาแนบรูป");
+
+  return errors;
+}
+
+/**
+ * =====================================
+ * SUBMIT
+ * =====================================
+ */
+submitBtn.addEventListener(
+  "click",
+  submitForm
+);
+
+async function submitForm(){
+
+  const errors =
+    validateForm();
+
+  if(errors.length > 0){
+
+    alert(errors.join("\n"));
+    return;
+  }
+
+  const status =
+    document.getElementById(
+      "status"
+    );
+
+  submitBtn.disabled = true;
+
+  try {
+
+    status.innerHTML =
+      "กำลังบันทึกข้อมูล...";
+
+    const imageFiles =
+      images.files;
+
+    const imageId =
+      generateImageId();
+
+    /**
+     * SAVE FORM
+     */
+    const saveResponse =
+      await fetch(API_URL,{
+
+        method:"POST",
+
+        body:JSON.stringify({
+
+          action:"saveForm",
+
+          reporter:
+            employee.value,
+
+          department:
+            department.value,
+
+          location:
+            locationText.value,
+
+          riskType:
+            riskType.value,
+
+          riskLevel:
+            riskLevel.value,
+
+          note:
+            note.value,
+
+          totalImages:
+            imageFiles.length,
+
+          imageId
+        })
+      });
+
+    const saveResult =
+      await saveResponse.json();
+
+    if(!saveResult.success){
+
+      throw new Error(
+        "บันทึกข้อมูลไม่สำเร็จ"
+      );
+    }
+
+    /**
+     * UPLOAD IMAGE
+     */
+    for(let i=0;i<imageFiles.length;i++){
+
+      status.innerHTML =
+      `กำลังอัปโหลดรูป ${
+        i+1
+      } / ${
+        imageFiles.length
+      }`;
+
+      const compressed =
+        await compressImage(
+          imageFiles[i]
+        );
+
+      const base64 =
+        await blobToBase64(
+          compressed
+        );
+
+      const imageFileId =
+        imageId + "_" + (i+1);
+
+      const uploadResponse =
+        await fetch(API_URL,{
+
+          method:"POST",
+
+          body:JSON.stringify({
+
+            action:"uploadImage",
+
+            base64,
+
+            rowNumber:
+              saveResult.rowNumber,
+
+            imageId:
+              imageFileId
+          })
+        });
+
+      /**
+       * เช็ค HTTP
+       */
+      if(!uploadResponse.ok){
+
+        throw new Error(
+          "HTTP Upload Error"
+        );
+      }
+
+      const uploadResult =
+        await uploadResponse.json();
+
+      if(!uploadResult.success){
+
+        throw new Error(
+          uploadResult.error ||
+          "Upload Failed"
+        );
+      }
+    }
+
+    status.innerHTML =
+      "✅ บันทึกข้อมูลสำเร็จ";
+
+    alert(
+      "บันทึกข้อมูลสำเร็จ"
+    );
+
+    location.reload();
+
+  } catch(err){
+
+    console.error(err);
+
+    status.innerHTML =
+      "❌ " + err.message;
+
+    alert(
+      "เกิดข้อผิดพลาด\n" +
+      err.message
+    );
+
+  } finally {
+
+    submitBtn.disabled = false;
+  }
+}
+
+/**
+ * =====================================
+ * START
+ * =====================================
+ */
+loadMasterData();
+
+</script>
+
+</body>
+</html>
