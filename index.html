@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ระบบรายงานและสรุปจุดเสี่ยง โรงงานอาหารสัตว์ศรีราชา</title>
-    <!-- โหลด Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body { margin: 0; min-height: 100vh; background: linear-gradient(135deg, #0f766e, #042424, #000000); padding: 20px; color: white; display: flex; justify-content: center; align-items: flex-start; }
-        .container { width: 100%; max-width: 800px; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border-radius: 24px; padding: 30px; box-shadow: 0 0 30px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); margin-top: 20px; }
+        .container { width: 100%; max-width: 850px; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border-radius: 24px; padding: 30px; box-shadow: 0 0 30px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); margin-top: 20px; }
         h1 { text-align: center; color: #8fffe0; margin-bottom: 25px; font-size: 1.8rem; }
         h2 { color: #00c9a7; text-align: center; margin-bottom: 20px; }
         .view { display: none; animation: fadeIn 0.3s; }
@@ -17,7 +16,7 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-size: 1rem; font-weight: bold; color: #8fffe0; }
-        input, select, textarea { width: 100%; padding: 12px; border: none; border-radius: 12px; font-size: 1rem; background: rgba(255, 255, 255, 0.95); color: #1a1a1a; }
+        input, select, textarea { width: 100%; padding: 12px; border: none; border-radius: 12px; font-size: 1rem; background: rgba(255, 255, 255, 0.95); color: #1a1a1a; outline: none;}
         button { width: 100%; padding: 16px; border: none; border-radius: 14px; font-size: 1.1rem; font-weight: bold; cursor: pointer; color: white; transition: 0.3s; margin-bottom: 15px; }
         .btn-primary { background: linear-gradient(90deg, #00c9a7, #00e5ff); box-shadow: 0 4px 15px rgba(0,201,167,0.3); }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,201,167,0.5); }
@@ -29,14 +28,22 @@
         .kpi-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 25px; }
         .kpi-card { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); padding: 15px; border-radius: 16px; text-align: center; }
         .kpi-title { font-size: 0.9rem; color: #ccffef; margin-bottom: 5px; }
-        .kpi-value { font-size: 2rem; font-weight: bold; color: #fff; margin: 0; }
-        .chart-container { background: rgba(255,255,255,0.95); border-radius: 16px; padding: 15px; margin-bottom: 20px; }
-        .table-container { background: rgba(255,255,255,0.95); border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
+        .kpi-value { font-size: 1.8rem; font-weight: bold; color: #fff; margin: 0; }
+        
+        .view-toggle { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .toggle-btn { flex: 1; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.1); border: 1px solid #00c9a7; color: white; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .toggle-btn.active { background: #00c9a7; color: #000; }
+        .dash-section { display: none; animation: fadeIn 0.3s; }
+        .dash-section.active { display: block; }
+
+        .chart-container { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 15px; }
+        .table-container { background: rgba(255,255,255,0.95); border-radius: 16px; overflow: hidden; }
         table { width: 100%; border-collapse: collapse; color: #000; font-size: 0.95rem; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
         th { background: #0f766e; color: white; font-weight: bold; }
-        .text-pass { color: #059669; font-weight: bold; }
-        .text-fail { color: #d97706; font-weight: bold; }
+        .text-pass { color: #15803d; font-weight: bold; } /* เขียว */
+        .text-fail { color: #d97706; font-weight: bold; } /* เหลืองเข้ม */
+        
         .preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
         .preview img { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; border: 2px solid #00c9a7; }
         #status { text-align: center; font-weight: bold; color: #8fffe0; }
@@ -92,38 +99,48 @@
             </div>
             <div><label>หน่วยงาน</label><select id="dashDept" onchange="renderDashboard()"></select></div>
             <div>
-                <label>สถานะ</label>
+                <label>สถานะรายบุคคล</label>
                 <select id="dashStatus" onchange="renderDashboard()">
                     <option value="all">ทั้งหมด</option>
-                    <option value="pass">เฉพาะที่ผ่านเกณฑ์</option>
-                    <option value="fail">เฉพาะที่ยังไม่ผ่าน</option>
+                    <option value="pass">ผ่านเกณฑ์</option>
+                    <option value="fail">ยังไม่ผ่าน</option>
                 </select>
             </div>
         </div>
         
         <div class="kpi-cards">
             <div class="kpi-card"><div class="kpi-title">แจ้งแล้ว (เรื่อง)</div><div class="kpi-value" id="kpiActual">0</div></div>
-            <div class="kpi-card"><div class="kpi-title">เป้าหมาย (เรื่อง)</div><div class="kpi-value" id="kpiTarget">0</div></div>
+            <div class="kpi-card"><div class="kpi-title" id="kpiTargetTitle">เป้าโรงงาน (เรื่อง)</div><div class="kpi-value" id="kpiTarget">0</div></div>
             <div class="kpi-card"><div class="kpi-title">คนผ่านเกณฑ์</div><div class="kpi-value" id="kpiPass">0</div></div>
         </div>
 
-        <div class="chart-container"><canvas id="deptChart"></canvas></div>
-
-        <div class="table-container">
-            <table>
-                <thead><tr><th>ชื่อพนักงาน</th><th style="text-align: center;">ส่ง / เป้า</th><th style="text-align: center;">สถานะ</th></tr></thead>
-                <tbody id="dashTableBody"></tbody>
-            </table>
+        <div class="view-toggle">
+            <button class="toggle-btn active" id="btnGraph" onclick="toggleDashView('graph')">📊 ดูกราฟ</button>
+            <button class="toggle-btn" id="btnTable" onclick="toggleDashView('table')">📋 ดูตารางรายบุคคล</button>
         </div>
-        <button class="btn-secondary" onclick="switchView('viewHome')">ออกจากระบบ</button>
+
+        <div id="secGraph" class="dash-section active">
+            <div class="chart-container"><canvas id="deptChart"></canvas></div>
+        </div>
+
+        <div id="secTable" class="dash-section">
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>ชื่อพนักงาน</th><th style="text-align: center;">ส่ง / เป้าส่วนตัว</th><th style="text-align: center;">สถานะ</th></tr></thead>
+                    <tbody id="dashTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <button class="btn-secondary" onclick="switchView('viewHome')" style="margin-top: 20px;">ออกจากระบบ</button>
     </div>
 </div>
 
 <script>
 // *** วางลิงก์ที่ Deploy ใหม่ตรงนี้ ***
-const API_URL = "https://script.google.com/macros/s/AKfycbx2gh3-J_cE7AUPQdQFVF7Sv1sIDsatp4ahdxMc4YED_BSGW5z5GPg9yKU_dcoHOccA/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxqzyUIvAeVOU8pBekfZvWoHrrdH36IBF29UpmQmp1sjiVjnzLaCqBMWlgYxCcji5i7/exec";
 
-let masterData = {}; let dashboardData = []; let dashboardTargets = { annual: 12, monthly: 1 };
+let masterData = {}; let dashboardData = []; let dashboardTargets = {};
 let chartInstance = null;
 
 function switchView(viewId) {
@@ -133,20 +150,30 @@ function switchView(viewId) {
     document.getElementById('loginPass').value = ""; window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function toggleDashView(mode) {
+    document.getElementById("btnGraph").classList.remove("active");
+    document.getElementById("btnTable").classList.remove("active");
+    document.getElementById("secGraph").classList.remove("active");
+    document.getElementById("secTable").classList.remove("active");
+
+    if (mode === 'graph') {
+        document.getElementById("btnGraph").classList.add("active");
+        document.getElementById("secGraph").classList.add("active");
+    } else {
+        document.getElementById("btnTable").classList.add("active");
+        document.getElementById("secTable").classList.add("active");
+    }
+}
+
 window.onload = async () => {
-    try {
-        const res = await fetch(API_URL + "?action=master");
-        const data = await res.json();
-        if (data.success) { masterData = data; setupDropdowns(); }
-    } catch(e) {}
+    try { const res = await fetch(API_URL + "?action=master"); const data = await res.json(); if (data.success) { masterData = data; setupDropdowns(); } } catch(e) {}
 };
 
 function setupDropdowns() {
     const dept = document.getElementById("department");
     masterData.departments.forEach(d => dept.innerHTML += `<option value="${d}">${d}</option>`);
     dept.onchange = () => {
-        const emp = document.getElementById("employee");
-        emp.innerHTML = '<option value="">เลือกพนักงาน</option>';
+        const emp = document.getElementById("employee"); emp.innerHTML = '<option value="">เลือกพนักงาน</option>';
         if (!dept.value) { emp.disabled = true; return; }
         emp.disabled = false;
         masterData.staffs.filter(s => s.department === dept.value).forEach(s => emp.innerHTML += `<option value="${s.name}" data-id="${s.empId}">${s.name}</option>`);
@@ -155,20 +182,17 @@ function setupDropdowns() {
     masterData.riskLevels.forEach(r => document.getElementById("riskLevel").innerHTML += `<option value="${r}">${r}</option>`);
 }
 
-// ระบบ Form (ย่อให้กระชับ)
+// ---------------------- ระบบส่ง Form ---------------------- //
 document.getElementById("images").onchange = function() {
     const preview = document.getElementById("preview"); preview.innerHTML = "";
     [...this.files].forEach(file => { const r = new FileReader(); r.onload = e => { const i = document.createElement("img"); i.src = e.target.result; preview.appendChild(i); }; r.readAsDataURL(file); });
 };
 async function compressFile(file) {
     return new Promise(res => {
-        const img = new Image(); const r = new FileReader(); r.readAsDataURL(file);
-        r.onload = e => img.src = e.target.result;
+        const img = new Image(); const r = new FileReader(); r.readAsDataURL(file); r.onload = e => img.src = e.target.result;
         img.onload = () => {
-            const cvs = document.createElement("canvas"); let w = img.width, h = img.height;
-            if (w > 1200) { h *= 1200 / w; w = 1200; }
-            cvs.width = w; cvs.height = h; cvs.getContext("2d").drawImage(img, 0, 0, w, h);
-            res(cvs.toDataURL("image/jpeg", 0.7).split(',')[1]);
+            const cvs = document.createElement("canvas"); let w = img.width, h = img.height; if (w > 1200) { h *= 1200 / w; w = 1200; }
+            cvs.width = w; cvs.height = h; cvs.getContext("2d").drawImage(img, 0, 0, w, h); res(cvs.toDataURL("image/jpeg", 0.7).split(',')[1]);
         };
     });
 }
@@ -177,8 +201,8 @@ document.getElementById("submitBtn").onclick = async function() {
     if (!emp.value || !document.getElementById("locationText").value || imgIn.files.length === 0) return alert("กรอกข้อมูลและแนบรูปให้ครบ");
     this.disabled = true; document.getElementById("status").innerHTML = "⌛ บันทึกข้อมูล...";
     try {
-        const empId = emp.options[emp.selectedIndex].getAttribute("data-id");
-        const d = new Date(); const imgBase = empId + String(d.getDate()).padStart(2,'0') + String(d.getMonth()+1).padStart(2,'0') + String(d.getFullYear()).slice(-2);
+        const empId = emp.options[emp.selectedIndex].getAttribute("data-id"); const d = new Date();
+        const imgBase = empId + String(d.getDate()).padStart(2,'0') + String(d.getMonth()+1).padStart(2,'0') + String(d.getFullYear()).slice(-2);
         const r1 = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveForm", reporter: emp.value, department: document.getElementById("department").value, location: document.getElementById("locationText").value, riskType: document.getElementById("riskType").value, riskLevel: document.getElementById("riskLevel").value, note: document.getElementById("note").value, totalImages: imgIn.files.length, imageId: imgBase }) });
         const textRes = await r1.json(); if (!textRes.success) throw new Error(textRes.error);
         for (let i = 0; i < imgIn.files.length; i++) {
@@ -189,7 +213,7 @@ document.getElementById("submitBtn").onclick = async function() {
     } catch (e) { alert("❌ พลาด: " + e.message); } finally { this.disabled = false; }
 };
 
-// ระบบ Login & Dashboard
+// ---------------------- ระบบ Dashboard ---------------------- //
 document.getElementById("btnLogin").onclick = async function() {
     const u = document.getElementById("loginUser").value, p = document.getElementById("loginPass").value;
     if(!u || !p) return;
@@ -197,19 +221,16 @@ document.getElementById("btnLogin").onclick = async function() {
     try {
         const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "checkLogin", user: u, pass: p }) });
         const d = await res.json();
-        if(d.success) { await loadDash(); switchView('viewDashboard'); } 
-        else document.getElementById("loginStatus").innerHTML = d.message;
+        if(d.success) { await loadDash(); switchView('viewDashboard'); } else document.getElementById("loginStatus").innerHTML = d.message;
     } catch(e) {} finally { this.disabled = false; }
 };
 
 async function loadDash() {
-    document.getElementById("dashTableBody").innerHTML = '<tr><td colspan="3" style="text-align:center;">กำลังดึงข้อมูล...</td></tr>';
     const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getDashboard" }) });
     const d = await res.json();
     if(d.success) {
         dashboardData = d.records; dashboardTargets = d.targets;
         
-        // เซ็ตตัวเลือกปีให้เป็นปีปัจจุบันอัตโนมัติ
         let years = [...new Set(dashboardData.map(r => r.year))].filter(y => y !== "N/A").sort().reverse();
         const ySel = document.getElementById("dashYear"); ySel.innerHTML = "";
         years.forEach(y => ySel.innerHTML += `<option value="${y}">${y}</option>`);
@@ -227,18 +248,18 @@ function renderDashboard() {
     const selD = document.getElementById("dashDept").value;
     const selS = document.getElementById("dashStatus").value;
 
-    // หาว่าใช้เป้าหมายรายปี หรือ รายเดือน
-    const targetPerPerson = (selM === "all") ? dashboardTargets.annual : dashboardTargets.monthly;
+    // เลือกเป้าหมาย (รายเดือน หรือ รายปี)
+    const tFactory = (selM === "all") ? dashboardTargets.factoryYear : dashboardTargets.factoryMonth;
+    const tPerson  = (selM === "all") ? dashboardTargets.personYear  : dashboardTargets.personMonth;
 
-    // นับจำนวนพนักงานในแต่ละหน่วยงาน (ฐานคำนวณเป้า)
-    let staffCount = {}; let totalTarget = 0;
+    document.getElementById("kpiTargetTitle").innerText = (selM === "all") ? "เป้าโรงงาน (ปี)" : "เป้าโรงงาน (เดือน)";
+    document.getElementById("kpiTarget").innerText = tFactory;
+
+    // หาจำนวนพนักงานในแต่ละหน่วยงาน เพื่อทำเส้นเป้าหมายในกราฟ (เป้าคน * จำนวนคน)
+    let staffCount = {}; 
     let staffInFocus = masterData.staffs.filter(s => selD === "all" || s.department === selD);
-    staffInFocus.forEach(s => {
-        staffCount[s.department] = (staffCount[s.department] || 0) + 1;
-        totalTarget += targetPerPerson;
-    });
+    staffInFocus.forEach(s => { staffCount[s.department] = (staffCount[s.department] || 0) + 1; });
 
-    // กรองข้อมูลแจ้งเหตุ
     let filtered = dashboardData.filter(d => d.year === selY && (selM === "all" || d.month === selM) && (selD === "all" || d.dept === selD));
     let reportsByDept = {}; let reportsByPerson = {};
     filtered.forEach(d => {
@@ -246,28 +267,55 @@ function renderDashboard() {
         if(d.reporter) reportsByPerson[d.reporter] = (reportsByPerson[d.reporter] || 0) + 1;
     });
 
-    // วาดกราฟ
-    let labels = [], dataVals = [], bgColors = [];
+    // --- ส่วนกราฟ ---
+    let labels = [], dataVals = [], bgColors = [], targetVals = [];
     (selD === "all" ? Object.keys(staffCount) : [selD]).forEach(dept => {
         let actual = reportsByDept[dept] || 0;
-        let expected = (staffCount[dept] || 0) * targetPerPerson;
-        labels.push(dept); dataVals.push(actual);
-        // สีเขียวถ้าผ่าน (>= เป้า) สีเหลืองถ้าไม่ผ่าน (< เป้า)
-        bgColors.push(actual >= expected ? '#10b981' : '#f59e0b');
+        let expected = (staffCount[dept] || 0) * tPerson; // เส้นเป้าหมาย = เป้าคน * จำนวนคนในแผนก
+        
+        labels.push(dept); 
+        dataVals.push(actual);
+        targetVals.push(expected);
+        bgColors.push(actual >= expected ? '#10b981' : '#eab308'); // เขียว / เหลือง
     });
 
     if(chartInstance) chartInstance.destroy();
     chartInstance = new Chart(document.getElementById('deptChart'), {
         type: 'bar',
-        data: { labels: labels, datasets: [{ label: 'จำนวนรายงาน', data: dataVals, backgroundColor: bgColors }] },
-        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+        data: { 
+            labels: labels, 
+            datasets: [
+                {
+                    type: 'line',
+                    label: 'เส้นเป้าหมาย (ตามจำนวนคน)',
+                    data: targetVals,
+                    borderColor: '#ef4444', // สีแดง
+                    backgroundColor: '#ef4444',
+                    borderWidth: 2, fill: false, tension: 0.1
+                },
+                {
+                    type: 'bar',
+                    label: 'จำนวนรายงานที่ส่ง',
+                    data: dataVals,
+                    backgroundColor: bgColors
+                }
+            ] 
+        },
+        options: { 
+            responsive: true, 
+            plugins: { legend: { position: 'top', labels: { color: 'white' } } }, 
+            scales: { 
+                y: { beginAtZero: true, ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                x: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+            } 
+        }
     });
 
-    // สร้างตารางพนักงาน
+    // --- ส่วนตารางพนักงาน ---
     let tbody = "", passCount = 0;
     staffInFocus.forEach(s => {
         let actual = reportsByPerson[s.name] || 0;
-        let isPass = actual >= targetPerPerson;
+        let isPass = actual >= tPerson;
         if(isPass) passCount++;
         
         if(selS === "pass" && !isPass) return;
@@ -277,14 +325,13 @@ function renderDashboard() {
         let txt = isPass ? 'ผ่าน' : 'ไม่ผ่าน';
         tbody += `<tr>
             <td>${s.name} ${selD === 'all' ? `<br><small style="color:gray;">(${s.department})</small>` : ''}</td>
-            <td style="text-align: center;"><b>${actual}</b> / ${targetPerPerson}</td>
+            <td style="text-align: center;"><b>${actual}</b> / ${tPerson}</td>
             <td style="text-align: center;" class="${cls}">${txt}</td>
         </tr>`;
     });
 
     document.getElementById("dashTableBody").innerHTML = tbody || '<tr><td colspan="3" style="text-align:center;">ไม่พบข้อมูล</td></tr>';
     document.getElementById("kpiActual").innerText = filtered.length;
-    document.getElementById("kpiTarget").innerText = totalTarget;
     document.getElementById("kpiPass").innerText = passCount;
 }
 </script>
