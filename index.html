@@ -1,110 +1,1054 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>แจ้งจุดเสี่ยง | Risk Report</title>
-  <style>
-    /* ... (ใส่ CSS ที่คุณเคยมีตรงนี้) ... */
-    body { background: #0d0f14; color: #e8eaf0; font-family: sans-serif; padding: 20px; }
-    .container { max-width: 600px; margin: 0 auto; }
-    input, select, textarea { width: 100%; padding: 10px; margin: 5px 0 15px; }
-    .submit-btn { width: 100%; padding: 15px; background: #ff5c3a; color: white; border: none; cursor: pointer; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แจ้งจุดเสี่ยง | Risk Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161920;
+    --surface2: #1e2230;
+    --border: #2a2f3d;
+    --accent: #ff5c3a;
+    --accent2: #ffb830;
+    --text: #e8eaf0;
+    --text2: #8b90a0;
+    --green: #2dd98f;
+    --red: #ff4444;
+    --yellow: #ffb830;
+    --font: 'IBM Plex Sans Thai', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15px;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* Background grid pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,92,58,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,92,58,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 16px 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    padding: 28px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 6px;
+  }
+
+  .logo-box {
+    width: 44px;
+    height: 44px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .logo-box::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 4px,
+      rgba(0,0,0,0.15) 4px,
+      rgba(0,0,0,0.15) 8px
+    );
+  }
+
+  .logo-box svg { position: relative; z-index: 1; }
+
+  .header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+
+  .header p {
+    font-size: 13px;
+    color: var(--text2);
+    font-family: var(--mono);
+    margin-top: 2px;
+  }
+
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 14px;
+  }
+
+  .status-dot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-family: var(--mono);
+    color: var(--text2);
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Section */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 14px;
+    transition: border-color 0.2s;
+  }
+
+  .section:focus-within {
+    border-color: rgba(255,92,58,0.4);
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-family: var(--mono);
+    font-weight: 500;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Form grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-1 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text2);
+    letter-spacing: 0.3px;
+  }
+
+  .field label span {
+    color: var(--accent);
+    margin-left: 2px;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: var(--font);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+    width: 100%;
+    -webkit-appearance: none;
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: var(--text2);
+    opacity: 0.5;
+  }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--accent);
+    background: #1a1e28;
+  }
+
+  .field select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b90a0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+
+  .field textarea {
+    height: 90px;
+    resize: none;
+    line-height: 1.6;
+  }
+
+  /* Risk type grid */
+  .risk-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .risk-btn {
+    padding: 10px 8px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--surface2);
+    color: var(--text2);
+    font-family: var(--font);
+    font-size: 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    line-height: 1.3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .risk-btn:hover {
+    border-color: rgba(255,92,58,0.4);
+    color: var(--text);
+  }
+
+  .risk-btn.active {
+    border-color: var(--accent);
+    background: rgba(255,92,58,0.1);
+    color: var(--accent);
+  }
+
+  .risk-btn.active.yellow {
+    border-color: var(--yellow);
+    background: rgba(255,184,48,0.1);
+    color: var(--yellow);
+  }
+
+  .risk-btn.active.red {
+    border-color: var(--red);
+    background: rgba(255,68,68,0.1);
+    color: var(--red);
+  }
+
+  .risk-icon { font-size: 20px; }
+
+  /* Severity */
+  .severity-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .sev-btn {
+    padding: 8px 4px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--surface2);
+    color: var(--text2);
+    font-family: var(--mono);
+    font-size: 11px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+  }
+
+  .sev-btn.active-low { border-color: var(--green); background: rgba(45,217,143,0.1); color: var(--green); }
+  .sev-btn.active-med { border-color: var(--yellow); background: rgba(255,184,48,0.1); color: var(--yellow); }
+  .sev-btn.active-high { border-color: var(--accent); background: rgba(255,92,58,0.1); color: var(--accent); }
+  .sev-btn.active-crit { border-color: var(--red); background: rgba(255,68,68,0.12); color: var(--red); }
+
+  /* Upload zone */
+  .upload-zone {
+    border: 1.5px dashed var(--border);
+    border-radius: 8px;
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--accent);
+    background: rgba(255,92,58,0.04);
+  }
+
+  .upload-zone input[type=file] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .upload-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .upload-zone p {
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 3px;
+  }
+
+  .upload-zone span {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--text2);
+    opacity: 0.6;
+  }
+
+  /* Preview grid */
+  .preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .preview-item {
+    aspect-ratio: 1;
+    border-radius: 7px;
+    overflow: hidden;
+    position: relative;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+  }
+
+  .preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .preview-item .remove-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    background: rgba(0,0,0,0.7);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    backdrop-filter: blur(4px);
+    transition: background 0.15s;
+  }
+
+  .preview-item .remove-btn:hover {
+    background: var(--red);
+  }
+
+  .preview-item .size-badge {
+    position: absolute;
+    bottom: 3px;
+    left: 3px;
+    background: rgba(0,0,0,0.65);
+    color: white;
+    font-size: 9px;
+    font-family: var(--mono);
+    padding: 2px 5px;
+    border-radius: 4px;
+  }
+
+  /* Compress indicator */
+  .compress-note {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--green);
+    margin-top: 8px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .compress-note.visible { opacity: 1; }
+
+  /* Submit */
+  .submit-section {
+    margin-top: 6px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.15s;
+    letter-spacing: 0.3px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .submit-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 8px,
+      rgba(255,255,255,0.04) 8px,
+      rgba(255,255,255,0.04) 16px
+    );
+  }
+
+  .submit-btn:hover {
+    background: #ff6f50;
+    transform: translateY(-1px);
+  }
+
+  .submit-btn:active {
+    transform: translateY(0);
+  }
+
+  .submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Success overlay */
+  .success-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(13,15,20,0.92);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    backdrop-filter: blur(6px);
+  }
+
+  .success-overlay.show { display: flex; }
+
+  .success-box {
+    background: var(--surface);
+    border: 1px solid var(--green);
+    border-radius: 14px;
+    padding: 32px 40px;
+    text-align: center;
+    max-width: 360px;
+    width: 90%;
+  }
+
+  .success-icon {
+    width: 56px;
+    height: 56px;
+    background: rgba(45,217,143,0.12);
+    border: 1.5px solid var(--green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 24px;
+  }
+
+  .success-box h2 { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .success-box p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+  .ref-code {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--green);
+    background: rgba(45,217,143,0.08);
+    border: 1px solid rgba(45,217,143,0.2);
+    padding: 8px 16px;
+    border-radius: 6px;
+    margin: 14px 0;
+    letter-spacing: 1px;
+  }
+
+  .new-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 24px;
+    border-radius: 7px;
+    font-family: var(--font);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 8px;
+    width: 100%;
+  }
+
+  .new-btn:hover { border-color: var(--text2); }
+
+  /* Counter */
+  .char-counter {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--text2);
+    opacity: 0.6;
+    text-align: right;
+    margin-top: 4px;
+  }
+
+  /* Loading state */
+  .spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Error */
+  .field-error {
+    font-size: 11px;
+    color: var(--red);
+    font-family: var(--mono);
+    display: none;
+  }
+
+  .field.error input,
+  .field.error select,
+  .field.error textarea {
+    border-color: var(--red);
+  }
+
+  .field.error .field-error { display: block; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: var(--mono);
+    transition: transform 0.3s;
+    z-index: 50;
+    white-space: nowrap;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 480px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .risk-grid { grid-template-columns: repeat(2, 1fr); }
+    .severity-row { grid-template-columns: repeat(2, 1fr); }
+    .header h1 { font-size: 17px; }
+  }
+</style>
 </head>
 <body>
 
 <div class="container">
-  <h1>แจ้งจุดเสี่ยง</h1>
-  <form id="riskForm">
-    <label>ชื่อผู้แจ้ง</label>
-    <input type="text" id="reporter-name" required placeholder="ระบุชื่อ">
-    
-    <label>หน่วยงาน</label>
-    <select id="dept">
-      <option value="ฝ่ายผลิต">ฝ่ายผลิต</option>
-      <option value="ฝ่ายวิศวกรรม">ฝ่ายวิศวกรรม</option>
-    </select>
 
-    <label>พื้นที่</label>
-    <select id="area">
-      <option value="โรงงาน A">โรงงาน A</option>
-    </select>
+  <header class="header">
+    <div class="header-top">
+      <div class="logo-box">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      <div>
+        <h1>แจ้งจุดเสี่ยง</h1>
+        <p>RISK REPORTING SYSTEM v2.0</p>
+      </div>
+    </div>
+    <div class="status-bar">
+      <div class="status-dot"><span class="dot"></span> ระบบพร้อมใช้งาน</div>
+      <div class="status-dot" style="color:var(--text2);font-size:11px;" id="datetime"></div>
+    </div>
+  </header>
 
-    <input type="hidden" id="riskType" value="ทั่วไป">
-    <input type="hidden" id="severity" value="ปานกลาง">
-    
-    <label>เครื่องจักร</label>
-    <input type="text" id="machine">
+  <form id="riskForm" novalidate>
 
-    <label>รายละเอียด</label>
-    <textarea id="note"></textarea>
+    <!-- Section 1: ข้อมูลผู้แจ้ง -->
+    <div class="section">
+      <div class="section-label">01 — ข้อมูลผู้แจ้ง</div>
+      <div class="grid-2">
+        <div class="field" id="f-name">
+          <label>ชื่อ-นามสกุล <span>*</span></label>
+          <input type="text" id="reporter-name" placeholder="สมชาย ใจดี" autocomplete="name" />
+          <span class="field-error">กรุณากรอกชื่อ</span>
+        </div>
+        <div class="field" id="f-dept">
+          <label>หน่วยงาน / แผนก <span>*</span></label>
+          <select id="dept">
+            <option value="">— เลือกหน่วยงาน —</option>
+            <option>ฝ่ายผลิต</option>
+            <option>ฝ่ายวิศวกรรม</option>
+            <option>ฝ่ายซ่อมบำรุง</option>
+            <option>ฝ่ายคุณภาพ (QC/QA)</option>
+            <option>ฝ่ายความปลอดภัย</option>
+            <option>ฝ่ายโลจิสติกส์</option>
+            <option>ฝ่ายอื่นๆ</option>
+          </select>
+          <span class="field-error">กรุณาเลือกหน่วยงาน</span>
+        </div>
+      </div>
+    </div>
 
-    <button type="submit" class="submit-btn" id="submitBtn">
-      <span id="spinner" style="display:none;">⏳ กำลังส่ง...</span>
-      <span id="submitIcon">📤 ส่งรายงาน</span>
-    </button>
+    <!-- Section 2: สถานที่ / เครื่องจักร -->
+    <div class="section">
+      <div class="section-label">02 — สถานที่และเครื่องจักร</div>
+      <div class="grid-2">
+        <div class="field" id="f-area">
+          <label>พื้นที่ / โซน <span>*</span></label>
+          <select id="area">
+            <option value="">— เลือกพื้นที่ —</option>
+            <option>โรงงาน A — ไลน์ 1</option>
+            <option>โรงงาน A — ไลน์ 2</option>
+            <option>โรงงาน A — ไลน์ 3</option>
+            <option>โรงงาน B — ไลน์ 1</option>
+            <option>โรงงาน B — ไลน์ 2</option>
+            <option>คลังสินค้า 1</option>
+            <option>คลังสินค้า 2</option>
+            <option>พื้นที่จอดรถ</option>
+            <option>สำนักงาน</option>
+            <option>พื้นที่อื่นๆ</option>
+          </select>
+          <span class="field-error">กรุณาเลือกพื้นที่</span>
+        </div>
+        <div class="field">
+          <label>เครื่องจักร / อุปกรณ์</label>
+          <input type="text" id="machine" placeholder="เช่น Compressor #3, สายพาน B" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: ประเภทความเสี่ยง -->
+    <div class="section">
+      <div class="section-label">03 — ประเภทความเสี่ยง <span style="color:var(--accent)">*</span></div>
+      <div class="risk-grid" id="riskTypeGrid">
+        <button type="button" class="risk-btn" data-val="ความปลอดภัย" data-color="red">
+          <span class="risk-icon">⚠️</span>ความปลอดภัย
+        </button>
+        <button type="button" class="risk-btn" data-val="ไฟไหม้/ระเบิด" data-color="red">
+          <span class="risk-icon">🔥</span>ไฟไหม้/ระเบิด
+        </button>
+        <button type="button" class="risk-btn" data-val="เครื่องจักร" data-color="">
+          <span class="risk-icon">⚙️</span>เครื่องจักร
+        </button>
+        <button type="button" class="risk-btn" data-val="สารเคมี" data-color="yellow">
+          <span class="risk-icon">🧪</span>สารเคมี
+        </button>
+        <button type="button" class="risk-btn" data-val="สิ่งแวดล้อม" data-color="yellow">
+          <span class="risk-icon">🌿</span>สิ่งแวดล้อม
+        </button>
+        <button type="button" class="risk-btn" data-val="อื่นๆ" data-color="">
+          <span class="risk-icon">📋</span>อื่นๆ
+        </button>
+      </div>
+      <input type="hidden" id="riskType" />
+      <span class="field-error" id="riskTypeError" style="display:none;font-size:11px;color:var(--red);font-family:var(--mono);margin-top:6px;">กรุณาเลือกประเภทความเสี่ยง</span>
+
+      <div style="margin-top:14px;">
+        <div class="section-label" style="margin-bottom:10px;font-size:10px;">ระดับความรุนแรง <span style="color:var(--accent)">*</span></div>
+        <div class="severity-row" id="sevGrid">
+          <button type="button" class="sev-btn" data-val="ต่ำ" data-cls="active-low">🟢 ต่ำ</button>
+          <button type="button" class="sev-btn" data-val="ปานกลาง" data-cls="active-med">🟡 ปานกลาง</button>
+          <button type="button" class="sev-btn" data-val="สูง" data-cls="active-high">🟠 สูง</button>
+          <button type="button" class="sev-btn" data-val="วิกฤต" data-cls="active-crit">🔴 วิกฤต</button>
+        </div>
+        <input type="hidden" id="severity" />
+        <span class="field-error" id="sevError" style="display:none;font-size:11px;color:var(--red);font-family:var(--mono);margin-top:6px;">กรุณาเลือกระดับความรุนแรง</span>
+      </div>
+    </div>
+
+    <!-- Section 4: ภาพแนบ -->
+    <div class="section">
+      <div class="section-label">04 — ภาพหลักฐาน</div>
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="fileInput" accept="image/*" multiple />
+        <div class="upload-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--text2)">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <p>แตะเพื่อเลือกภาพ หรือลากวางที่นี่</p>
+        <span>สูงสุด 5 ภาพ • ย่อขนาดอัตโนมัติถ้าเกิน 800px • JPG, PNG</span>
+      </div>
+      <div class="compress-note" id="compressNote">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        ย่อขนาดภาพอัตโนมัติแล้ว ประหยัดพื้นที่เก็บข้อมูล
+      </div>
+      <div class="preview-grid" id="previewGrid"></div>
+    </div>
+
+    <!-- Section 5: หมายเหตุ -->
+    <div class="section">
+      <div class="section-label">05 — หมายเหตุเพิ่มเติม</div>
+      <div class="field">
+        <label>รายละเอียดและข้อเสนอแนะ</label>
+        <textarea id="note" placeholder="อธิบายสถานการณ์ สาเหตุที่สังเกตพบ หรือข้อเสนอแนะในการแก้ไข..." oninput="updateCounter()"></textarea>
+        <div class="char-counter" id="charCounter">0 / 500</div>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-section">
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <div class="spinner" id="spinner"></div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="submitIcon"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        ส่งรายงานจุดเสี่ยง
+      </button>
+      <p style="text-align:center;font-size:11px;color:var(--text2);margin-top:10px;font-family:var(--mono);">
+        ข้อมูลจะถูกบันทึกลง Google Sheets โดยอัตโนมัติ
+      </p>
+    </div>
+
   </form>
 </div>
 
+<!-- Success overlay -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-box">
+    <div class="success-icon">✓</div>
+    <h2>ส่งรายงานสำเร็จ</h2>
+    <p>ข้อมูลจุดเสี่ยงถูกบันทึกเรียบร้อยแล้ว<br>ทีมความปลอดภัยจะดำเนินการตรวจสอบ</p>
+    <div class="ref-code" id="refCode">REF-XXXXXXXX</div>
+    <p style="font-size:12px;color:var(--text2);">เก็บรหัสนี้ไว้เพื่ออ้างอิง</p>
+    <button class="new-btn" onclick="resetForm()">+ แจ้งจุดเสี่ยงใหม่</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-  // ตัวแปรสำหรับเก็บไฟล์ภาพ (จำลองไว้เพื่อให้ script ทำงานได้)
-  let imageFiles = []; 
-  
-  // URL เว็บแอปที่คุณได้มา
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9h2LyffpY0-nAayXumrS2Fbf6eV7qSriLtpXXwqErXFtmI12eI0kfmqmADAcEELdr/exec';
+// ---- Datetime ----
+function updateClock() {
+  const now = new Date();
+  const d = now.toLocaleDateString('th-TH', { day:'2-digit', month:'2-digit', year:'numeric' });
+  const t = now.toLocaleTimeString('th-TH', { hour:'2-digit', minute:'2-digit' });
+  document.getElementById('datetime').textContent = d + ' ' + t;
+}
+updateClock();
+setInterval(updateClock, 30000);
 
-  document.getElementById('riskForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const btn = document.getElementById('submitBtn');
-    const spinner = document.getElementById('spinner');
-    const icon = document.getElementById('submitIcon');
-    
-    btn.disabled = true;
-    spinner.style.display = 'inline';
-    icon.style.display = 'none';
+// ---- Risk type buttons ----
+document.querySelectorAll('.risk-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.risk-btn').forEach(b => b.classList.remove('active','yellow','red'));
+    btn.classList.add('active');
+    const c = btn.dataset.color;
+    if (c) btn.classList.add(c);
+    document.getElementById('riskType').value = btn.dataset.val;
+    document.getElementById('riskTypeError').style.display = 'none';
+  });
+});
 
-    const payload = {
-      timestamp: new Date().toLocaleString('th-TH'),
-      reporter: document.getElementById('reporter-name').value.trim(),
-      dept: document.getElementById('dept').value,
-      area: document.getElementById('area').value,
-      machine: document.getElementById('machine').value.trim(),
-      riskType: document.getElementById('riskType').value,
-      severity: document.getElementById('severity').value,
-      note: document.getElementById('note').value.trim(),
-      imageCount: imageFiles.length,
+// ---- Severity buttons ----
+document.querySelectorAll('.sev-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sev-btn').forEach(b => {
+      b.className = 'sev-btn';
+    });
+    btn.classList.add(btn.dataset.cls);
+    document.getElementById('severity').value = btn.dataset.val;
+    document.getElementById('sevError').style.display = 'none';
+  });
+});
+
+// ---- Image handling ----
+let imageFiles = [];
+
+function compressImage(file, maxPx = 800, quality = 0.75) {
+  return new Promise(resolve => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      const needsResize = width > maxPx || height > maxPx;
+      if (!needsResize) { resolve({ blob: file, compressed: false, size: file.size }); return; }
+      const ratio = Math.min(maxPx / width, maxPx / height);
+      width = Math.round(width * ratio);
+      height = Math.round(height * ratio);
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      canvas.toBlob(blob => resolve({ blob, compressed: true, size: blob.size }), 'image/jpeg', quality);
     };
+    img.src = url;
+  });
+}
 
-    try {
-      const formData = new FormData();
-      formData.append('data', JSON.stringify(payload));
-      
-      // ส่งรูปภาพ
-      imageFiles.forEach((f, i) => {
-        formData.append('image_' + i, f.blob, `img_${i}.jpg`);
-      });
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + 'B';
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(0) + 'KB';
+  return (bytes/(1024*1024)).toFixed(1) + 'MB';
+}
 
-      await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        body: formData
-      });
+function renderPreviews() {
+  const grid = document.getElementById('previewGrid');
+  grid.innerHTML = '';
+  imageFiles.forEach((f, i) => {
+    const div = document.createElement('div');
+    div.className = 'preview-item';
+    const imgEl = document.createElement('img');
+    imgEl.src = URL.createObjectURL(f.blob);
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-btn';
+    removeBtn.innerHTML = '×';
+    removeBtn.type = 'button';
+    removeBtn.onclick = () => { imageFiles.splice(i, 1); renderPreviews(); };
+    const badge = document.createElement('div');
+    badge.className = 'size-badge';
+    badge.textContent = formatSize(f.size);
+    div.appendChild(imgEl);
+    div.appendChild(removeBtn);
+    div.appendChild(badge);
+    grid.appendChild(div);
+  });
+}
 
-      alert('ส่งข้อมูลสำเร็จ!');
-      location.reload();
+document.getElementById('fileInput').addEventListener('change', async function() {
+  const files = Array.from(this.files);
+  const remaining = 5 - imageFiles.length;
+  const toProcess = files.slice(0, remaining);
+  if (files.length > remaining) showToast('เพิ่มได้สูงสุด 5 ภาพ');
+  let anyCompressed = false;
+  for (const file of toProcess) {
+    const result = await compressImage(file);
+    if (result.compressed) anyCompressed = true;
+    imageFiles.push(result);
+  }
+  renderPreviews();
+  const note = document.getElementById('compressNote');
+  if (anyCompressed) { note.classList.add('visible'); }
+  this.value = '';
+});
 
-    } catch (err) {
-      alert('เกิดข้อผิดพลาด: ' + err.message);
-      btn.disabled = false;
-      spinner.style.display = 'none';
-      icon.style.display = 'inline';
+// Drag & drop
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+zone.addEventListener('drop', async e => {
+  e.preventDefault();
+  zone.classList.remove('dragover');
+  const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+  const remaining = 5 - imageFiles.length;
+  for (const file of files.slice(0, remaining)) {
+    const result = await compressImage(file);
+    if (result.compressed) document.getElementById('compressNote').classList.add('visible');
+    imageFiles.push(result);
+  }
+  renderPreviews();
+});
+
+// ---- Char counter ----
+function updateCounter() {
+  const val = document.getElementById('note').value.length;
+  document.getElementById('charCounter').textContent = val + ' / 500';
+}
+
+// ---- Toast ----
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ---- Validation ----
+function validate() {
+  let ok = true;
+  const checks = [
+    { id: 'reporter-name', field: 'f-name', msg: 'กรุณากรอกชื่อ' },
+    { id: 'dept', field: 'f-dept', msg: 'กรุณาเลือกหน่วยงาน' },
+    { id: 'area', field: 'f-area', msg: 'กรุณาเลือกพื้นที่' },
+  ];
+  checks.forEach(c => {
+    const el = document.getElementById(c.id);
+    const field = document.getElementById(c.field);
+    if (!el.value.trim()) {
+      field.classList.add('error');
+      field.querySelector('.field-error').textContent = c.msg;
+      ok = false;
+    } else {
+      field.classList.remove('error');
     }
   });
+  if (!document.getElementById('riskType').value) {
+    document.getElementById('riskTypeError').style.display = 'block';
+    ok = false;
+  }
+  if (!document.getElementById('severity').value) {
+    document.getElementById('sevError').style.display = 'block';
+    ok = false;
+  }
+  return ok;
+}
 
-  // ฟังก์ชัน validate จำลอง
-  function validate() { return true; }
+// ---- Submit ----
+document.getElementById('riskForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  if (!validate()) { showToast('กรุณากรอกข้อมูลที่จำเป็นให้ครบ'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  const spinner = document.getElementById('spinner');
+  const icon = document.getElementById('submitIcon');
+  btn.disabled = true;
+  spinner.style.display = 'block';
+  icon.style.display = 'none';
+
+  // Collect data
+  const payload = {
+    timestamp: new Date().toISOString(),
+    reporter: document.getElementById('reporter-name').value.trim(),
+    dept: document.getElementById('dept').value,
+    area: document.getElementById('area').value,
+    machine: document.getElementById('machine').value.trim(),
+    riskType: document.getElementById('riskType').value,
+    severity: document.getElementById('severity').value,
+    note: document.getElementById('note').value.trim(),
+    imageCount: imageFiles.length,
+  };
+
+  // --- Google Apps Script endpoint ---
+  // ใส่ URL ของ Apps Script ที่นี่:
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9h2LyffpY0-nAayXumrS2Fbf6eV7qSriLtpXXwqErXFtmI12eI0kfmqmADAcEELdr/exec';
+
+  try {
+    if (APPS_SCRIPT_URL !== '') {
+      const formData = new FormData();
+      formData.append('data', JSON.stringify(payload));
+      imageFiles.forEach((f, i) => formData.append('image_' + i, f.blob, 'img_' + i + '.jpg'));
+      await fetch(APPS_SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' });
+    } else {
+      // Demo mode: simulate delay
+      await new Promise(r => setTimeout(r, 1500));
+    }
+
+    const ref = 'RSK-' + Date.now().toString(36).toUpperCase().slice(-8);
+    document.getElementById('refCode').textContent = ref;
+    document.getElementById('successOverlay').classList.add('show');
+
+  } catch (err) {
+    showToast('เกิดข้อผิดพลาด กรุณาลองใหม่');
+    btn.disabled = false;
+    spinner.style.display = 'none';
+    icon.style.display = '';
+  }
+});
+
+// ---- Reset ----
+function resetForm() {
+  document.getElementById('riskForm').reset();
+  document.getElementById('riskType').value = '';
+  document.getElementById('severity').value = '';
+  document.querySelectorAll('.risk-btn').forEach(b => b.classList.remove('active','yellow','red'));
+  document.querySelectorAll('.sev-btn').forEach(b => b.className = 'sev-btn');
+  imageFiles = [];
+  renderPreviews();
+  document.getElementById('previewGrid').innerHTML = '';
+  document.getElementById('compressNote').classList.remove('visible');
+  document.getElementById('charCounter').textContent = '0 / 500';
+  document.querySelectorAll('.field').forEach(f => f.classList.remove('error'));
+  document.getElementById('riskTypeError').style.display = 'none';
+  document.getElementById('sevError').style.display = 'none';
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('spinner').style.display = 'none';
+  document.getElementById('submitIcon').style.display = '';
+  document.getElementById('successOverlay').classList.remove('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 </script>
-
 </body>
 </html>
