@@ -30,7 +30,7 @@ body{
     linear-gradient(
       135deg,
       #0f766e,
-      #052727,
+      #042424,
       #000000
     );
 
@@ -61,16 +61,16 @@ body{
   padding:30px;
 
   box-shadow:
-    0 0 30px rgba(0,0,0,0.4);
+    0 0 30px rgba(0,0,0,0.5);
 }
 
 h1{
 
   text-align:center;
 
-  margin-bottom:30px;
-
   color:#8fffe0;
+
+  margin-bottom:30px;
 
   font-size:2rem;
 }
@@ -86,7 +86,7 @@ label{
 
   margin-bottom:8px;
 
-  font-size:1.1rem;
+  font-size:1.05rem;
 
   font-weight:bold;
 }
@@ -109,6 +109,8 @@ textarea{
 textarea{
 
   min-height:120px;
+
+  resize:vertical;
 }
 
 button{
@@ -135,6 +137,11 @@ button{
     );
 
   color:white;
+}
+
+button:disabled{
+
+  opacity:0.6;
 }
 
 .preview{
@@ -165,16 +172,9 @@ button{
 
   text-align:center;
 
-  color:#8fffe0;
-
   font-weight:bold;
-}
 
-.loading{
-
-  opacity:0.7;
-
-  pointer-events:none;
+  color:#8fffe0;
 }
 
 </style>
@@ -194,7 +194,9 @@ button{
 <label>หน่วยงาน</label>
 
 <select id="department">
-<option value="">กำลังโหลด...</option>
+<option value="">
+กำลังโหลด...
+</option>
 </select>
 
 </div>
@@ -204,7 +206,11 @@ button{
 <label>ชื่อพนักงาน</label>
 
 <select id="employee">
-<option value="">เลือกพนักงาน</option>
+
+<option value="">
+เลือกพนักงาน
+</option>
+
 </select>
 
 </div>
@@ -247,7 +253,10 @@ button{
   accept="image/*"
 />
 
-<div class="preview" id="preview"></div>
+<div
+  class="preview"
+  id="preview"
+></div>
 
 </div>
 
@@ -270,16 +279,16 @@ button{
 <script>
 
 const API_URL =
-"https://script.google.com/macros/s/AKfycbwqNKqzuuuLRKTkcBPJy0m3LR8o7R0MAU75VVjPaDM0Cex6n_ldx-pM_vK8xl8qlSv4/exec";
+"https://script.google.com/macros/s/AKfycbxoVzK3AWZ5UFbtDgHsBypUrVQMY4FiThTiOYPLomw-MGCELVCN5Lg_z0XL0TFkNQ5E/exec";
 
 let masterData = {};
 
 let selectedEmpId = "";
 
 /**
- * =========================
- * โหลดข้อมูล
- * =========================
+ * =====================================
+ * LOAD MASTER
+ * =====================================
  */
 async function loadMasterData(){
 
@@ -321,9 +330,9 @@ async function loadMasterData(){
 }
 
 /**
- * =========================
- * หน่วยงาน
- * =========================
+ * =====================================
+ * DEPARTMENT
+ * =====================================
  */
 function loadDepartments(){
 
@@ -339,6 +348,7 @@ function loadDepartments(){
     .forEach(d=>{
 
       dept.innerHTML +=
+
         `<option value="${d}">
           ${d}
         </option>`;
@@ -351,9 +361,9 @@ function loadDepartments(){
 }
 
 /**
- * =========================
- * พนักงาน
- * =========================
+ * =====================================
+ * EMPLOYEE
+ * =====================================
  */
 function loadEmployees(){
 
@@ -371,9 +381,10 @@ function loadEmployees(){
     '<option value="">เลือกพนักงาน</option>';
 
   const filtered =
-    masterData.staffs
-    .filter(
+    masterData.staffs.filter(
+
       s=>s.department===dept
+
     );
 
   filtered.forEach(s=>{
@@ -408,9 +419,9 @@ function loadEmployees(){
 }
 
 /**
- * =========================
- * ประเภทความเสี่ยง
- * =========================
+ * =====================================
+ * RISK TYPE
+ * =====================================
  */
 function loadRiskTypes(){
 
@@ -426,6 +437,7 @@ function loadRiskTypes(){
     .forEach(r=>{
 
       risk.innerHTML +=
+
         `<option value="${r}">
           ${r}
         </option>`;
@@ -433,9 +445,9 @@ function loadRiskTypes(){
 }
 
 /**
- * =========================
- * ระดับความเสี่ยง
- * =========================
+ * =====================================
+ * RISK LEVEL
+ * =====================================
  */
 function loadRiskLevels(){
 
@@ -451,6 +463,7 @@ function loadRiskLevels(){
     .forEach(r=>{
 
       risk.innerHTML +=
+
         `<option value="${r}">
           ${r}
         </option>`;
@@ -458,9 +471,9 @@ function loadRiskLevels(){
 }
 
 /**
- * =========================
- * Preview รูป
- * =========================
+ * =====================================
+ * PREVIEW IMAGE
+ * =====================================
  */
 document
 .getElementById("images")
@@ -500,22 +513,27 @@ document
 );
 
 /**
- * =========================
- * Generate Image ID
- * =========================
+ * =====================================
+ * GENERATE IMAGE ID
+ * =====================================
  */
 function generateImageId(){
 
   const now = new Date();
 
+  const hh =
+    String(
+      now.getHours()
+    ).padStart(2,'0');
+
+  const mi =
+    String(
+      now.getMinutes()
+    ).padStart(2,'0');
+
   const dd =
     String(
       now.getDate()
-    ).padStart(2,'0');
-
-  const mm =
-    String(
-      now.getMonth()+1
     ).padStart(2,'0');
 
   const yy =
@@ -524,17 +542,19 @@ function generateImageId(){
     ).slice(-2);
 
   return (
+
     selectedEmpId +
+    hh +
+    mi +
     dd +
-    mm +
     yy
   );
 }
 
 /**
- * =========================
- * Compress
- * =========================
+ * =====================================
+ * COMPRESS IMAGE
+ * =====================================
  */
 async function compressImage(file){
 
@@ -586,6 +606,7 @@ async function compressImage(file){
         canvas.getContext("2d");
 
       ctx.drawImage(
+
         img,
         0,
         0,
@@ -597,7 +618,7 @@ async function compressImage(file){
 
         resolve(blob);
 
-      },'image/jpeg',0.8);
+      },"image/jpeg",0.8);
     };
 
     reader.readAsDataURL(file);
@@ -605,9 +626,9 @@ async function compressImage(file){
 }
 
 /**
- * =========================
- * Base64
- * =========================
+ * =====================================
+ * BLOB TO BASE64
+ * =====================================
  */
 function blobToBase64(blob){
 
@@ -619,6 +640,7 @@ function blobToBase64(blob){
     reader.onloadend = ()=>{
 
       resolve(
+
         reader.result
         .split(',')[1]
       );
@@ -629,9 +651,9 @@ function blobToBase64(blob){
 }
 
 /**
- * =========================
- * VALIDATION
- * =========================
+ * =====================================
+ * VALIDATE
+ * =====================================
  */
 function validateForm(){
 
@@ -677,7 +699,7 @@ function validateForm(){
     ).value
   ){
     errors.push(
-      "กรุณาเลือกประเภทความเสี่ยง"
+      "กรุณาเลือกประเภท"
     );
   }
 
@@ -688,7 +710,7 @@ function validateForm(){
     ).value
   ){
     errors.push(
-      "กรุณาเลือกระดับความเสี่ยง"
+      "กรุณาเลือกระดับ"
     );
   }
 
@@ -707,9 +729,9 @@ function validateForm(){
 }
 
 /**
- * =========================
+ * =====================================
  * SUBMIT
- * =========================
+ * =====================================
  */
 document
 .getElementById("submitBtn")
@@ -741,10 +763,6 @@ async function submitForm(){
     document.getElementById(
       "submitBtn"
     );
-
-  btn.classList.add(
-    "loading"
-  );
 
   btn.disabled = true;
 
@@ -862,18 +880,13 @@ async function submitForm(){
 
             base64,
 
-            fileName:
-              images[i].name,
-
             mimeType:
-              compressed.type,
+              "image/jpeg",
 
             rowNumber:
               saveResult.rowNumber,
 
-            imageId,
-
-            imageIndex:i+1
+            imageId
           })
         });
 
@@ -884,7 +897,7 @@ async function submitForm(){
       if(!uploadResult.success){
 
         throw new Error(
-          "Upload รูปไม่สำเร็จ"
+          "อัปโหลดรูปไม่สำเร็จ"
         );
       }
     }
@@ -907,18 +920,14 @@ async function submitForm(){
 
   } finally {
 
-    btn.classList.remove(
-      "loading"
-    );
-
     btn.disabled = false;
   }
 }
 
 /**
- * =========================
+ * =====================================
  * START
- * =========================
+ * =====================================
  */
 loadMasterData();
 
