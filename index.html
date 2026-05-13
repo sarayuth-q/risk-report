@@ -811,46 +811,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-//เก็บรูปภาพที่ส่งมาจาก FormData
-function doPost(e) {
-  try {
-    const ss = SpreadsheetApp.openById('1F597csZBe2D3gZAMfzowXxQGpQFx6_LgC52QMuddRL8');
-    const sheet = ss.getSheets()[0];
-    const folder = DriveApp.getFolderById('1kMKFHAHu1PzxZ_m9AvSaw47djH8bRz8f');
-    
-    const data = JSON.parse(e.parameter.data);
-    const imageLinks = [];
-
-    // วนลูปเก็บรูปภาพที่ส่งมาจาก FormData
-    for (let key in e.parameter) {
-      if (key.startsWith('image_')) {
-        const blob = e.parameter[key]; // รับค่าเป็น Blob โดยตรง
-        blob.setName(`risk_image_${Date.now()}.jpg`);
-        const file = folder.createFile(blob);
-        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-        imageLinks.push(file.getUrl());
-      }
-    }
-
-    // บันทึกข้อมูลลง Sheet
-    sheet.appendRow([
-      data.timestamp,
-      data.reporter,
-      data.dept,
-      data.area,
-      data.machine,
-      data.riskType,
-      data.severity,
-      data.note,
-      imageLinks.length,
-      imageLinks.join('\n') // ใส่ลิงก์รูปในคอลัมน์สุดท้าย
-    ]);
-
-    return ContentService.createTextOutput(JSON.stringify({status: 'ok'})).setMimeType(ContentService.MimeType.JSON);
-  } catch (f) {
-    return ContentService.createTextOutput(JSON.stringify({status: 'error', error: f.toString()})).setMimeType(ContentService.MimeType.JSON);
-  }
-}
 // ---- Datetime ----
 function updateClock() {
   const now = new Date();
