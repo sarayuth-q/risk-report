@@ -1,87 +1,110 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    </head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แจ้งจุดเสี่ยง | Risk Report</title>
+  <style>
+    /* ... (ใส่ CSS ที่คุณเคยมีตรงนี้) ... */
+    body { background: #0d0f14; color: #e8eaf0; font-family: sans-serif; padding: 20px; }
+    .container { max-width: 600px; margin: 0 auto; }
+    input, select, textarea { width: 100%; padding: 10px; margin: 5px 0 15px; }
+    .submit-btn { width: 100%; padding: 15px; background: #ff5c3a; color: white; border: none; cursor: pointer; }
+  </style>
+</head>
 <body>
-    <script>
-    // ---- ส่วนการตั้งค่าและฟังก์ชันอื่นๆ (Datetime, Risk buttons, Image handling) คงเดิมไว้ทั้งหมด ----
 
-    // [จุดที่ต้องระวัง] ตรวจสอบว่าได้ใส่ URL ของ Web App ที่ถูกต้องแล้ว
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9h2LyffpY0-nAayXumrS2Fbf6eV7qSriLtpXXwqErXFtmI12eI0kfmqmADAcEELdr/exec';
+<div class="container">
+  <h1>แจ้งจุดเสี่ยง</h1>
+  <form id="riskForm">
+    <label>ชื่อผู้แจ้ง</label>
+    <input type="text" id="reporter-name" required placeholder="ระบุชื่อ">
+    
+    <label>หน่วยงาน</label>
+    <select id="dept">
+      <option value="ฝ่ายผลิต">ฝ่ายผลิต</option>
+      <option value="ฝ่ายวิศวกรรม">ฝ่ายวิศวกรรม</option>
+    </select>
 
-    // ---- ปรับปรุงส่วน Submit ใหม่ ----
-    document.getElementById('riskForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
+    <label>พื้นที่</label>
+    <select id="area">
+      <option value="โรงงาน A">โรงงาน A</option>
+    </select>
+
+    <input type="hidden" id="riskType" value="ทั่วไป">
+    <input type="hidden" id="severity" value="ปานกลาง">
+    
+    <label>เครื่องจักร</label>
+    <input type="text" id="machine">
+
+    <label>รายละเอียด</label>
+    <textarea id="note"></textarea>
+
+    <button type="submit" class="submit-btn" id="submitBtn">
+      <span id="spinner" style="display:none;">⏳ กำลังส่ง...</span>
+      <span id="submitIcon">📤 ส่งรายงาน</span>
+    </button>
+  </form>
+</div>
+
+<script>
+  // ตัวแปรสำหรับเก็บไฟล์ภาพ (จำลองไว้เพื่อให้ script ทำงานได้)
+  let imageFiles = []; 
+  
+  // URL เว็บแอปที่คุณได้มา
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9h2LyffpY0-nAayXumrS2Fbf6eV7qSriLtpXXwqErXFtmI12eI0kfmqmADAcEELdr/exec';
+
+  document.getElementById('riskForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const btn = document.getElementById('submitBtn');
+    const spinner = document.getElementById('spinner');
+    const icon = document.getElementById('submitIcon');
+    
+    btn.disabled = true;
+    spinner.style.display = 'inline';
+    icon.style.display = 'none';
+
+    const payload = {
+      timestamp: new Date().toLocaleString('th-TH'),
+      reporter: document.getElementById('reporter-name').value.trim(),
+      dept: document.getElementById('dept').value,
+      area: document.getElementById('area').value,
+      machine: document.getElementById('machine').value.trim(),
+      riskType: document.getElementById('riskType').value,
+      severity: document.getElementById('severity').value,
+      note: document.getElementById('note').value.trim(),
+      imageCount: imageFiles.length,
+    };
+
+    try {
+      const formData = new FormData();
+      formData.append('data', JSON.stringify(payload));
       
-      // 1. ตรวจสอบความถูกต้องของข้อมูล
-      if (!validate()) { 
-        showToast('กรุณากรอกข้อมูลที่จำเป็นให้ครบ'); 
-        return; 
-      }
+      // ส่งรูปภาพ
+      imageFiles.forEach((f, i) => {
+        formData.append('image_' + i, f.blob, `img_${i}.jpg`);
+      });
 
-      const btn = document.getElementById('submitBtn');
-      const spinner = document.getElementById('spinner');
-      const icon = document.getElementById('submitIcon');
-      
-      // แสดงสถานะกำลังโหลด
-      btn.disabled = true;
-      spinner.style.display = 'block';
-      icon.style.display = 'none';
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: formData
+      });
 
-      // 2. เตรียมข้อมูล (Payload)
-      const payload = {
-        timestamp: new Date().toLocaleString('th-TH'),
-        reporter: document.getElementById('reporter-name').value.trim(),
-        dept: document.getElementById('dept').value,
-        area: document.getElementById('area').value,
-        machine: document.getElementById('machine').value.trim(),
-        riskType: document.getElementById('riskType').value,
-        severity: document.getElementById('severity').value,
-        note: document.getElementById('note').value.trim(),
-        imageCount: imageFiles.length,
-      };
+      alert('ส่งข้อมูลสำเร็จ!');
+      location.reload();
 
-      try {
-        if (APPS_SCRIPT_URL !== '') {
-          const formData = new FormData();
-          
-          // ส่งข้อมูล Text ในรูปแบบ JSON string
-          formData.append('data', JSON.stringify(payload));
-          
-          // ส่งไฟล์รูปภาพ (ถ้ามี)
-          imageFiles.forEach((f, i) => {
-            formData.append('image_' + i, f.blob, `img_${i}_${Date.now()}.jpg`);
-          });
+    } catch (err) {
+      alert('เกิดข้อผิดพลาด: ' + err.message);
+      btn.disabled = false;
+      spinner.style.display = 'none';
+      icon.style.display = 'inline';
+    }
+  });
 
-          // 3. ส่งข้อมูลไปยัง Google Apps Script (ถอด mode: 'no-cors' ออก)
-          const response = await fetch(APPS_SCRIPT_URL, {
-            method: 'POST',
-            body: formData
-          });
+  // ฟังก์ชัน validate จำลอง
+  function validate() { return true; }
+</script>
 
-          // แม้จะเป็น Google Script บางครั้ง Response อาจถูกบล็อก แต่ถ้าข้อมูลเข้า Sheets คือใช้ได้ครับ
-        } else {
-          // Demo mode
-          await new Promise(r => setTimeout(r, 1500));
-        }
-
-        // 4. แสดงผลสำเร็จ
-        const ref = 'RSK-' + Date.now().toString(36).toUpperCase().slice(-8);
-        document.getElementById('refCode').textContent = ref;
-        document.getElementById('successOverlay').classList.add('show');
-
-      } catch (err) {
-        console.error('Submission Error:', err);
-        showToast('เกิดข้อผิดพลาด: ' + err.message);
-        
-        // คืนค่าปุ่มหากเกิดข้อผิดพลาด
-        btn.disabled = false;
-        spinner.style.display = 'none';
-        icon.style.display = '';
-      }
-    });
-
-    // ---- ฟังก์ชัน resetForm() คงเดิม ----
-    </script>
 </body>
 </html>
