@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>รายงานจุดเสี่ยง โรงงานอาหารสัตว์ศรีราชา</title>
+    <title>ระบบรายงานและสรุปจุดเสี่ยง โรงงานอาหารสัตว์ศรีราชา</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
         body {
@@ -19,86 +19,155 @@
             padding: 30px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        h1 { text-align: center; color: #8fffe0; margin-bottom: 30px; font-size: 1.8rem; }
+        h1 { text-align: center; color: #8fffe0; margin-bottom: 25px; font-size: 1.8rem; }
+        h2 { color: #00c9a7; text-align: center; margin-bottom: 20px; }
+        
+        .view { display: none; animation: fadeIn 0.3s; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Form Styles */
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-size: 1.1rem; font-weight: bold; color: #8fffe0; }
         input, select, textarea {
-            width: 100%; padding: 16px; border: none; border-radius: 14px;
+            width: 100%; padding: 14px; border: none; border-radius: 12px;
             font-size: 1.05rem; background: rgba(255, 255, 255, 0.95); color: #1a1a1a;
         }
         textarea { min-height: 100px; resize: vertical; }
+        
+        /* Buttons */
         button {
-            width: 100%; padding: 18px; border: none; border-radius: 14px;
-            font-size: 1.2rem; font-weight: bold; cursor: pointer;
-            background: linear-gradient(90deg, #00c9a7, #00e5ff); color: white;
-            transition: 0.3s; box-shadow: 0 4px 15px rgba(0, 201, 167, 0.3);
+            width: 100%; padding: 16px; border: none; border-radius: 14px;
+            font-size: 1.2rem; font-weight: bold; cursor: pointer; color: white;
+            transition: 0.3s; margin-bottom: 15px;
         }
-        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 201, 167, 0.5); }
+        .btn-primary { background: linear-gradient(90deg, #00c9a7, #00e5ff); box-shadow: 0 4px 15px rgba(0, 201, 167, 0.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 201, 167, 0.5); }
+        .btn-secondary { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.3); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.2); }
         button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* Dashboard Styles */
+        .filter-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .kpi-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .kpi-card {
+            background: rgba(0, 201, 167, 0.15); border: 1px solid #00c9a7;
+            padding: 20px; border-radius: 16px; text-align: center;
+        }
+        .kpi-title { font-size: 1rem; color: #ccffef; margin-bottom: 5px; }
+        .kpi-value { font-size: 2.5rem; font-weight: bold; color: #fff; margin: 0; }
+        
+        .table-container { background: rgba(255,255,255,0.9); border-radius: 12px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; color: #000; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #0f766e; color: white; font-weight: bold; }
+        tr:last-child td { border-bottom: none; }
+        
         .preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
         .preview img { width: 90px; height: 90px; object-fit: cover; border-radius: 12px; border: 2px solid #00c9a7; }
-        #status { margin-top: 20px; text-align: center; font-weight: bold; color: #8fffe0; min-height: 1.5em; }
+        #status { text-align: center; font-weight: bold; color: #8fffe0; min-height: 1.5em; margin-top: 10px;}
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>รายงานจุดเสี่ยง โรงงานอาหารสัตว์ศรีราชา</h1>
-
-    <div class="form-group">
-        <label>หน่วยงาน</label>
-        <select id="department"><option value="">กำลังโหลด...</option></select>
+    
+    <!-- หน้าหลัก (Home) -->
+    <div id="viewHome" class="view active">
+        <h1>ระบบแจ้งจุดเสี่ยง<br>โรงงานอาหารสัตว์ศรีราชา</h1>
+        <div style="margin-top: 40px;">
+            <button class="btn-primary" onclick="switchView('viewForm')">🚧 พนักงานส่งจุดเสี่ยง</button>
+            <button class="btn-secondary" onclick="switchView('viewLogin')">📊 รายงานสรุป (ผู้บริหาร)</button>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label>ชื่อพนักงาน</label>
-        <select id="employee" disabled><option value="">เลือกพนักงาน</option></select>
+    <!-- หน้า Form แจ้งเหตุ (หน้าเดิม) -->
+    <div id="viewForm" class="view">
+        <h1>ส่งรายงานจุดเสี่ยง</h1>
+        <div class="form-group"><label>หน่วยงาน</label><select id="department"><option value="">กำลังโหลด...</option></select></div>
+        <div class="form-group"><label>ชื่อพนักงาน</label><select id="employee" disabled><option value="">เลือกพนักงาน</option></select></div>
+        <div class="form-group"><label>จุดพบความเสี่ยง</label><textarea id="locationText" placeholder="แจ้งสถานที่หรือจุดเสี่ยง"></textarea></div>
+        <div class="form-group"><label>ประเภทความเสี่ยง</label><select id="riskType"></select></div>
+        <div class="form-group"><label>ระดับความเสี่ยง</label><select id="riskLevel"></select></div>
+        <div class="form-group">
+            <label>แนบรูปภาพ</label>
+            <input type="file" id="images" multiple accept="image/*" />
+            <div class="preview" id="preview"></div>
+        </div>
+        <div class="form-group"><label>หมายเหตุ</label><textarea id="note"></textarea></div>
+        <button id="submitBtn" class="btn-primary">บันทึกข้อมูล</button>
+        <button class="btn-secondary" onclick="switchView('viewHome')">ย้อนกลับ</button>
+        <div id="status"></div>
     </div>
 
-    <div class="form-group">
-        <label>จุดพบความเสี่ยง</label>
-        <textarea id="locationText" placeholder="แจ้งสถานที่หรือจุดเสี่ยง"></textarea>
+    <!-- หน้า Login สำหรับ Dashboard -->
+    <div id="viewLogin" class="view">
+        <h2>เข้าสู่ระบบรายงานสรุป</h2>
+        <div class="form-group"><label>ชื่อผู้ใช้งาน (User)</label><input type="text" id="loginUser"></div>
+        <div class="form-group"><label>รหัสผ่าน (Password)</label><input type="password" id="loginPass"></div>
+        <button id="btnLogin" class="btn-primary">เข้าสู่ระบบ</button>
+        <button class="btn-secondary" onclick="switchView('viewHome')">ย้อนกลับ</button>
+        <div id="loginStatus" style="text-align: center; color: #ff8f8f; margin-top: 10px;"></div>
     </div>
 
-    <div class="form-group">
-        <label>ประเภทความเสี่ยง</label>
-        <select id="riskType"></select>
+    <!-- หน้า Dashboard -->
+    <div id="viewDashboard" class="view">
+        <h2>รายงานสรุปจุดเสี่ยงสะสม</h2>
+        <div class="filter-row">
+            <div><label>ปี ค.ศ.</label><select id="dashYear" onchange="renderDashboard()"></select></div>
+            <div><label>หน่วยงาน</label><select id="dashDept" onchange="renderDashboard()"></select></div>
+        </div>
+        
+        <div class="kpi-cards">
+            <div class="kpi-card">
+                <div class="kpi-title">จุดเสี่ยงรวม (ตามเงื่อนไข)</div>
+                <div class="kpi-value" id="kpiTotal">0</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">พนักงานที่รายงาน (คน)</div>
+                <div class="kpi-value" id="kpiPeople">0</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead><tr><th>ชื่อพนักงาน</th><th style="text-align: center;">จำนวนจุดเสี่ยง</th></tr></thead>
+                <tbody id="dashTableBody"></tbody>
+            </table>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button class="btn-secondary" onclick="switchView('viewHome')">ออกจากระบบ (กลับหน้าหลัก)</button>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label>ระดับความเสี่ยง</label>
-        <select id="riskLevel"></select>
-    </div>
-
-    <div class="form-group">
-        <label>แนบรูปภาพ</label>
-        <input type="file" id="images" multiple accept="image/*" />
-        <div class="preview" id="preview"></div>
-    </div>
-
-    <div class="form-group">
-        <label>หมายเหตุ</label>
-        <textarea id="note"></textarea>
-    </div>
-
-    <button id="submitBtn">บันทึกข้อมูล</button>
-    <div id="status"></div>
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyj9KZcrJxudGXYV8bjebdkixPSGHp5_JS3QPAcFSs2_sIpSkZ7VsrvlzGwuxqSQ_s/exec";
-let masterData = {};
-let selectedEmpId = "";
+// *** ใส่ URL ใหม่ที่ได้จากการ Deploy ที่นี่ ***
+const API_URL = "https://script.google.com/macros/s/AKfycbxptHmD6yIxaC2JjU6mMxyjhtXn1rDImWniRaNSqWk5oJYCQpCZBgSaJ-YR7NHP63Kx/exec";
 
-// โหลดข้อมูล Master
+let masterData = {};
+let dashboardData = [];
+
+// 1. ระบบจัดการหน้าจอ (SPA)
+function switchView(viewId) {
+    document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+    document.getElementById(viewId).classList.add('active');
+    
+    // รีเซ็ตข้อความแจ้งเตือนต่างๆ เมื่อเปลี่ยนหน้า
+    document.getElementById('status').innerHTML = "";
+    document.getElementById('loginStatus').innerHTML = "";
+    document.getElementById('loginPass').value = "";
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 2. โหลดข้อมูลเริ่มต้น (สำหรับ Form)
 async function loadMasterData() {
     try {
         const response = await fetch(API_URL + "?action=master");
         const data = await response.json();
-        if (data.success) {
-            masterData = data;
-            setupDropdowns();
-        }
+        if (data.success) { masterData = data; setupDropdowns(); }
     } catch (e) { console.error("Load failed", e); }
 }
 
@@ -128,6 +197,8 @@ function loadEmployees() {
     });
 }
 
+// 3. ระบบส่งฟอร์ม (Form Submit)
+// (ส่วนการบีบอัดรูปและส่งข้อมูลเดิม ทำงานปกติ)
 document.getElementById("images").onchange = function() {
     const preview = document.getElementById("preview");
     preview.innerHTML = "";
@@ -168,109 +239,142 @@ document.getElementById("submitBtn").onclick = async function() {
         alert("กรุณากรอกข้อมูลและแนบรูปภาพให้ครบถ้วน"); return;
     }
 
-    btn.disabled = true;
-    status.innerHTML = "⌛ กำลังบันทึกข้อมูลส่วนข้อความ...";
-
+    btn.disabled = true; status.innerHTML = "⌛ กำลังบันทึกข้อมูลส่วนข้อความ...";
     try {
         const empId = empSelect.options[empSelect.selectedIndex].getAttribute("data-id");
-        const now = new Date();
-        const dateStr = String(now.getDate()).padStart(2,'0') + String(now.getMonth()+1).padStart(2,'0') + String(now.getFullYear()).slice(-2);
-        const imageIdBase = empId + dateStr;
+        const d = new Date();
+        const imageIdBase = empId + String(d.getDate()).padStart(2,'0') + String(d.getMonth()+1).padStart(2,'0') + String(d.getFullYear()).slice(-2);
 
-        // --- Step 1: บันทึกข้อมูลตัวอักษร ---
         const resText = await fetch(API_URL, {
             method: "POST",
             body: JSON.stringify({
-                action: "saveForm",
-                reporter: empSelect.value,
-                department: document.getElementById("department").value,
-                location: document.getElementById("locationText").value,
-                riskType: document.getElementById("riskType").value,
-                riskLevel: document.getElementById("riskLevel").value,
-                note: document.getElementById("note").value,
-                totalImages: document.getElementById("images").files.length,
-                imageId: imageIdBase
+                action: "saveForm", reporter: empSelect.value, department: document.getElementById("department").value,
+                location: document.getElementById("locationText").value, riskType: document.getElementById("riskType").value,
+                riskLevel: document.getElementById("riskLevel").value, note: document.getElementById("note").value,
+                totalImages: document.getElementById("images").files.length, imageId: imageIdBase
             })
         });
+        const resultText = await resText.json();
+        if (!resultText.success) throw new Error(resultText.error || resultText.message);
         
-        // อ่านค่าเป็น Text ก่อนเพื่อดักจับ Error ที่ไม่ได้มาเป็น JSON
-        const rawText = await resText.text();
-        let resultText;
-        try { 
-            resultText = JSON.parse(rawText); 
-        } catch(e) { 
-            throw new Error("เซิร์ฟเวอร์ไม่ได้ตอบเป็น JSON (Step 1):\n" + rawText); 
-        }
-
-        // ดักทั้งกรณี success เป็น false หรือ status เป็น error
-        if (resultText.success === false || resultText.status === "error") {
-            throw new Error("บันทึกข้อความไม่สำเร็จ:\n" + (resultText.error || resultText.message || rawText));
-        }
-
-        // เช็คว่าระบบหา ID แถวเจอหรือไม่ (เผื่อโค้ดเก่าคุณใช้ตัวแปรชื่อ row แทน rowNumber)
-        const targetRow = resultText.rowNumber || resultText.row;
-        if (!targetRow) {
-            console.warn("แจ้งเตือน: ไม่พบตัวเลขแถว (rowNumber) ส่งกลับมาจาก Server", resultText);
-        }
-
-        // --- Step 2: ทยอยส่งรูปภาพ ---
         const files = document.getElementById("images").files;
         for (let i = 0; i < files.length; i++) {
             status.innerHTML = `📸 กำลังอัปโหลดรูปที่ ${i+1}/${files.length}...`;
             const base64 = await compressAndGetBase64(files[i]);
-            
-            const resImg = await fetch(API_URL, {
+            await fetch(API_URL, {
                 method: "POST",
-                body: JSON.stringify({
-                    action: "uploadImage",
-                    base64: base64,
-                    rowNumber: targetRow,  // จุดที่มักจะมีปัญหาถ้าค่านี้ว่าง
-                    imageId: imageIdBase + "_" + (i+1)
-                })
+                body: JSON.stringify({ action: "uploadImage", base64: base64, rowNumber: resultText.rowNumber, imageId: imageIdBase + "_" + (i+1) })
             });
-            
-            const rawImg = await resImg.text();
-            let resultImg;
-            try { 
-                resultImg = JSON.parse(rawImg); 
-            } catch(e) { 
-                throw new Error("เซิร์ฟเวอร์ไม่ได้ตอบเป็น JSON (รูปที่ " + (i+1) + "):\n" + rawImg); 
-            }
-
-            if (resultImg.success === false || resultImg.status === "error") {
-                throw new Error(`รูปที่ ${i+1} บันทึกไม่สมบูรณ์:\n` + (resultImg.error || resultImg.message || rawImg));
-            }
         }
-
-        // สำเร็จ 100%
-        status.innerHTML = "✅ บันทึกข้อมูลและรูปภาพสำเร็จเรียบร้อย";
+        
         alert("✅ บันทึกข้อมูลสำเร็จ");
-        resetForm();
+        document.getElementById("locationText").value = ""; document.getElementById("note").value = "";
+        document.getElementById("images").value = ""; document.getElementById("preview").innerHTML = "";
+        document.getElementById("department").selectedIndex = 0; document.getElementById("employee").innerHTML = '<option value="">เลือกพนักงาน</option>';
+        document.getElementById("employee").disabled = true; document.getElementById("riskType").selectedIndex = 0;
+        document.getElementById("riskLevel").selectedIndex = 0; status.innerHTML = "";
+        switchView('viewHome');
 
     } catch (err) {
-        console.error("ระบบตรวจพบปัญหา:", err);
-        alert("❌ เกิดข้อผิดพลาดฝั่งเซิร์ฟเวอร์:\n" + err.message);
-        status.innerHTML = "❌ บันทึกไม่สำเร็จ (ดูรายละเอียดในหน้าต่างแจ้งเตือน)";
-    } finally {
-        btn.disabled = false;
-    }
+        console.error(err);
+        alert("❌ เกิดข้อผิดพลาด:\n" + err.message);
+        status.innerHTML = "❌ บันทึกไม่สำเร็จ";
+    } finally { btn.disabled = false; }
 };
 
-function resetForm() {
-    document.getElementById("locationText").value = "";
-    document.getElementById("note").value = "";
-    document.getElementById("images").value = "";
-    document.getElementById("preview").innerHTML = "";
-    document.getElementById("status").innerHTML = "";
-    document.getElementById("department").selectedIndex = 0;
-    document.getElementById("employee").innerHTML = '<option value="">เลือกพนักงาน</option>';
-    document.getElementById("employee").disabled = true;
-    document.getElementById("riskType").selectedIndex = 0;
-    document.getElementById("riskLevel").selectedIndex = 0;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+// 4. ระบบ Login
+document.getElementById("btnLogin").onclick = async function() {
+    const user = document.getElementById("loginUser").value;
+    const pass = document.getElementById("loginPass").value;
+    const stat = document.getElementById("loginStatus");
+    const btn = this;
+
+    if(!user || !pass) { stat.innerHTML = "กรุณากรอก User และ Password"; return; }
+    
+    btn.disabled = true; stat.innerHTML = "กำลังตรวจสอบ...";
+    try {
+        const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "checkLogin", user: user, pass: pass }) });
+        const data = await res.json();
+        if(data.success) {
+            stat.innerHTML = "";
+            await loadDashboardData();
+            switchView('viewDashboard');
+        } else {
+            stat.innerHTML = data.message;
+        }
+    } catch(err) { stat.innerHTML = "เชื่อมต่อระบบขัดข้อง"; } finally { btn.disabled = false; }
+};
+
+// 5. ระบบ Dashboard
+async function loadDashboardData() {
+    document.getElementById("dashTableBody").innerHTML = '<tr><td colspan="2" style="text-align:center;">กำลังดึงข้อมูล...</td></tr>';
+    try {
+        const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getDashboard" }) });
+        const data = await res.json();
+        if(data.success) {
+            dashboardData = data.records;
+            setupDashboardFilters();
+            renderDashboard();
+        }
+    } catch(err) { console.error("Dashboard Load Error"); }
 }
 
-loadMasterData();
+function setupDashboardFilters() {
+    const yearSelect = document.getElementById("dashYear");
+    const deptSelect = document.getElementById("dashDept");
+    
+    // หารายการปีทั้งหมดจากข้อมูล
+    let years = [...new Set(dashboardData.map(d => d.year))].filter(y => y !== "N/A").sort().reverse();
+    yearSelect.innerHTML = '<option value="all">รวมทุกปี</option>';
+    years.forEach(y => yearSelect.innerHTML += `<option value="${y}" selected>${y}</option>`);
+
+    // หารายการหน่วยงานทั้งหมด
+    let depts = [...new Set(dashboardData.map(d => d.dept))].sort();
+    deptSelect.innerHTML = '<option value="all">รวมทุกหน่วยงาน</option>';
+    depts.forEach(d => deptSelect.innerHTML += `<option value="${d}">${d}</option>`);
+}
+
+function renderDashboard() {
+    const selYear = document.getElementById("dashYear").value;
+    const selDept = document.getElementById("dashDept").value;
+    
+    // กรองข้อมูลตามเงื่อนไข
+    let filtered = dashboardData.filter(d => {
+        let matchYear = (selYear === "all") || (d.year === selYear);
+        let matchDept = (selDept === "all") || (d.dept === selDept);
+        return matchYear && matchDept;
+    });
+
+    // นับจำนวนรวม และนับแยกรายบุคคล
+    let empCounts = {};
+    filtered.forEach(d => {
+        if(!d.reporter) return;
+        empCounts[d.reporter] = (empCounts[d.reporter] || 0) + 1;
+    });
+
+    // อัปเดตการ์ด KPI ด้านบน
+    document.getElementById("kpiTotal").innerText = filtered.length;
+    document.getElementById("kpiPeople").innerText = Object.keys(empCounts).length;
+
+    // สร้างตารางพนักงานเรียงตามคนที่ส่งเยอะสุด
+    let sortable = [];
+    for (let emp in empCounts) sortable.push([emp, empCounts[emp]]);
+    sortable.sort((a, b) => b[1] - a[1]);
+
+    const tbody = document.getElementById("dashTableBody");
+    tbody.innerHTML = "";
+    if(sortable.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">ไม่พบข้อมูลในปีหรือหน่วยงานที่เลือก</td></tr>';
+        return;
+    }
+
+    sortable.forEach(item => {
+        tbody.innerHTML += `<tr><td>${item[0]}</td><td style="text-align: center; font-weight: bold;">${item[1]}</td></tr>`;
+    });
+}
+
+// โหลด Master Data ตอนเปิดหน้าเว็บครั้งแรก
+window.onload = loadMasterData;
 </script>
 </body>
 </html>
