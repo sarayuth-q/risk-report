@@ -574,45 +574,55 @@
     return ok;
   }
 
-  document.getElementById('riskForm').onsubmit = async function(e) {
-    e.preventDefault();
-    if (!validate()) return;
+  document.getElementById('riskForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  if (!validate()) { showToast('กรุณากรอกข้อมูลให้ครบ'); return; }
 
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    document.getElementById('spinner').style.display = 'block';
-    document.getElementById('submitIcon').style.display = 'none';
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  document.getElementById('spinner').style.display = 'block';
+  document.getElementById('submitIcon').style.display = 'none';
 
-    const payload = {
-      timestamp: new Date().toLocaleString('th-TH'),
-      reporter: document.getElementById('reporter-name').value,
-      dept: document.getElementById('dept').value,
-      area: document.getElementById('area').value,
-      machine: document.getElementById('machine').value,
-      riskType: document.getElementById('riskType').value,
-      severity: document.getElementById('severity').value,
-      note: document.getElementById('note').value,
-      imageCount: imageFiles.length
-    };
+  const payload = {
+    timestamp: new Date().toLocaleString('th-TH'),
+    reporter: document.getElementById('reporter-name').value.trim(),
+    dept: document.getElementById('dept').value,
+    area: document.getElementById('area').value,
+    machine: document.getElementById('machine').value.trim(),
+    riskType: document.getElementById('riskType').value,
+    severity: document.getElementById('severity').value,
+    note: document.getElementById('note').value.trim(),
+    imageCount: imageFiles.length,
+  };
 
+  try {
     const formData = new FormData();
     formData.append('data', JSON.stringify(payload));
-    imageFiles.forEach((f, i) => formData.append('image_' + i, f.blob));
+    
+    // แนบไฟล์ภาพ
+    imageFiles.forEach((f, i) => {
+      formData.append('image_' + i, f.blob); 
+    });
 
-    try {
-      const resp = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: formData });
-      const res = await resp.json();
-      if (res.status === 'ok') {
-        document.getElementById('refCode').textContent = 'REF-' + Date.now().toString(36).toUpperCase();
-        document.getElementById('successOverlay').classList.add('show');
-      }
-    } catch (err) {
-      alert('เกิดข้อผิดพลาด กรุณาลองใหม่');
-      btn.disabled = false;
-      document.getElementById('spinner').style.display = 'none';
-      document.getElementById('submitIcon').style.display = 'block';
+    // ส่งข้อมูลแบบมาตรฐาน (ห้ามใส่ mode: 'no-cors' เด็ดขาด)
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.json(); // อ่านคำตอบจาก Google
+
+    if (result.status === 'ok') {
+      document.getElementById('refCode').textContent = 'RSK-' + Date.now().toString(36).toUpperCase().slice(-8);
+      document.getElementById('successOverlay').classList.add('show');
+    } else {
+      throw new Error(result.message);
     }
-  };
-</script>
-</body>
-</html>
+
+  } catch (err) {
+    showToast('Error: ' + err.message);
+    btn.disabled = false;
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('submitIcon').style.display = '';
+  }
+});
