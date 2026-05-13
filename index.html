@@ -7,175 +7,262 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0d0f14; --surface: #161920; --surface2: #1e2230; --border: #2a2f3d;
-    --accent: #ff5c3a; --text: #e8eaf0; --text2: #8b90a0; --green: #2dd98f;
-    --red: #ff4444; --yellow: #ffb830; --font: 'IBM Plex Sans Thai', sans-serif;
-  }
+  /* --- CSS เดิมของคุณทั้งหมด --- */
+  :root { --bg: #0d0f14; --surface: #161920; --surface2: #1e2230; --border: #2a2f3d; --accent: #ff5c3a; --accent2: #ffb830; --text: #e8eaf0; --text2: #8b90a0; --green: #2dd98f; --red: #ff4444; --yellow: #ffb830; --font: 'IBM Plex Sans Thai', sans-serif; --mono: 'IBM Plex Mono', monospace; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.6; padding: 20px 10px; }
-  .container { max-width: 600px; margin: 0 auto; background: var(--surface); border-radius: 12px; padding: 25px; border: 1px solid var(--border); }
-  h1 { font-size: 20px; margin-bottom: 20px; color: var(--accent); text-align: center; }
-  .field { margin-bottom: 15px; }
-  label { display: block; font-size: 13px; color: var(--text2); margin-bottom: 5px; }
-  input, select, textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; color: var(--text); outline: none; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .upload-box { border: 2px dashed var(--border); padding: 20px; text-align: center; border-radius: 10px; cursor: pointer; margin: 15px 0; }
-  .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; margin-top: 10px; }
-  .preview-item { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px; min-height: 100vh; line-height: 1.6; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(255,92,58,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,92,58,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+  .container { max-width: 680px; margin: 0 auto; padding: 0 16px 60px; position: relative; z-index: 1; }
+  .header { padding: 28px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+  .header-top { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+  .logo-box { width: 44px; height: 44px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; overflow: hidden; }
+  .logo-box::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(0,0,0,0.15) 4px, rgba(0,0,0,0.15) 8px); }
+  .header h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; color: var(--text); }
+  .header p { font-size: 13px; color: var(--text2); font-family: var(--mono); margin-top: 2px; }
+  .status-bar { display: flex; align-items: center; gap: 16px; margin-top: 14px; }
+  .status-dot { display: flex; align-items: center; gap: 6px; font-size: 12px; font-family: var(--mono); color: var(--text2); }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 14px; transition: border-color 0.2s; }
+  .section:focus-within { border-color: rgba(255,92,58,0.4); }
+  .section-label { font-size: 11px; font-family: var(--mono); font-weight: 500; color: var(--accent); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 12px; font-weight: 500; color: var(--text2); }
+  .field label span { color: var(--accent); }
+  .field input, .field select, .field textarea { background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; padding: 10px 12px; font-size: 14px; color: var(--text); outline: none; width: 100%; }
+  .field textarea { height: 90px; resize: none; }
+  .risk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .risk-btn { padding: 10px 8px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface2); color: var(--text2); cursor: pointer; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 12px; }
+  .risk-btn.active { border-color: var(--accent); background: rgba(255,92,58,0.1); color: var(--accent); }
+  .severity-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .sev-btn { padding: 8px 4px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface2); color: var(--text2); cursor: pointer; font-size: 11px; }
+  .sev-btn.active-low { border-color: var(--green); background: rgba(45,217,143,0.1); color: var(--green); }
+  .sev-btn.active-med { border-color: var(--yellow); background: rgba(255,184,48,0.1); color: var(--yellow); }
+  .sev-btn.active-high { border-color: var(--accent); background: rgba(255,92,58,0.1); color: var(--accent); }
+  .sev-btn.active-crit { border-color: var(--red); background: rgba(255,68,68,0.12); color: var(--red); }
+  .upload-zone { border: 1.5px dashed var(--border); border-radius: 8px; padding: 24px 16px; text-align: center; cursor: pointer; position: relative; }
+  .upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; margin-top: 12px; }
+  .preview-item { aspect-ratio: 1; border-radius: 7px; overflow: hidden; position: relative; border: 1px solid var(--border); }
   .preview-item img { width: 100%; height: 100%; object-fit: cover; }
-  .submit-btn { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
-  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .success-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; align-items: center; justify-content: center; flex-direction: column; }
+  .preview-item .remove-btn { position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; background: rgba(0,0,0,0.7); border: none; border-radius: 50%; color: white; cursor: pointer; }
+  .submit-btn { width: 100%; padding: 14px 20px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .success-overlay { display: none; position: fixed; inset: 0; background: rgba(13,15,20,0.92); z-index: 100; align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(6px); }
   .success-overlay.show { display: flex; }
-  .error-msg { color: var(--red); font-size: 11px; display: none; }
+  .success-box { background: var(--surface); border: 1px solid var(--green); border-radius: 14px; padding: 32px 40px; text-align: center; max-width: 360px; }
+  .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface2); padding: 10px 20px; border-radius: 8px; transition: transform 0.3s; z-index: 50; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .field-error { font-size: 11px; color: var(--red); display: none; }
+  .field.error input { border-color: var(--red); }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>📤 ส่งรายงานจุดเสี่ยง</h1>
-  <form id="riskForm">
-    <div class="field">
-      <label>ชื่อผู้แจ้ง *</label>
-      <input type="text" id="reporter-name" required>
-    </div>
-    <div class="grid">
-      <div class="field">
-        <label>หน่วยงาน *</label>
-        <select id="dept" required>
-          <option value="">เลือกแผนก</option>
-          <option>ฝ่ายผลิต</option><option>วิศวกรรม</option><option>ซ่อมบำรุง</option>
-        </select>
+  <header class="header">
+    <div class="header-top">
+      <div class="logo-box">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       </div>
-      <div class="field">
-        <label>พื้นที่ *</label>
-        <select id="area" required>
-          <option value="">เลือกพื้นที่</option>
-          <option>โรงงาน A</option><option>โรงงาน B</option><option>คลังสินค้า</option>
-        </select>
+      <div>
+        <h1>แจ้งจุดเสี่ยง</h1>
+        <p>RISK REPORTING SYSTEM v2.0</p>
       </div>
     </div>
-    <div class="field">
-      <label>เครื่องจักร (ถ้ามี)</label>
-      <input type="text" id="machine">
+    <div class="status-bar">
+      <div class="status-dot"><span class="dot"></span> ระบบพร้อมใช้งาน</div>
+      <div id="datetime" style="font-size:11px; color:var(--text2);"></div>
     </div>
-    <div class="grid">
-      <div class="field">
-        <label>ประเภทความเสี่ยง *</label>
-        <select id="riskType" required>
-          <option value="ความปลอดภัย">ความปลอดภัย</option>
-          <option value="เครื่องจักร">เครื่องจักร</option>
-          <option value="อื่นๆ">อื่นๆ</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>ระดับความรุนแรง *</label>
-        <select id="severity" required>
-          <option value="ต่ำ">ต่ำ</option><option value="ปานกลาง" selected>ปานกลาง</option>
-          <option value="สูง">สูง</option><option value="วิกฤต">วิกฤต</option>
-        </select>
+  </header>
+
+  <form id="riskForm" novalidate>
+    <div class="section">
+      <div class="section-label">01 — ข้อมูลผู้แจ้ง</div>
+      <div class="grid-2">
+        <div class="field" id="f-name">
+          <label>ชื่อ-นามสกุล <span>*</span></label>
+          <input type="text" id="reporter-name" placeholder="ระบุชื่อ">
+          <span class="field-error">กรุณากรอกชื่อ</span>
+        </div>
+        <div class="field" id="f-dept">
+          <label>หน่วยงาน / แผนก <span>*</span></label>
+          <select id="dept">
+            <option value="">— เลือกหน่วยงาน —</option>
+            <option>ฝ่ายผลิต</option><option>ฝ่ายวิศวกรรม</option><option>ฝ่ายซ่อมบำรุง</option>
+          </select>
+          <span class="field-error">กรุณาเลือกหน่วยงาน</span>
+        </div>
       </div>
     </div>
-    <div class="field">
-      <label>ภาพหลักฐาน (สูงสุด 5 ภาพ)</label>
-      <div class="upload-box" onclick="document.getElementById('fileInput').click()">
-        <span>📸 คลิกเพื่อเลือกรูปภาพ</span>
-        <input type="file" id="fileInput" accept="image/*" multiple style="display:none">
+
+    <div class="section">
+      <div class="section-label">02 — สถานที่และเครื่องจักร</div>
+      <div class="grid-2">
+        <div class="field" id="f-area">
+          <label>พื้นที่ / โซน <span>*</span></label>
+          <select id="area">
+            <option value="">— เลือกพื้นที่ —</option>
+            <option>โรงงาน A</option><option>โรงงาน B</option><option>คลังสินค้า</option>
+          </select>
+          <span class="field-error">กรุณาเลือกพื้นที่</span>
+        </div>
+        <div class="field">
+          <label>เครื่องจักร / อุปกรณ์</label>
+          <input type="text" id="machine" placeholder="เช่น Compressor #3">
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">03 — ประเภทความเสี่ยง</div>
+      <div class="risk-grid">
+        <button type="button" class="risk-btn" data-val="ความปลอดภัย">⚠️ ความปลอดภัย</button>
+        <button type="button" class="risk-btn" data-val="ไฟไหม้">🔥 ไฟไหม้</button>
+        <button type="button" class="risk-btn" data-val="เครื่องจักร">⚙️ เครื่องจักร</button>
+      </div>
+      <input type="hidden" id="riskType">
+      <span id="riskTypeError" class="field-error">กรุณาเลือกประเภทความเสี่ยง</span>
+
+      <div style="margin-top:14px;">
+        <label style="font-size:12px;">ระดับความรุนแรง <span>*</span></label>
+        <div class="severity-row" id="sevGrid">
+          <button type="button" class="sev-btn" data-val="ต่ำ" data-cls="active-low">🟢 ต่ำ</button>
+          <button type="button" class="sev-btn" data-val="ปานกลาง" data-cls="active-med">🟡 ปานกลาง</button>
+          <button type="button" class="sev-btn" data-val="สูง" data-cls="active-high">🟠 สูง</button>
+          <button type="button" class="sev-btn" data-val="วิกฤต" data-cls="active-crit">🔴 วิกฤต</button>
+        </div>
+        <input type="hidden" id="severity">
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">04 — ภาพหลักฐาน</div>
+      <div class="upload-zone">
+        <input type="file" id="fileInput" accept="image/*" multiple>
+        <p>แตะเพื่อเลือกภาพ (สูงสุด 5 ภาพ)</p>
       </div>
       <div class="preview-grid" id="previewGrid"></div>
     </div>
-    <div class="field">
-      <label>หมายเหตุ</label>
-      <textarea id="note" rows="3"></textarea>
+
+    <div class="section">
+      <div class="section-label">05 — หมายเหตุเพิ่มเติม</div>
+      <textarea id="note" style="width:100%; height:80px; padding:10px;" placeholder="ระบุรายละเอียด..."></textarea>
     </div>
-    <button type="submit" class="submit-btn" id="submitBtn">ส่งข้อมูลรายงาน</button>
+
+    <button type="submit" class="submit-btn" id="submitBtn">
+      <div class="spinner" id="spinner"></div>
+      <span id="submitIcon">📤 ส่งรายงาน</span>
+    </button>
   </form>
 </div>
 
 <div class="success-overlay" id="successOverlay">
-  <h2 style="color:var(--green)">✓ บันทึกสำเร็จ</h2>
-  <p style="margin: 10px 0">ข้อมูลและรูปภาพถูกส่งแล้ว</p>
-  <button onclick="location.reload()" style="padding:10px 20px; cursor:pointer">ส่งรายงานใหม่</button>
+  <div class="success-box">
+    <div style="font-size:40px; color:var(--green); margin-bottom:10px;">✓</div>
+    <h2>ส่งรายงานสำเร็จ</h2>
+    <p>ข้อมูลและรูปภาพถูกบันทึกแล้ว</p>
+    <button onclick="location.reload()" style="margin-top:20px; padding:10px 20px; cursor:pointer;">แจ้งเรื่องใหม่</button>
+  </div>
 </div>
 
+<div id="toast" class="toast"></div>
+
 <script>
-  // *** วาง URL ของ Apps Script ของคุณที่นี่ ***
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx0a7DJ2KRMxc-8_x6Dizy5tV3TESrapaP0M7JrFptZE8JyLxrBndc46_-SRPvzMaGH/exec';
+// --- JavaScript Logic ---
+function updateClock() {
+  document.getElementById('datetime').textContent = new Date().toLocaleString('th-TH');
+}
+updateClock(); setInterval(updateClock, 30000);
 
-  let imageFiles = [];
+document.querySelectorAll('.risk-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.risk-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('riskType').value = btn.dataset.val;
+  };
+});
 
-  document.getElementById('fileInput').addEventListener('change', function(e) {
-    const files = Array.from(e.target.files);
-    files.slice(0, 5 - imageFiles.length).forEach(file => {
-      imageFiles.push(file);
-    });
-    renderPreviews();
+document.querySelectorAll('.sev-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.sev-btn').forEach(b => b.className = 'sev-btn');
+    btn.classList.add(btn.dataset.cls);
+    document.getElementById('severity').value = btn.dataset.val;
+  };
+});
+
+let imageFiles = [];
+document.getElementById('fileInput').onchange = function(e) {
+  const files = Array.from(e.target.files);
+  files.slice(0, 5 - imageFiles.length).forEach(file => {
+    imageFiles.push({ blob: file });
+  });
+  renderPreviews();
+};
+
+function renderPreviews() {
+  const grid = document.getElementById('previewGrid');
+  grid.innerHTML = '';
+  imageFiles.forEach((f, i) => {
+    const div = document.createElement('div');
+    div.className = 'preview-item';
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(f.blob);
+    const btn = document.createElement('button');
+    btn.className = 'remove-btn'; btn.innerHTML = '×';
+    btn.onclick = () => { imageFiles.splice(i, 1); renderPreviews(); };
+    div.append(img, btn); grid.append(div);
+  });
+}
+
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzRTHJlaJ3jv5dt7ibW8hyc1OWs30w1GLiE6D_-1m8GZ1HkDQxTOO7WxUqnx8gJz8Ww/exec';
+
+document.getElementById('riskForm').onsubmit = async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  document.getElementById('spinner').style.display = 'block';
+  document.getElementById('submitIcon').style.display = 'none';
+
+  const payload = {
+    timestamp: new Date().toLocaleString('th-TH'),
+    reporter: document.getElementById('reporter-name').value,
+    dept: document.getElementById('dept').value,
+    area: document.getElementById('area').value,
+    machine: document.getElementById('machine').value,
+    riskType: document.getElementById('riskType').value,
+    severity: document.getElementById('severity').value,
+    note: document.getElementById('note').value,
+    imageCount: imageFiles.length
+  };
+
+  const formData = new FormData();
+  formData.append('data', JSON.stringify(payload));
+  imageFiles.forEach((f, i) => {
+    formData.append('image_' + i, f.blob);
   });
 
-  function renderPreviews() {
-    const grid = document.getElementById('previewGrid');
-    grid.innerHTML = '';
-    imageFiles.forEach((file, i) => {
-      const div = document.createElement('div');
-      div.className = 'preview-item';
-      const img = document.createElement('img');
-      img.src = URL.createObjectURL(file);
-      const btn = document.createElement('button');
-      btn.innerHTML = '×';
-      btn.style = "position:absolute;top:2px;right:2px;background:red;color:white;border:none;border-radius:50%;cursor:pointer;width:20px;height:20px;";
-      btn.onclick = (e) => { e.preventDefault(); imageFiles.splice(i, 1); renderPreviews(); };
-      div.append(img, btn);
-      grid.append(div);
+  try {
+    // *** สำคัญ: ห้ามใส่ mode: 'no-cors' ***
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: formData
     });
-  }
-
-  document.getElementById('riskForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.innerText = 'กำลังส่งข้อมูล...';
-
-    const payload = {
-      timestamp: new Date().toLocaleString('th-TH'),
-      reporter: document.getElementById('reporter-name').value,
-      dept: document.getElementById('dept').value,
-      area: document.getElementById('area').value,
-      machine: document.getElementById('machine').value || '-',
-      riskType: document.getElementById('riskType').value,
-      severity: document.getElementById('severity').value,
-      note: document.getElementById('note').value || '-',
-      imageCount: imageFiles.length
-    };
-    // ตรวจสอบส่วนนี้ในไฟล์ index.html ของคุณ
-    const formData = new FormData();
-    formData.append('data', JSON.stringify(payload));
-    imageFiles.forEach((f, i) => {
-      formData.append('image_' + i, f.blob); // ส่ง f.blob โดยตรง
-    });
-    const formData = new FormData();
-    formData.append('data', JSON.stringify(payload));
-    imageFiles.forEach((file, i) => {
-      formData.append('image_' + i, file);
-    });
-
-    try {
-      const response = await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        body: formData // ห้ามมี mode: 'no-cors'
-      });
-      const result = await response.json();
-      if (result.status === 'ok') {
-        document.getElementById('successOverlay').classList.add('show');
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (err) {
-      alert('เกิดข้อผิดพลาด: ' + err.message);
-      btn.disabled = false;
-      btn.innerText = 'ส่งข้อมูลรายงาน';
+    
+    const result = await response.json();
+    if (result.status === 'ok') {
+      document.getElementById('successOverlay').classList.add('show');
     }
-  });
+  } catch (err) {
+    alert('เกิดข้อผิดพลาด: ' + err.message);
+    btn.disabled = false;
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('submitIcon').style.display = 'block';
+  }
+};
 </script>
 </body>
 </html>
