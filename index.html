@@ -15,88 +15,168 @@
 }
 
 body{
+
   margin:0;
   min-height:100vh;
-  background:linear-gradient(135deg,#043b3b,#021414,#000000);
-  color:white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0f766e,
+      #062b2b,
+      #000000
+    );
+
   display:flex;
   justify-content:center;
   align-items:center;
+
   padding:20px;
+
+  color:white;
 }
 
 .container{
+
   width:100%;
-  max-width:700px;
+  max-width:720px;
+
   background:rgba(255,255,255,0.08);
+
   backdrop-filter:blur(10px);
-  border-radius:25px;
+
+  border-radius:24px;
+
   padding:30px;
-  box-shadow:0 0 30px rgba(0,0,0,0.5);
+
+  box-shadow:
+    0 0 30px rgba(0,0,0,0.5);
 }
 
 h1{
+
   text-align:center;
+
   margin-bottom:30px;
-  font-size:2rem;
+
   color:#8fffe0;
+
+  font-size:2rem;
 }
 
 .form-group{
-  margin-bottom:22px;
+
+  margin-bottom:20px;
 }
 
 label{
+
   display:block;
+
   margin-bottom:8px;
+
   font-size:1.1rem;
+
   font-weight:bold;
 }
 
 input,
 select,
 textarea{
+
   width:100%;
+
   padding:16px;
+
   border:none;
+
   border-radius:14px;
+
   font-size:1rem;
-  background:#ffffff;
-  color:#000;
+
+  background:white;
+
+  color:black;
 }
 
 textarea{
+
   min-height:120px;
+
   resize:vertical;
 }
 
 input[type=file]{
-  background:#ffffff22;
+
+  background:rgba(255,255,255,0.1);
+
   color:white;
 }
 
 button{
+
   width:100%;
+
   padding:18px;
+
   border:none;
-  border-radius:15px;
+
+  border-radius:14px;
+
   font-size:1.2rem;
+
   font-weight:bold;
+
   cursor:pointer;
-  background:linear-gradient(90deg,#00b894,#00cec9);
+
+  background:
+    linear-gradient(
+      90deg,
+      #00c9a7,
+      #00e5ff
+    );
+
   color:white;
+
   transition:0.3s;
 }
 
 button:hover{
+
   transform:scale(1.02);
 }
 
 #status{
+
   margin-top:20px;
+
   text-align:center;
-  font-size:1rem;
+
   color:#8fffe0;
+
+  font-size:1rem;
+}
+
+.preview{
+
+  margin-top:10px;
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:10px;
+}
+
+.preview img{
+
+  width:100px;
+
+  height:100px;
+
+  object-fit:cover;
+
+  border-radius:12px;
 }
 
 @media(max-width:600px){
@@ -108,9 +188,9 @@ button:hover{
   input,
   select,
   textarea{
+
     font-size:1rem;
   }
-
 }
 
 </style>
@@ -121,46 +201,83 @@ button:hover{
 
 <div class="container">
 
-<h1>รายงานจุดเสี่ยง โรงงานอาหารสัตว์ศรีราชา</h1>
+<h1>
+รายงานจุดเสี่ยง โรงงานอาหารสัตว์ศรีราชา
+</h1>
 
 <div class="form-group">
+
 <label>หน่วยงาน</label>
-<select id="department" required></select>
+
+<select id="department" required>
+<option value="">กำลังโหลด...</option>
+</select>
+
 </div>
 
 <div class="form-group">
+
 <label>ชื่อพนักงาน</label>
-<select id="employee" required></select>
+
+<select id="employee" required>
+<option value="">เลือกพนักงาน</option>
+</select>
+
 </div>
 
 <div class="form-group">
+
 <label>จุดพบความเสี่ยง</label>
-<textarea id="location"
-placeholder="แจ้งสถานที่หรือจุดเสี่ยง"
-required></textarea>
+
+<textarea
+  id="location"
+  placeholder="แจ้งสถานที่หรือจุดเสี่ยง"
+></textarea>
+
 </div>
 
 <div class="form-group">
+
 <label>ประเภทความเสี่ยง</label>
-<select id="riskType" required></select>
+
+<select id="riskType"></select>
+
 </div>
 
 <div class="form-group">
+
 <label>ระดับความเสี่ยง</label>
-<select id="riskLevel" required></select>
+
+<select id="riskLevel"></select>
+
 </div>
 
 <div class="form-group">
+
 <label>แนบรูปภาพ</label>
-<input type="file" id="images" multiple accept="image/*" required>
+
+<input
+  type="file"
+  id="images"
+  multiple
+  accept="image/*"
+/>
+
+<div class="preview" id="preview"></div>
+
 </div>
 
 <div class="form-group">
+
 <label>หมายเหตุ</label>
+
 <textarea id="note"></textarea>
+
 </div>
 
-<button onclick="submitForm()">บันทึกข้อมูล</button>
+<button onclick="submitForm()">
+บันทึกข้อมูล
+</button>
 
 <div id="status"></div>
 
@@ -168,56 +285,106 @@ required></textarea>
 
 <script>
 
-const API_URL = "https://script.google.com/macros/s/AKfycbxjbF0fTWnBzDWGAJLgzw7yfqOanxzcO_WBgxt067JUnwCFS3is6kGnRj6RB2sePGHM/exec";
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyylZ0FfpPWqZj-Rl-dLDlWF3NonI9qz8-b1col2ShyMfsAcgXtEHDP218ixxDCRnlw/exec";
 
 let masterData = {};
+
 let selectedEmpId = "";
 
+/**
+ * =========================
+ * โหลดข้อมูล
+ * =========================
+ */
 async function loadMasterData(){
 
-  const response = await fetch(API_URL + "?action=master");
-  masterData = await response.json();
+  try {
 
-  loadDepartments();
-  loadRiskTypes();
-  loadRiskLevels();
+    const response =
+      await fetch(
+        API_URL + "?action=master"
+      );
+
+    const data = await response.json();
+
+    if(!data.success){
+
+      alert(data.message);
+      return;
+    }
+
+    masterData = data;
+
+    loadDepartments();
+    loadRiskTypes();
+    loadRiskLevels();
+
+  } catch(err){
+
+    console.error(err);
+
+    alert("โหลดข้อมูลไม่สำเร็จ");
+  }
 }
 
+/**
+ * =========================
+ * หน่วยงาน
+ * =========================
+ */
 function loadDepartments(){
 
-  const dept = document.getElementById("department");
+  const dept =
+    document.getElementById("department");
 
-  dept.innerHTML = '<option value="">เลือกหน่วยงาน</option>';
+  dept.innerHTML =
+    '<option value="">เลือกหน่วยงาน</option>';
 
   masterData.departments.forEach(d=>{
 
-    dept.innerHTML += `<option value="${d}">${d}</option>`;
+    dept.innerHTML +=
+      `<option value="${d}">${d}</option>`;
 
   });
 
-  dept.addEventListener("change",loadEmployees);
+  dept.addEventListener(
+    "change",
+    loadEmployees
+  );
 }
 
+/**
+ * =========================
+ * พนักงาน
+ * =========================
+ */
 function loadEmployees(){
 
-  const dept = document.getElementById("department").value;
-  const emp = document.getElementById("employee");
+  const dept =
+    document.getElementById("department").value;
 
-  emp.innerHTML = '<option value="">เลือกพนักงาน</option>';
+  const emp =
+    document.getElementById("employee");
 
-  const filtered = masterData.staffs.filter(
-    s=>s.department===dept
-  );
+  emp.innerHTML =
+    '<option value="">เลือกพนักงาน</option>';
+
+  const filtered =
+    masterData.staffs.filter(
+      s => s.department === dept
+    );
 
   filtered.forEach(s=>{
 
     emp.innerHTML += `
-      <option value="${s.name}"
-      data-id="${s.empId}">
-      ${s.name}
+      <option
+        value="${s.name}"
+        data-id="${s.empId}"
+      >
+        ${s.name}
       </option>
     `;
-
   });
 
   emp.addEventListener("change",()=>{
@@ -231,9 +398,15 @@ function loadEmployees(){
   });
 }
 
+/**
+ * =========================
+ * ประเภทความเสี่ยง
+ * =========================
+ */
 function loadRiskTypes(){
 
-  const risk = document.getElementById("riskType");
+  const risk =
+    document.getElementById("riskType");
 
   risk.innerHTML =
     '<option value="">เลือกประเภท</option>';
@@ -242,13 +415,18 @@ function loadRiskTypes(){
 
     risk.innerHTML +=
       `<option value="${r}">${r}</option>`;
-
   });
 }
 
+/**
+ * =========================
+ * ระดับความเสี่ยง
+ * =========================
+ */
 function loadRiskLevels(){
 
-  const risk = document.getElementById("riskLevel");
+  const risk =
+    document.getElementById("riskLevel");
 
   risk.innerHTML =
     '<option value="">เลือกระดับ</option>';
@@ -257,37 +435,84 @@ function loadRiskLevels(){
 
     risk.innerHTML +=
       `<option value="${r}">${r}</option>`;
-
   });
 }
 
+/**
+ * =========================
+ * Preview รูป
+ * =========================
+ */
+document
+.getElementById("images")
+.addEventListener("change",function(){
+
+  const preview =
+    document.getElementById("preview");
+
+  preview.innerHTML = "";
+
+  [...this.files].forEach(file=>{
+
+    const reader = new FileReader();
+
+    reader.onload = e=>{
+
+      const img =
+        document.createElement("img");
+
+      img.src = e.target.result;
+
+      preview.appendChild(img);
+    };
+
+    reader.readAsDataURL(file);
+  });
+});
+
+/**
+ * =========================
+ * Generate Image ID
+ * =========================
+ */
 function generateImageId(){
 
   const now = new Date();
 
-  const dd = String(now.getDate()).padStart(2,'0');
-  const mm = String(now.getMonth()+1).padStart(2,'0');
-  const yy = String(now.getFullYear()).slice(-2);
+  const dd =
+    String(now.getDate()).padStart(2,'0');
+
+  const mm =
+    String(now.getMonth()+1).padStart(2,'0');
+
+  const yy =
+    String(now.getFullYear()).slice(-2);
 
   return selectedEmpId + dd + mm + yy;
 }
 
+/**
+ * =========================
+ * Compress Image
+ * =========================
+ */
 async function compressImage(file){
 
-  return new Promise((resolve)=>{
+  return new Promise(resolve=>{
 
     const img = new Image();
+
     const reader = new FileReader();
 
     reader.onload = e=>{
 
       img.src = e.target.result;
-
     };
 
     img.onload = ()=>{
 
-      const canvas = document.createElement('canvas');
+      const canvas =
+        document.createElement("canvas");
 
       let width = img.width;
       let height = img.height;
@@ -297,147 +522,244 @@ async function compressImage(file){
       if(width > maxWidth){
 
         height *= maxWidth / width;
-        width = maxWidth;
 
+        width = maxWidth;
       }
 
       canvas.width = width;
       canvas.height = height;
 
-      const ctx = canvas.getContext('2d');
+      const ctx =
+        canvas.getContext("2d");
 
-      ctx.drawImage(img,0,0,width,height);
+      ctx.drawImage(
+        img,
+        0,
+        0,
+        width,
+        height
+      );
 
       canvas.toBlob(blob=>{
 
         resolve(blob);
 
       },'image/jpeg',0.8);
-
     };
 
     reader.readAsDataURL(file);
-
   });
 }
 
-async function submitForm(){
-
-  const status = document.getElementById("status");
-
-  const images =
-    document.getElementById("images").files;
-
-  if(images.length===0){
-
-    alert("กรุณาแนบรูป");
-    return;
-
-  }
-
-  status.innerHTML = "กำลังบันทึกข้อมูล...";
-
-  const imageId = generateImageId();
-
-  const payload = {
-
-    reporter:
-      document.getElementById("employee").value,
-
-    department:
-      document.getElementById("department").value,
-
-    location:
-      document.getElementById("location").value,
-
-    riskLevel:
-      document.getElementById("riskLevel").value,
-
-    note:
-      document.getElementById("note").value,
-
-    totalImages: images.length,
-
-    imageId: imageId
-
-  };
-
-  google.script.run
-    .withSuccessHandler(async(res)=>{
-
-      const rowNumber = res.rowNumber;
-
-      for(let i=0;i<images.length;i++){
-
-        status.innerHTML =
-          `กำลังอัปโหลดรูป ${i+1}/${images.length}`;
-
-        const compressed =
-          await compressImage(images[i]);
-
-        const base64 =
-          await blobToBase64(compressed);
-
-        await uploadChunk(
-          base64,
-          images[i].name,
-          compressed.type,
-          rowNumber
-        );
-      }
-
-      status.innerHTML =
-        "✅ บันทึกข้อมูลสำเร็จ";
-
-      document
-        .querySelector("form")
-        ?.reset();
-
-    })
-    .saveForm(payload);
-}
-
+/**
+ * =========================
+ * Blob to Base64
+ * =========================
+ */
 function blobToBase64(blob){
 
-  return new Promise((resolve)=>{
+  return new Promise(resolve=>{
 
     const reader = new FileReader();
 
     reader.onloadend = ()=>{
 
-      resolve(reader.result.split(',')[1]);
-
+      resolve(
+        reader.result.split(',')[1]
+      );
     };
 
     reader.readAsDataURL(blob);
-
   });
 }
 
-async function uploadChunk(
-  base64,
-  fileName,
-  mimeType,
-  rowNumber
-){
+/**
+ * =========================
+ * Submit Form
+ * =========================
+ */
+async function submitForm(){
 
-  return new Promise((resolve,reject)=>{
+  const status =
+    document.getElementById("status");
 
-    google.script.run
-      .withSuccessHandler(resolve)
-      .withFailureHandler(reject)
-      .uploadImageChunk({
+  const reporter =
+    document.getElementById("employee").value;
 
-        base64,
-        fileName,
-        mimeType,
-        rowNumber
+  const department =
+    document.getElementById("department").value;
 
+  const location =
+    document.getElementById("location").value;
+
+  const riskType =
+    document.getElementById("riskType").value;
+
+  const riskLevel =
+    document.getElementById("riskLevel").value;
+
+  const note =
+    document.getElementById("note").value;
+
+  const images =
+    document.getElementById("images").files;
+
+  if(!department){
+
+    alert("กรุณาเลือกหน่วยงาน");
+    return;
+  }
+
+  if(!reporter){
+
+    alert("กรุณาเลือกพนักงาน");
+    return;
+  }
+
+  if(!location){
+
+    alert("กรุณากรอกจุดเสี่ยง");
+    return;
+  }
+
+  if(!riskType){
+
+    alert("กรุณาเลือกประเภท");
+    return;
+  }
+
+  if(!riskLevel){
+
+    alert("กรุณาเลือกระดับ");
+    return;
+  }
+
+  if(images.length === 0){
+
+    alert("กรุณาแนบรูป");
+    return;
+  }
+
+  try {
+
+    status.innerHTML =
+      "กำลังบันทึกข้อมูล...";
+
+    const imageId =
+      generateImageId();
+
+    /**
+     * STEP 1
+     * SAVE FORM
+     */
+    const saveResponse =
+      await fetch(API_URL,{
+
+        method:"POST",
+
+        body:JSON.stringify({
+
+          action:"saveForm",
+
+          reporter,
+          department,
+          location,
+          riskType,
+          riskLevel,
+          note,
+
+          totalImages:
+            images.length,
+
+          imageId
+        })
       });
 
-  });
+    const saveResult =
+      await saveResponse.json();
+
+    if(!saveResult.success){
+
+      alert("บันทึกข้อมูลไม่สำเร็จ");
+      return;
+    }
+
+    const rowNumber =
+      saveResult.rowNumber;
+
+    /**
+     * STEP 2
+     * Upload Images
+     */
+    for(let i=0;i<images.length;i++){
+
+      status.innerHTML =
+        `กำลังอัปโหลดรูป ${i+1}/${images.length}`;
+
+      const compressed =
+        await compressImage(images[i]);
+
+      const base64 =
+        await blobToBase64(compressed);
+
+      const uploadResponse =
+        await fetch(API_URL,{
+
+          method:"POST",
+
+          body:JSON.stringify({
+
+            action:"uploadImage",
+
+            base64,
+
+            fileName:
+              images[i].name,
+
+            mimeType:
+              compressed.type,
+
+            rowNumber
+          })
+        });
+
+      const uploadResult =
+        await uploadResponse.json();
+
+      if(!uploadResult.success){
+
+        console.error(uploadResult);
+
+        alert(
+          "Upload รูปไม่สำเร็จ"
+        );
+
+        return;
+      }
+    }
+
+    status.innerHTML =
+      "✅ บันทึกข้อมูลสำเร็จ";
+
+    setTimeout(()=>{
+
+      location.reload();
+
+    },1500);
+
+  } catch(err){
+
+    console.error(err);
+
+    alert("เกิดข้อผิดพลาด");
+  }
 }
 
+/**
+ * =========================
+ * START
+ * =========================
+ */
 loadMasterData();
 
 </script>
