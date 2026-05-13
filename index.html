@@ -15,180 +15,107 @@
     --mono: 'IBM Plex Mono', monospace;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px; min-height: 100vh; line-height: 1.6; }
-  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(255,92,58,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,92,58,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
-  .container { max-width: 680px; margin: 0 auto; padding: 0 16px 60px; position: relative; z-index: 1; }
-  .header { padding: 28px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
-  .header-top { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
-  .logo-box { width: 44px; height: 44px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; overflow: hidden; }
-  .logo-box::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(0,0,0,0.15) 4px, rgba(0,0,0,0.15) 8px); }
-  .header h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; }
-  .header p { font-size: 13px; color: var(--text2); font-family: var(--mono); margin-top: 2px; }
-  .status-bar { display: flex; align-items: center; gap: 16px; margin-top: 14px; }
-  .status-dot { display: flex; align-items: center; gap: 6px; font-size: 12px; font-family: var(--mono); color: var(--text2); }
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); padding: 16px; min-height: 100vh; }
+  .container { max-width: 680px; margin: 0 auto; position: relative; }
+  .header { padding-bottom: 24px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+  .logo-box { width: 44px; height: 44px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
   .section { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 14px; }
-  .section-label { font-size: 11px; font-family: var(--mono); font-weight: 500; color: var(--accent); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .section-label { font-size: 11px; font-family: var(--mono); color: var(--accent); letter-spacing: 1.5px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .field { display: flex; flex-direction: column; gap: 6px; }
-  .field label { font-size: 12px; font-weight: 500; color: var(--text2); }
-  .field label span { color: var(--accent); }
-  .field input, .field select, .field textarea { background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; padding: 10px 12px; font-size: 14px; color: var(--text); outline: none; width: 100%; font-family: var(--font); }
-  .field textarea { height: 90px; resize: none; }
-  .field.error input, .field.error select { border-color: var(--red); }
-  .field-error { font-size: 11px; color: var(--red); display: none; }
-  .field.error .field-error { display: block; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  .field label { font-size: 12px; color: var(--text2); }
+  input, select, textarea { background: var(--surface2); border: 1px solid var(--border); border-radius: 7px; padding: 10px; color: var(--text); width: 100%; outline: none; }
   .risk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .risk-btn { padding: 12px 8px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface2); color: var(--text2); cursor: pointer; text-align: center; font-size: 12px; font-family: var(--font); line-height: 1.6; }
+  .risk-btn { padding: 12px 8px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface2); color: var(--text2); cursor: pointer; text-align: center; font-size: 12px; }
   .risk-btn.active { border-color: var(--accent); background: rgba(255,92,58,0.1); color: var(--accent); }
-  .severity-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
-  .sev-btn { padding: 8px 4px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface2); color: var(--text2); cursor: pointer; font-size: 11px; font-family: var(--font); }
-  .sev-btn.active-low  { border-color: var(--green);  background: rgba(45,217,143,0.1); color: var(--green); }
-  .sev-btn.active-med  { border-color: var(--yellow); background: rgba(255,184,48,0.1); color: var(--yellow); }
-  .sev-btn.active-high { border-color: var(--accent); background: rgba(255,92,58,0.1);  color: var(--accent); }
-  .sev-btn.active-crit { border-color: var(--red);    background: rgba(255,68,68,0.12); color: var(--red); }
-  .upload-zone { border: 1.5px dashed var(--border); border-radius: 8px; padding: 24px 16px; text-align: center; cursor: pointer; position: relative; transition: border-color 0.2s; }
-  .upload-zone:hover { border-color: var(--accent); }
-  .upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .severity-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .sev-btn { padding: 8px 4px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface2); color: var(--text2); font-size: 11px; cursor: pointer; }
+  .sev-btn.active-low { border-color: var(--green); color: var(--green); background: rgba(45,217,143,0.1); }
+  .sev-btn.active-high { border-color: var(--accent); color: var(--accent); background: rgba(255,92,58,0.1); }
+  .upload-zone { border: 1.5px dashed var(--border); padding: 24px; text-align: center; border-radius: 8px; cursor: pointer; position: relative; }
+  .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
   .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; margin-top: 12px; }
   .preview-item { aspect-ratio: 1; border-radius: 7px; overflow: hidden; position: relative; border: 1px solid var(--border); }
   .preview-item img { width: 100%; height: 100%; object-fit: cover; }
-  .preview-item .remove-btn { position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; background: rgba(0,0,0,0.75); border: none; border-radius: 50%; color: white; cursor: pointer; font-size: 14px; line-height: 20px; text-align: center; padding: 0; }
-  .submit-btn { width: 100%; padding: 14px 20px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; font-family: var(--font); }
-  .submit-btn:disabled { opacity: 0.55; cursor: not-allowed; }
-  .progress-wrap { margin-top: 12px; display: none; }
-  .progress-bar { width: 100%; height: 5px; background: var(--surface2); border-radius: 5px; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--accent); border-radius: 5px; transition: width 0.4s ease; width: 0%; }
-  .status-msg { font-size: 12px; color: var(--text2); font-family: var(--mono); margin-top: 8px; text-align: center; min-height: 18px; }
-  .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .success-overlay { display: none; position: fixed; inset: 0; background: rgba(13,15,20,0.93); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(6px); }
+  .remove-btn { position: absolute; top: 2px; right: 2px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; }
+  .submit-btn { width: 100%; padding: 14px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+  .submit-btn:disabled { opacity: 0.5; }
+  .progress-wrap { margin-top: 15px; display: none; }
+  .progress-bar { width: 100%; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--green); width: 0%; transition: 0.3s; }
+  .status-msg { font-size: 12px; color: var(--text2); text-align: center; margin-top: 8px; font-family: var(--mono); }
+  .success-overlay { display: none; position: fixed; inset: 0; background: rgba(13,15,20,0.95); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
   .success-overlay.show { display: flex; }
-  .success-box { background: var(--surface); border: 1px solid var(--green); border-radius: 14px; padding: 36px 40px; text-align: center; max-width: 360px; width: 90%; }
-  .success-box h2 { color: var(--green); margin: 12px 0 8px; }
-  .success-box p { color: var(--text2); font-size: 13px; }
-  .success-box button { margin-top: 20px; padding: 10px 28px; cursor: pointer; background: var(--green); border: none; border-radius: 7px; color: #000; font-weight: 600; font-size: 14px; font-family: var(--font); }
-  #riskTypeError { font-size: 11px; color: var(--red); display: none; margin-top: 8px; }
+  .success-box { background: var(--surface); border: 1px solid var(--green); padding: 40px; border-radius: 15px; text-align: center; }
+  .field.error input, .field.error select { border-color: var(--red); }
+  .field-error { color: var(--red); font-size: 11px; display: none; }
+  .field.error .field-error { display: block; }
 </style>
 </head>
 <body>
 
 <div class="container">
   <header class="header">
-    <div class="header-top">
-      <div class="logo-box">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-        </svg>
-      </div>
-      <div>
-        <h1>แจ้งจุดเสี่ยง</h1>
-        <p>RISK REPORTING SYSTEM v2.0</p>
-      </div>
+    <div class="logo-box">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
     </div>
-    <div class="status-bar">
-      <div class="status-dot"><span class="dot"></span> ระบบพร้อมใช้งาน</div>
-      <div id="datetime" style="font-size:11px;color:var(--text2);font-family:var(--mono);"></div>
-    </div>
+    <h1>แจ้งจุดเสี่ยง</h1>
+    <div id="datetime" style="font-size:12px; color:var(--text2); margin-top:5px;"></div>
   </header>
 
-  <form id="riskForm" novalidate>
-
-    <!-- 01 -->
+  <form id="riskForm">
     <div class="section">
-      <div class="section-label">01 — ข้อมูลผู้แจ้ง</div>
+      <div class="section-label">01 — ผู้แจ้ง</div>
       <div class="grid-2">
-        <div class="field" id="f-name">
-          <label>ชื่อ-นามสกุล <span>*</span></label>
-          <input type="text" id="reporter-name" placeholder="ระบุชื่อ-นามสกุล">
-          <span class="field-error">กรุณากรอกชื่อ</span>
-        </div>
-        <div class="field" id="f-dept">
-          <label>หน่วยงาน / แผนก <span>*</span></label>
-          <select id="dept">
-            <option value="">— เลือกหน่วยงาน —</option>
-            <option>ฝ่ายผลิต</option>
-            <option>ฝ่ายวิศวกรรม</option>
-            <option>ฝ่ายซ่อมบำรุง</option>
-          </select>
-          <span class="field-error">กรุณาเลือกหน่วยงาน</span>
-        </div>
+        <div class="field" id="f-name"><label>ชื่อ-นามสกุล *</label><input type="text" id="reporter-name" placeholder="ชื่อ"></div>
+        <div class="field" id="f-dept"><label>แผนก *</label><select id="dept"><option value="">เลือกแผนก</option><option>ฝ่ายผลิต</option><option>วิศวกรรม</option></select></div>
       </div>
     </div>
 
-    <!-- 02 -->
     <div class="section">
-      <div class="section-label">02 — สถานที่และเครื่องจักร</div>
+      <div class="section-label">02 — สถานที่</div>
       <div class="grid-2">
-        <div class="field" id="f-area">
-          <label>พื้นที่ / โซน <span>*</span></label>
-          <select id="area">
-            <option value="">— เลือกพื้นที่ —</option>
-            <option>โรงงาน A</option>
-            <option>โรงงาน B</option>
-            <option>คลังสินค้า</option>
-          </select>
-          <span class="field-error">กรุณาเลือกพื้นที่</span>
-        </div>
-        <div class="field">
-          <label>เครื่องจักร / อุปกรณ์</label>
-          <input type="text" id="machine" placeholder="เช่น Compressor #3">
-        </div>
+        <div class="field" id="f-area"><label>พื้นที่ *</label><select id="area"><option value="">เลือกพื้นที่</option><option>โรงงาน A</option><option>โรงงาน B</option></select></div>
+        <div class="field"><label>เครื่องจักร</label><input type="text" id="machine" placeholder="Compressor #1"></div>
       </div>
     </div>
 
-    <!-- 03 -->
     <div class="section">
-      <div class="section-label">03 — ประเภทความเสี่ยง</div>
+      <div class="section-label">03 — ความเสี่ยง</div>
       <div class="risk-grid">
-        <button type="button" class="risk-btn" data-val="ความปลอดภัย">⚠️<br>ความปลอดภัย</button>
-        <button type="button" class="risk-btn" data-val="ไฟไหม้">🔥<br>ไฟไหม้</button>
-        <button type="button" class="risk-btn" data-val="เครื่องจักร">⚙️<br>เครื่องจักร</button>
+        <button type="button" class="risk-btn" data-val="ความปลอดภัย">⚠️ ความปลอดภัย</button>
+        <button type="button" class="risk-btn" data-val="ไฟไหม้">🔥 ไฟไหม้</button>
+        <button type="button" class="risk-btn" data-val="เครื่องจักร">⚙️ เครื่องจักร</button>
       </div>
       <input type="hidden" id="riskType">
-      <div id="riskTypeError">กรุณาเลือกประเภทความเสี่ยง</div>
-      <div style="margin-top:16px;">
-        <label style="font-size:12px;color:var(--text2);">ระดับความรุนแรง <span style="color:var(--accent)">*</span></label>
+      <div style="margin-top:15px;">
+        <label style="font-size:12px; color:var(--text2);">ระดับความรุนแรง</label>
         <div class="severity-row">
-          <button type="button" class="sev-btn" data-val="ต่ำ"      data-cls="active-low" >🟢 ต่ำ</button>
-          <button type="button" class="sev-btn" data-val="ปานกลาง" data-cls="active-med" >🟡 ปานกลาง</button>
-          <button type="button" class="sev-btn" data-val="สูง"      data-cls="active-high">🟠 สูง</button>
-          <button type="button" class="sev-btn" data-val="วิกฤต"    data-cls="active-crit">🔴 วิกฤต</button>
+          <button type="button" class="sev-btn" data-val="ต่ำ" data-cls="active-low">🟢 ต่ำ</button>
+          <button type="button" class="sev-btn" data-val="ปานกลาง" data-cls="active-med">🟡 กลาง</button>
+          <button type="button" class="sev-btn" data-val="สูง" data-cls="active-high">🟠 สูง</button>
         </div>
-        <input type="hidden" id="severity">
+        <input type="hidden" id="severity" value="ปานกลาง">
       </div>
     </div>
 
-    <!-- 04 -->
     <div class="section">
-      <div class="section-label">04 — ภาพหลักฐาน</div>
+      <div class="section-label">04 — รูปภาพ</div>
       <div class="upload-zone">
         <input type="file" id="fileInput" accept="image/*" multiple>
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="1.5" style="margin-bottom:8px">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-        </svg>
-        <p style="color:var(--text2);font-size:13px;">แตะเพื่อเลือกภาพ</p>
-        <p style="color:var(--text2);font-size:11px;margin-top:4px;font-family:var(--mono);">สูงสุด 5 ภาพ • JPG, PNG</p>
+        <p>แตะเพื่อแนบรูป (สูงสุด 5 รูป)</p>
       </div>
       <div class="preview-grid" id="previewGrid"></div>
     </div>
 
-    <!-- 05 -->
     <div class="section">
-      <div class="section-label">05 — หมายเหตุเพิ่มเติม</div>
-      <div class="field">
-        <textarea id="note" placeholder="ระบุรายละเอียดเพิ่มเติม..."></textarea>
-      </div>
+      <div class="section-label">05 — หมายเหตุ</div>
+      <textarea id="note" placeholder="รายละเอียดเพิ่มเติม..."></textarea>
     </div>
 
-    <button type="submit" class="submit-btn" id="submitBtn">
-      <div class="spinner" id="spinner"></div>
-      <span id="submitText">📤 ส่งรายงาน</span>
-    </button>
+    <button type="submit" class="submit-btn" id="submitBtn">📤 ส่งรายงาน</button>
+
     <div class="progress-wrap" id="progressWrap">
       <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
       <p class="status-msg" id="statusMsg"></p>
@@ -196,34 +123,26 @@
   </form>
 </div>
 
-<!-- Success -->
 <div class="success-overlay" id="successOverlay">
   <div class="success-box">
-    <div style="font-size:48px;">✅</div>
-    <h2>ส่งรายงานสำเร็จ</h2>
-    <p id="successDetail">ข้อมูลถูกบันทึกเรียบร้อยแล้ว</p>
-    <button onclick="location.reload()">แจ้งเรื่องใหม่</button>
+    <h2>✅ บันทึกสำเร็จ</h2>
+    <p style="margin-top:10px;">ข้อมูลและรูปภาพของคุณถูกส่งแล้ว</p>
+    <button onclick="location.reload()" style="margin-top:20px; padding:10px 20px; background:var(--green); border:none; border-radius:5px; cursor:pointer;">แจ้งเรื่องใหม่</button>
   </div>
 </div>
 
 <script>
+// --- CONFIG (เปลี่ยนตรงนี้) ---
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkFw2GeZb8Gmn9sT7kdYNfZHKxo8JbXNi_DLUTAusqkgks3nKdBBJc7WVYvL7IUs03/exec';
 
-// ============================================================
-function updateClock() {
-  document.getElementById('datetime').textContent = new Date().toLocaleString('th-TH');
-}
-updateClock();
-setInterval(updateClock, 30000);
+function updateClock() { document.getElementById('datetime').textContent = new Date().toLocaleString('th-TH'); }
+updateClock(); setInterval(updateClock, 30000);
 
-// ============================================================
-// Risk / Severity buttons
-// ============================================================
 document.querySelectorAll('.risk-btn').forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll('.risk-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('riskType').value = btn.dataset.val;
-    document.getElementById('riskTypeError').style.display = 'none';
   };
 });
 
@@ -235,16 +154,10 @@ document.querySelectorAll('.sev-btn').forEach(btn => {
   };
 });
 
-// ============================================================
-// Image upload & preview
-// ============================================================
 let imageFiles = [];
-
-document.getElementById('fileInput').onchange = function(e) {
-  const slots = 5 - imageFiles.length;
-  Array.from(e.target.files).slice(0, slots).forEach(f => imageFiles.push(f));
+document.getElementById('fileInput').onchange = e => {
+  Array.from(e.target.files).slice(0, 5 - imageFiles.length).forEach(f => imageFiles.push(f));
   renderPreviews();
-  e.target.value = '';
 };
 
 function renderPreviews() {
@@ -256,522 +169,91 @@ function renderPreviews() {
     const img = document.createElement('img');
     img.src = URL.createObjectURL(file);
     const btn = document.createElement('button');
-    btn.className = 'remove-btn'; btn.type = 'button'; btn.innerHTML = '×';
+    btn.className = 'remove-btn'; btn.innerHTML = '×';
     btn.onclick = () => { imageFiles.splice(i, 1); renderPreviews(); };
     div.append(img, btn); grid.append(div);
   });
 }
 
-// ============================================================
-// Resize ภาพ → Blob (ลดขนาด payload)
-// ============================================================
-function resizeImage(file, maxPx = 1024, quality = 0.72) {
-  return new Promise(resolve => {
+async function resizeImage(file) {
+  return new Promise(res => {
     const img = new Image();
     img.onload = () => {
-      const scale = Math.min(1, maxPx / Math.max(img.width, img.height));
-      const c = document.createElement('canvas');
-      c.width  = Math.round(img.width  * scale);
-      c.height = Math.round(img.height * scale);
-      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-      c.toBlob(b => resolve(b), 'image/jpeg', quality);
-      URL.revokeObjectURL(img.src);
+      const canvas = document.createElement('canvas');
+      const MAX_WIDTH = 1024;
+      let width = img.width, height = img.height;
+      if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      res(canvas.toDataURL('image/jpeg', 0.7).split(',')[1]);
     };
     img.src = URL.createObjectURL(file);
   });
 }
 
-// File/Blob → base64 string (no prefix)
-function toBase64(blob) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload  = () => res(r.result.split(',')[1]);
-    r.onerror = rej;
-    r.readAsDataURL(blob);
-  });
-}
-
-// ============================================================
-// Validate
-// ============================================================
-function validate() {
-  let ok = true;
-  [['reporter-name','f-name', v => v.trim()!==''],
-   ['dept',         'f-dept', v => v!==''],
-   ['area',         'f-area', v => v!=='']
-  ].forEach(([id, fid, test]) => {
-    const el = document.getElementById(id);
-    const f  = document.getElementById(fid);
-    if (!test(el.value)) { f.classList.add('error'); ok = false; }
-    else f.classList.remove('error');
-  });
-  if (!document.getElementById('riskType').value) {
-    document.getElementById('riskTypeError').style.display = 'block';
-    ok = false;
-  }
-  return ok;
-}
-
-// ============================================================
-// Progress helpers
-// ============================================================
-function setProgress(pct, msg) {
-  document.getElementById('progressFill').style.width = pct + '%';
-  if (msg !== undefined) document.getElementById('statusMsg').textContent = msg;
-}
-
-// ============================================================
-// GET fetch — ส่งข้อมูลผ่าน query string (ไม่มี CORS preflight)
-// ============================================================
-async function gasGet(payload) {
-  const url = APPS_SCRIPT_URL + '?data=' + encodeURIComponent(JSON.stringify(payload));
-  const res  = await fetch(url);
-  return res.json();
-}
-
-// ============================================================
-// SUBMIT
-// ============================================================
-document.getElementById('riskForm').onsubmit = async function(e) {
+document.getElementById('riskForm').onsubmit = async e => {
   e.preventDefault();
-  if (!validate()) return;
+  if (!document.getElementById('reporter-name').value || !document.getElementById('riskType').value) {
+    alert('กรุณากรอกข้อมูลที่จำเป็น'); return;
+  }
 
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
-  document.getElementById('spinner').style.display = 'block';
-  document.getElementById('submitText').style.display = 'none';
   document.getElementById('progressWrap').style.display = 'block';
-  setProgress(5, 'กำลังเตรียมข้อมูล...');
+  const status = document.getElementById('statusMsg');
+  const fill = document.getElementById('progressFill');
 
   try {
-    // 1. Resize + encode images
-    const encoded = [];
-    for (let i = 0; i < imageFiles.length; i++) {
-      setProgress(5 + Math.round((i / (imageFiles.length || 1)) * 25),
-        `แปลงภาพ ${i+1}/${imageFiles.length}...`);
-      const blob = await resizeImage(imageFiles[i]);
-      const b64  = await toBase64(blob);
-      encoded.push({ data: b64, mimeType: 'image/jpeg', name: imageFiles[i].name || `img_${i}.jpg` });
-    }
+    // 1. ส่งฟอร์มก่อน
+    status.textContent = 'กำลังบันทึกข้อมูลฟอร์ม...';
+    fill.style.width = '20%';
+    const formData = {
+      action: 'saveForm',
+      reporter: document.getElementById('reporter-name').value,
+      dept: document.getElementById('dept').value,
+      area: document.getElementById('area').value,
+      machine: document.getElementById('machine').value,
+      riskType: document.getElementById('riskType').value,
+      severity: document.getElementById('severity').value,
+      note: document.getElementById('note').value,
+      imageCount: imageFiles.length
+    };
 
-    // 2. ส่งข้อมูลฟอร์ม → ได้ rowId กลับมา
-    setProgress(35, 'กำลังบันทึกข้อมูลฟอร์ม...');
-    const formResult = await gasGet({
-      action:     'saveForm',
-      timestamp:  new Date().toLocaleString('th-TH'),
-      reporter:   document.getElementById('reporter-name').value.trim(),
-      dept:       document.getElementById('dept').value,
-      area:       document.getElementById('area').value,
-      machine:    document.getElementById('machine').value.trim() || '-',
-      riskType:   document.getElementById('riskType').value,
-      severity:   document.getElementById('severity').value || '-',
-      note:       document.getElementById('note').value.trim() || '-',
-      imageCount: encoded.length
+    const resForm = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(formData)
     });
+    const resultForm = await resForm.json();
+    if (resultForm.status !== 'ok') throw new Error('บันทึกฟอร์มไม่สำเร็จ');
 
-    if (formResult.status !== 'ok') throw new Error(formResult.message || 'บันทึกฟอร์มล้มเหลว');
-    const rowId = formResult.rowId;
+    const rowId = resultForm.rowId;
 
-    // 3. ส่งภาพทีละใบพร้อม rowId
-    for (let i = 0; i < encoded.length; i++) {
-      setProgress(50 + Math.round(((i) / encoded.length) * 45),
-        `อัปโหลดภาพ ${i+1}/${encoded.length}...`);
-      const imgResult = await gasGet({
-        action:   'saveImage',
-        rowId:    rowId,
-        index:    i,
-        total:    encoded.length,
-        data:     encoded[i].data,
-        mimeType: encoded[i].mimeType,
-        name:     encoded[i].name
+    // 2. ส่งรูปทีละรูป
+    for (let i = 0; i < imageFiles.length; i++) {
+      status.textContent = `กำลังอัปโหลดรูปที่ ${i+1}/${imageFiles.length}...`;
+      fill.style.width = `${20 + ((i + 1) / imageFiles.length * 70)}%`;
+      
+      const base64 = await resizeImage(imageFiles[i]);
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'saveImage',
+          rowId: rowId,
+          data: base64,
+          mimeType: 'image/jpeg',
+          name: `img_${i}.jpg`
+        })
       });
-      if (imgResult.status !== 'ok') throw new Error(imgResult.message || `อัปโหลดภาพ ${i+1} ล้มเหลว`);
     }
 
-    setProgress(100, 'เสร็จสมบูรณ์ ✓');
-    document.getElementById('successDetail').textContent =
-      `บันทึกข้อมูลเรียบร้อย${encoded.length > 0 ? ` พร้อมภาพ ${encoded.length} ภาพ` : ''}`;
+    fill.style.width = '100%';
+    status.textContent = 'สำเร็จ!';
     document.getElementById('successOverlay').classList.add('show');
 
   } catch (err) {
-    console.error(err);
-    document.getElementById('statusMsg').style.color = 'var(--red)';
-    setProgress(0, '❌ ' + err.message);
+    alert('เกิดข้อผิดพลาด: ' + err.message);
     btn.disabled = false;
-    document.getElementById('spinner').style.display = 'none';
-    document.getElementById('submitText').style.display = 'block';
-  }
-};
-</script>
-</body>
-</html>
-  .risk-btn.active { border-color: var(--accent); background: rgba(255,92,58,0.1); color: var(--accent); }
-  .severity-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-  .sev-btn { padding: 8px 4px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface2); color: var(--text2); cursor: pointer; font-size: 11px; }
-  .sev-btn.active-low { border-color: var(--green); background: rgba(45,217,143,0.1); color: var(--green); }
-  .sev-btn.active-med { border-color: var(--yellow); background: rgba(255,184,48,0.1); color: var(--yellow); }
-  .sev-btn.active-high { border-color: var(--accent); background: rgba(255,92,58,0.1); color: var(--accent); }
-  .sev-btn.active-crit { border-color: var(--red); background: rgba(255,68,68,0.12); color: var(--red); }
-  .upload-zone { border: 1.5px dashed var(--border); border-radius: 8px; padding: 24px 16px; text-align: center; cursor: pointer; position: relative; }
-  .upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-  .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; margin-top: 12px; }
-  .preview-item { aspect-ratio: 1; border-radius: 7px; overflow: hidden; position: relative; border: 1px solid var(--border); }
-  .preview-item img { width: 100%; height: 100%; object-fit: cover; }
-  .preview-item .remove-btn { position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; background: rgba(0,0,0,0.7); border: none; border-radius: 50%; color: white; cursor: pointer; font-size: 14px; line-height: 1; }
-  .submit-btn { width: 100%; padding: 14px 20px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; }
-  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-  .progress-bar { width: 100%; height: 4px; background: var(--surface2); border-radius: 4px; margin-top: 10px; display: none; }
-  .progress-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 0.3s; width: 0%; }
-  .success-overlay { display: none; position: fixed; inset: 0; background: rgba(13,15,20,0.92); z-index: 100; align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(6px); }
-  .success-overlay.show { display: flex; }
-  .success-box { background: var(--surface); border: 1px solid var(--green); border-radius: 14px; padding: 32px 40px; text-align: center; max-width: 360px; }
-  .success-box button { margin-top: 20px; padding: 10px 24px; cursor: pointer; background: var(--green); border: none; border-radius: 7px; color: #000; font-weight: 600; font-size: 14px; }
-  .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .status-msg { font-size: 12px; color: var(--text2); font-family: var(--mono); margin-top: 8px; text-align: center; min-height: 18px; }
-  .field-error { font-size: 11px; color: var(--red); display: none; }
-  .field.error .field-error { display: block; }
-  .field.error input, .field.error select { border-color: var(--red); }
-</style>
-</head>
-<body>
-
-<div class="container">
-  <header class="header">
-    <div class="header-top">
-      <div class="logo-box">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-        </svg>
-      </div>
-      <div>
-        <h1>แจ้งจุดเสี่ยง</h1>
-        <p>RISK REPORTING SYSTEM v2.0</p>
-      </div>
-    </div>
-    <div class="status-bar">
-      <div class="status-dot"><span class="dot"></span> ระบบพร้อมใช้งาน</div>
-      <div id="datetime" style="font-size:11px; color:var(--text2);"></div>
-    </div>
-  </header>
-
-  <form id="riskForm" novalidate>
-
-    <!-- 01 ข้อมูลผู้แจ้ง -->
-    <div class="section">
-      <div class="section-label">01 — ข้อมูลผู้แจ้ง</div>
-      <div class="grid-2">
-        <div class="field" id="f-name">
-          <label>ชื่อ-นามสกุล <span>*</span></label>
-          <input type="text" id="reporter-name" placeholder="ระบุชื่อ">
-          <span class="field-error">กรุณากรอกชื่อ</span>
-        </div>
-        <div class="field" id="f-dept">
-          <label>หน่วยงาน / แผนก <span>*</span></label>
-          <select id="dept">
-            <option value="">— เลือกหน่วยงาน —</option>
-            <option>ฝ่ายผลิต</option>
-            <option>ฝ่ายวิศวกรรม</option>
-            <option>ฝ่ายซ่อมบำรุง</option>
-          </select>
-          <span class="field-error">กรุณาเลือกหน่วยงาน</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 02 สถานที่ -->
-    <div class="section">
-      <div class="section-label">02 — สถานที่และเครื่องจักร</div>
-      <div class="grid-2">
-        <div class="field" id="f-area">
-          <label>พื้นที่ / โซน <span>*</span></label>
-          <select id="area">
-            <option value="">— เลือกพื้นที่ —</option>
-            <option>โรงงาน A</option>
-            <option>โรงงาน B</option>
-            <option>คลังสินค้า</option>
-          </select>
-          <span class="field-error">กรุณาเลือกพื้นที่</span>
-        </div>
-        <div class="field">
-          <label>เครื่องจักร / อุปกรณ์</label>
-          <input type="text" id="machine" placeholder="เช่น Compressor #3">
-        </div>
-      </div>
-    </div>
-
-    <!-- 03 ประเภทความเสี่ยง -->
-    <div class="section">
-      <div class="section-label">03 — ประเภทความเสี่ยง</div>
-      <div class="risk-grid">
-        <button type="button" class="risk-btn" data-val="ความปลอดภัย">⚠️<br>ความปลอดภัย</button>
-        <button type="button" class="risk-btn" data-val="ไฟไหม้">🔥<br>ไฟไหม้</button>
-        <button type="button" class="risk-btn" data-val="เครื่องจักร">⚙️<br>เครื่องจักร</button>
-      </div>
-      <input type="hidden" id="riskType">
-      <span id="riskTypeError" class="field-error" style="display:none;">กรุณาเลือกประเภทความเสี่ยง</span>
-
-      <div style="margin-top:14px;">
-        <label style="font-size:12px; color:var(--text2);">ระดับความรุนแรง <span style="color:var(--accent)">*</span></label>
-        <div class="severity-row" style="margin-top:8px;">
-          <button type="button" class="sev-btn" data-val="ต่ำ" data-cls="active-low">🟢 ต่ำ</button>
-          <button type="button" class="sev-btn" data-val="ปานกลาง" data-cls="active-med">🟡 ปานกลาง</button>
-          <button type="button" class="sev-btn" data-val="สูง" data-cls="active-high">🟠 สูง</button>
-          <button type="button" class="sev-btn" data-val="วิกฤต" data-cls="active-crit">🔴 วิกฤต</button>
-        </div>
-        <input type="hidden" id="severity">
-      </div>
-    </div>
-
-    <!-- 04 ภาพหลักฐาน -->
-    <div class="section">
-      <div class="section-label">04 — ภาพหลักฐาน</div>
-      <div class="upload-zone" id="uploadZone">
-        <input type="file" id="fileInput" accept="image/*" multiple>
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="1.5" style="margin-bottom:8px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <p style="color:var(--text2); font-size:13px;">แตะเพื่อเลือกภาพ</p>
-        <p style="color:var(--text2); font-size:11px; margin-top:4px; font-family:var(--mono);">สูงสุด 5 ภาพ • JPG, PNG</p>
-      </div>
-      <div class="preview-grid" id="previewGrid"></div>
-    </div>
-
-    <!-- 05 หมายเหตุ -->
-    <div class="section">
-      <div class="section-label">05 — หมายเหตุเพิ่มเติม</div>
-      <div class="field">
-        <textarea id="note" placeholder="ระบุรายละเอียดเพิ่มเติม..."></textarea>
-      </div>
-    </div>
-
-    <button type="submit" class="submit-btn" id="submitBtn">
-      <div class="spinner" id="spinner"></div>
-      <span id="submitText">📤 ส่งรายงาน</span>
-    </button>
-    <div class="progress-bar" id="progressBar">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
-    <p class="status-msg" id="statusMsg"></p>
-
-  </form>
-</div>
-
-<!-- Success Overlay -->
-<div class="success-overlay" id="successOverlay">
-  <div class="success-box">
-    <div style="font-size:48px; margin-bottom:12px;">✅</div>
-    <h2 style="color:var(--green); margin-bottom:8px;">ส่งรายงานสำเร็จ</h2>
-    <p style="color:var(--text2); font-size:13px;" id="successDetail">ข้อมูลและรูปภาพถูกบันทึกแล้ว</p>
-    <button onclick="location.reload()">แจ้งเรื่องใหม่</button>
-  </div>
-</div>
-
-<script>
-// =============================================
-// CONFIG — เปลี่ยน URL ตรงนี้อย่างเดียว
-// =============================================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw5bhdAdDF28Ga2uSWVoy90j9KGc3brXzcSm35VWNiPEn_r2U5dPB2z1JnF3jwccvEc/exec';
-
-// =============================================
-// Clock
-// =============================================
-function updateClock() {
-  document.getElementById('datetime').textContent = new Date().toLocaleString('th-TH');
-}
-updateClock();
-setInterval(updateClock, 30000);
-
-// =============================================
-// Risk Type Buttons
-// =============================================
-document.querySelectorAll('.risk-btn').forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll('.risk-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('riskType').value = btn.dataset.val;
-    document.getElementById('riskTypeError').style.display = 'none';
-  };
-});
-
-// =============================================
-// Severity Buttons
-// =============================================
-document.querySelectorAll('.sev-btn').forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll('.sev-btn').forEach(b => b.className = 'sev-btn');
-    btn.classList.add(btn.dataset.cls);
-    document.getElementById('severity').value = btn.dataset.val;
-  };
-});
-
-// =============================================
-// Image Upload & Preview
-// =============================================
-let imageFiles = [];
-
-document.getElementById('fileInput').onchange = function(e) {
-  const files = Array.from(e.target.files);
-  const remaining = 5 - imageFiles.length;
-  files.slice(0, remaining).forEach(file => {
-    imageFiles.push(file);
-  });
-  renderPreviews();
-  e.target.value = ''; // reset input so same file can be re-added
-};
-
-function renderPreviews() {
-  const grid = document.getElementById('previewGrid');
-  grid.innerHTML = '';
-  imageFiles.forEach((file, i) => {
-    const div = document.createElement('div');
-    div.className = 'preview-item';
-    const img = document.createElement('img');
-    img.src = URL.createObjectURL(file);
-    const btn = document.createElement('button');
-    btn.className = 'remove-btn';
-    btn.innerHTML = '×';
-    btn.type = 'button';
-    btn.onclick = () => { imageFiles.splice(i, 1); renderPreviews(); };
-    div.append(img, btn);
-    grid.append(div);
-  });
-}
-
-// =============================================
-// Convert File to Base64
-// =============================================
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      // reader.result = "data:image/jpeg;base64,/9j/4AAQ..."
-      // เอาแค่ส่วน base64 หลัง comma
-      const base64 = reader.result.split(',')[1];
-      resolve(base64);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-// =============================================
-// Validate Form
-// =============================================
-function validate() {
-  let ok = true;
-
-  const name = document.getElementById('reporter-name').value.trim();
-  const fName = document.getElementById('f-name');
-  if (!name) { fName.classList.add('error'); ok = false; }
-  else { fName.classList.remove('error'); }
-
-  const dept = document.getElementById('dept').value;
-  const fDept = document.getElementById('f-dept');
-  if (!dept) { fDept.classList.add('error'); ok = false; }
-  else { fDept.classList.remove('error'); }
-
-  const area = document.getElementById('area').value;
-  const fArea = document.getElementById('f-area');
-  if (!area) { fArea.classList.add('error'); ok = false; }
-  else { fArea.classList.remove('error'); }
-
-  const riskType = document.getElementById('riskType').value;
-  if (!riskType) {
-    document.getElementById('riskTypeError').style.display = 'block';
-    ok = false;
-  }
-
-  return ok;
-}
-
-// =============================================
-// Submit
-// =============================================
-document.getElementById('riskForm').onsubmit = async function(e) {
-  e.preventDefault();
-
-  if (!validate()) return;
-
-  const btn = document.getElementById('submitBtn');
-  const spinner = document.getElementById('spinner');
-  const submitText = document.getElementById('submitText');
-  const progressBar = document.getElementById('progressBar');
-  const progressFill = document.getElementById('progressFill');
-  const statusMsg = document.getElementById('statusMsg');
-
-  btn.disabled = true;
-  spinner.style.display = 'block';
-  submitText.style.display = 'none';
-  progressBar.style.display = 'block';
-  progressFill.style.width = '10%';
-  statusMsg.textContent = 'กำลังเตรียมข้อมูล...';
-
-  try {
-    // --- แปลงภาพเป็น Base64 ทั้งหมด ---
-    statusMsg.textContent = `กำลังแปลงภาพ (${imageFiles.length} ภาพ)...`;
-    progressFill.style.width = '30%';
-
-    const imagesBase64 = [];
-    for (let i = 0; i < imageFiles.length; i++) {
-      const file = imageFiles[i];
-      const b64 = await fileToBase64(file);
-      imagesBase64.push({
-        data: b64,
-        name: file.name || ('image_' + i + '.jpg'),
-        mimeType: file.type || 'image/jpeg'
-      });
-    }
-
-    progressFill.style.width = '60%';
-    statusMsg.textContent = 'กำลังส่งข้อมูล...';
-
-    // --- สร้าง payload ---
-    const payload = {
-      timestamp: new Date().toLocaleString('th-TH'),
-      reporter: document.getElementById('reporter-name').value.trim(),
-      dept: document.getElementById('dept').value,
-      area: document.getElementById('area').value,
-      machine: document.getElementById('machine').value.trim() || '-',
-      riskType: document.getElementById('riskType').value,
-      severity: document.getElementById('severity').value || '-',
-      note: document.getElementById('note').value.trim() || '-',
-      images: imagesBase64
-    };
-
-    // --- ส่งแบบ URL-encoded (หลีกเลี่ยง CORS preflight) ---
-    const body = 'data=' + encodeURIComponent(JSON.stringify(payload));
-
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: body
-    });
-
-    progressFill.style.width = '90%';
-
-    const result = await response.json();
-
-    progressFill.style.width = '100%';
-
-    if (result.status === 'ok') {
-      const imgCount = imagesBase64.length;
-      document.getElementById('successDetail').textContent =
-        `บันทึกข้อมูลเรียบร้อย${imgCount > 0 ? ` พร้อมภาพ ${imgCount} ภาพ` : ''}`;
-      document.getElementById('successOverlay').classList.add('show');
-    } else {
-      throw new Error(result.message || 'Apps Script ตอบกลับ error');
-    }
-
-  } catch (err) {
-    console.error('Submit error:', err);
-    statusMsg.textContent = '❌ เกิดข้อผิดพลาด: ' + err.message;
-    statusMsg.style.color = 'var(--red)';
-    btn.disabled = false;
-    spinner.style.display = 'none';
-    submitText.style.display = 'block';
-    progressBar.style.display = 'none';
+    document.getElementById('progressWrap').style.display = 'none';
   }
 };
 </script>
