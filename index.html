@@ -48,7 +48,6 @@ body{
 .container{
 
   width:100%;
-
   max-width:720px;
 
   background:
@@ -109,7 +108,6 @@ textarea{
 textarea{
 
   min-height:120px;
-
   resize:vertical;
 }
 
@@ -158,7 +156,6 @@ button:disabled{
 .preview img{
 
   width:100px;
-
   height:100px;
 
   object-fit:cover;
@@ -282,7 +279,6 @@ const API_URL =
 "https://script.google.com/macros/s/AKfycbzp1gpiHeRqhtLFB5FUkhsvp4Vb7loVU2FkZ9mtv3FdB8s68LoE54sx5aEz4SE8bbQM/exec";
 
 let masterData = {};
-
 let selectedEmpId = "";
 
 /**
@@ -314,9 +310,7 @@ async function loadMasterData(){
     masterData = data;
 
     loadDepartments();
-
     loadRiskTypes();
-
     loadRiskLevels();
 
   } catch(err){
@@ -331,7 +325,7 @@ async function loadMasterData(){
 
 /**
  * =====================================
- * DEPARTMENT
+ * LOAD DEPARTMENT
  * =====================================
  */
 function loadDepartments(){
@@ -348,10 +342,9 @@ function loadDepartments(){
     .forEach(d=>{
 
       dept.innerHTML +=
-
-        `<option value="${d}">
-          ${d}
-        </option>`;
+      `<option value="${d}">
+        ${d}
+      </option>`;
     });
 
   dept.addEventListener(
@@ -362,7 +355,7 @@ function loadDepartments(){
 
 /**
  * =====================================
- * EMPLOYEE
+ * LOAD EMPLOYEE
  * =====================================
  */
 function loadEmployees(){
@@ -382,40 +375,34 @@ function loadEmployees(){
 
   const filtered =
     masterData.staffs.filter(
-
       s=>s.department===dept
-
     );
 
   filtered.forEach(s=>{
 
-    emp.innerHTML += `
-
+    emp.innerHTML +=
+    `
       <option
         value="${s.name}"
         data-id="${s.empId}"
       >
         ${s.name}
       </option>
-
     `;
   });
 
-  emp.addEventListener(
-    "change",
-    ()=>{
+  emp.onchange = ()=>{
 
-      const selected =
-        emp.options[
-          emp.selectedIndex
-        ];
+    const selected =
+      emp.options[
+        emp.selectedIndex
+      ];
 
-      selectedEmpId =
-        selected.getAttribute(
-          "data-id"
-        );
-    }
-  );
+    selectedEmpId =
+      selected.getAttribute(
+        "data-id"
+      );
+  };
 }
 
 /**
@@ -437,10 +424,9 @@ function loadRiskTypes(){
     .forEach(r=>{
 
       risk.innerHTML +=
-
-        `<option value="${r}">
-          ${r}
-        </option>`;
+      `<option value="${r}">
+        ${r}
+      </option>`;
     });
 }
 
@@ -463,16 +449,15 @@ function loadRiskLevels(){
     .forEach(r=>{
 
       risk.innerHTML +=
-
-        `<option value="${r}">
-          ${r}
-        </option>`;
+      `<option value="${r}">
+        ${r}
+      </option>`;
     });
 }
 
 /**
  * =====================================
- * PREVIEW IMAGE
+ * IMAGE PREVIEW
  * =====================================
  */
 document
@@ -522,27 +507,22 @@ function generateImageId(){
   const now = new Date();
 
   const hh =
-    String(
-      now.getHours()
-    ).padStart(2,'0');
+    String(now.getHours())
+    .padStart(2,'0');
 
   const mi =
-    String(
-      now.getMinutes()
-    ).padStart(2,'0');
+    String(now.getMinutes())
+    .padStart(2,'0');
 
   const dd =
-    String(
-      now.getDate()
-    ).padStart(2,'0');
+    String(now.getDate())
+    .padStart(2,'0');
 
   const yy =
-    String(
-      now.getFullYear()
-    ).slice(-2);
+    String(now.getFullYear())
+    .slice(-2);
 
   return (
-
     selectedEmpId +
     hh +
     mi +
@@ -585,8 +565,7 @@ async function compressImage(file){
       let height =
         img.height;
 
-      const maxWidth =
-        1600;
+      const maxWidth = 1600;
 
       if(width > maxWidth){
 
@@ -596,17 +575,13 @@ async function compressImage(file){
         width = maxWidth;
       }
 
-      canvas.width =
-        width;
-
-      canvas.height =
-        height;
+      canvas.width = width;
+      canvas.height = height;
 
       const ctx =
         canvas.getContext("2d");
 
       ctx.drawImage(
-
         img,
         0,
         0,
@@ -640,7 +615,6 @@ function blobToBase64(blob){
     reader.onloadend = ()=>{
 
       resolve(
-
         reader.result
         .split(',')[1]
       );
@@ -659,71 +633,23 @@ function validateForm(){
 
   const errors = [];
 
-  if(
-    !document
-    .getElementById(
-      "department"
-    ).value
-  ){
-    errors.push(
-      "กรุณาเลือกหน่วยงาน"
-    );
-  }
+  if(!department.value)
+    errors.push("กรุณาเลือกหน่วยงาน");
 
-  if(
-    !document
-    .getElementById(
-      "employee"
-    ).value
-  ){
-    errors.push(
-      "กรุณาเลือกพนักงาน"
-    );
-  }
+  if(!employee.value)
+    errors.push("กรุณาเลือกพนักงาน");
 
-  if(
-    !document
-    .getElementById(
-      "locationText"
-    ).value
-  ){
-    errors.push(
-      "กรุณากรอกจุดเสี่ยง"
-    );
-  }
+  if(!locationText.value)
+    errors.push("กรุณากรอกจุดเสี่ยง");
 
-  if(
-    !document
-    .getElementById(
-      "riskType"
-    ).value
-  ){
-    errors.push(
-      "กรุณาเลือกประเภท"
-    );
-  }
+  if(!riskType.value)
+    errors.push("กรุณาเลือกประเภท");
 
-  if(
-    !document
-    .getElementById(
-      "riskLevel"
-    ).value
-  ){
-    errors.push(
-      "กรุณาเลือกระดับ"
-    );
-  }
+  if(!riskLevel.value)
+    errors.push("กรุณาเลือกระดับ");
 
-  if(
-    document
-    .getElementById(
-      "images"
-    ).files.length === 0
-  ){
-    errors.push(
-      "กรุณาแนบรูปภาพ"
-    );
-  }
+  if(images.files.length===0)
+    errors.push("กรุณาแนบรูป");
 
   return errors;
 }
@@ -733,9 +659,7 @@ function validateForm(){
  * SUBMIT
  * =====================================
  */
-document
-.getElementById("submitBtn")
-.addEventListener(
+submitBtn.addEventListener(
   "click",
   submitForm
 );
@@ -747,10 +671,7 @@ async function submitForm(){
 
   if(errors.length > 0){
 
-    alert(
-      errors.join("\n")
-    );
-
+    alert(errors.join("\n"));
     return;
   }
 
@@ -759,29 +680,21 @@ async function submitForm(){
       "status"
     );
 
-  const btn =
-    document.getElementById(
-      "submitBtn"
-    );
-
-  btn.disabled = true;
+  submitBtn.disabled = true;
 
   try {
 
     status.innerHTML =
       "กำลังบันทึกข้อมูล...";
 
-    const images =
-      document
-      .getElementById(
-        "images"
-      ).files;
+    const imageFiles =
+      images.files;
 
     const imageId =
       generateImageId();
 
     /**
-     * STEP 1
+     * SAVE FORM
      */
     const saveResponse =
       await fetch(API_URL,{
@@ -793,43 +706,25 @@ async function submitForm(){
           action:"saveForm",
 
           reporter:
-            document
-            .getElementById(
-              "employee"
-            ).value,
+            employee.value,
 
           department:
-            document
-            .getElementById(
-              "department"
-            ).value,
+            department.value,
 
           location:
-            document
-            .getElementById(
-              "locationText"
-            ).value,
+            locationText.value,
 
           riskType:
-            document
-            .getElementById(
-              "riskType"
-            ).value,
+            riskType.value,
 
           riskLevel:
-            document
-            .getElementById(
-              "riskLevel"
-            ).value,
+            riskLevel.value,
 
           note:
-            document
-            .getElementById(
-              "note"
-            ).value,
+            note.value,
 
           totalImages:
-            images.length,
+            imageFiles.length,
 
           imageId
         })
@@ -846,28 +741,29 @@ async function submitForm(){
     }
 
     /**
-     * STEP 2
-     * Upload Images
+     * UPLOAD IMAGE
      */
-    for(let i=0;i<images.length;i++){
+    for(let i=0;i<imageFiles.length;i++){
 
       status.innerHTML =
-
-        `กำลังอัปโหลดรูป ${
-          i+1
-        } / ${
-          images.length
-        }`;
+      `กำลังอัปโหลดรูป ${
+        i+1
+      } / ${
+        imageFiles.length
+      }`;
 
       const compressed =
         await compressImage(
-          images[i]
+          imageFiles[i]
         );
 
       const base64 =
         await blobToBase64(
           compressed
         );
+
+      const imageFileId =
+        imageId + "_" + (i+1);
 
       const uploadResponse =
         await fetch(API_URL,{
@@ -880,24 +776,32 @@ async function submitForm(){
 
             base64,
 
-            mimeType:
-              "image/jpeg",
-
             rowNumber:
               saveResult.rowNumber,
 
-            imageId
+            imageId:
+              imageFileId
           })
         });
 
+      /**
+       * เช็ค HTTP
+       */
+      if(!uploadResponse.ok){
+
+        throw new Error(
+          "HTTP Upload Error"
+        );
+      }
+
       const uploadResult =
-        await uploadResponse
-        .json();
+        await uploadResponse.json();
 
       if(!uploadResult.success){
 
         throw new Error(
-          "อัปโหลดรูปไม่สำเร็จ"
+          uploadResult.error ||
+          "Upload Failed"
         );
       }
     }
@@ -905,11 +809,11 @@ async function submitForm(){
     status.innerHTML =
       "✅ บันทึกข้อมูลสำเร็จ";
 
-    setTimeout(()=>{
+    alert(
+      "บันทึกข้อมูลสำเร็จ"
+    );
 
-      location.reload();
-
-    },1200);
+    location.reload();
 
   } catch(err){
 
@@ -918,9 +822,14 @@ async function submitForm(){
     status.innerHTML =
       "❌ " + err.message;
 
+    alert(
+      "เกิดข้อผิดพลาด\n" +
+      err.message
+    );
+
   } finally {
 
-    btn.disabled = false;
+    submitBtn.disabled = false;
   }
 }
 
