@@ -147,7 +147,12 @@
       note: document.getElementById('note').value || '-',
       imageCount: imageFiles.length
     };
-
+    // ตรวจสอบส่วนนี้ในไฟล์ index.html ของคุณ
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(payload));
+    imageFiles.forEach((f, i) => {
+      formData.append('image_' + i, f.blob); // ส่ง f.blob โดยตรง
+    });
     const formData = new FormData();
     formData.append('data', JSON.stringify(payload));
     imageFiles.forEach((file, i) => {
@@ -157,7 +162,7 @@
     try {
       const response = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        body: formData
+        body: formData // ห้ามมี mode: 'no-cors'
       });
       const result = await response.json();
       if (result.status === 'ok') {
