@@ -56,297 +56,123 @@
         }
 
         /* ============ HOME PAGE ============ */
-        .home-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px 0 36px;
-            gap: 0;
-        }
-        .helmet-wrap {
-            position: relative;
-            width: 130px;
-            height: 130px;
-            margin-bottom: 20px;
-        }
+        .home-header { display: flex; flex-direction: column; align-items: center; padding: 10px 0 36px; gap: 0; }
+        .helmet-wrap { position: relative; width: 130px; height: 130px; margin-bottom: 20px; }
         .helmet-wrap svg { width: 130px; height: 130px; filter: drop-shadow(0 4px 18px rgba(0,212,170,0.4)); }
-        
-        .home-title {
-            text-align: center;
-            margin-top: 8px;
-        }
-        .home-title h1 {
-            font-size: 2.2rem; /* ขยายขนาดใหญ่ขึ้น */
-            font-weight: 700;
-            color: var(--clr-accent);
-            line-height: 1.4;
-            letter-spacing: 0.2px;
-        }
-        .home-title p {
-            font-size: 1.2rem; /* ขยายขนาดใหญ่ขึ้น */
-            color: var(--clr-muted);
-            margin-top: 5px;
-        }
-        .home-divider {
-            width: 80px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--clr-accent), var(--clr-accent2));
-            border-radius: 99px;
-            margin: 20px auto 0;
-        }
-        .home-btns {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-top: 36px;
-        }
+        .home-title { text-align: center; margin-top: 8px; }
+        .home-title h1 { font-size: 2.2rem; font-weight: 700; color: var(--clr-accent); line-height: 1.4; letter-spacing: 0.2px; }
+        .home-title p { font-size: 1.2rem; color: var(--clr-muted); margin-top: 5px; }
+        .home-divider { width: 80px; height: 4px; background: linear-gradient(90deg, var(--clr-accent), var(--clr-accent2)); border-radius: 99px; margin: 20px auto 0; }
+        .home-btns { display: flex; flex-direction: column; gap: 16px; margin-top: 36px; }
 
         /* ============ PAGE HEADER ============ */
-        .page-header {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            margin-bottom: 32px;
-        }
+        .page-header { display: flex; align-items: center; gap: 18px; margin-bottom: 32px; }
         .page-header-icon {
-            width: 54px; height: 54px;
-            background: linear-gradient(135deg, var(--clr-accent), var(--clr-accent2));
-            border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem;
-            flex-shrink: 0;
+            width: 54px; height: 54px; background: linear-gradient(135deg, var(--clr-accent), var(--clr-accent2));
+            border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0;
         }
-        .page-header h2 {
-            font-size: 1.7rem; /* ขยายขนาดใหญ่ขึ้น */
-            font-weight: 700;
-            color: var(--clr-text);
-        }
-        .page-header p {
-            font-size: 1.1rem; /* ขยายขนาดใหญ่ขึ้น */
-            color: var(--clr-muted);
-            margin-top: 4px;
-        }
+        .page-header h2 { font-size: 1.7rem; font-weight: 700; color: var(--clr-text); }
+        .page-header p { font-size: 1.1rem; color: var(--clr-muted); margin-top: 4px; }
 
         /* ============ FORM ============ */
         .form-group { margin-bottom: 22px; }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 1.1rem; /* ขยายขนาดใหญ่ขึ้น */
-            font-weight: 600;
-            color: var(--clr-accent);
-            letter-spacing: 0.2px;
-        }
+        label { display: block; margin-bottom: 8px; font-size: 1.1rem; font-weight: 600; color: var(--clr-accent); letter-spacing: 0.2px; }
         input, select, textarea {
-            width: 100%;
-            padding: 15px 18px;
-            border: 1.5px solid var(--clr-border);
-            border-radius: var(--radius-sm);
-            font-size: 1.1rem; /* ขยายขนาดใหญ่ขึ้น */
-            font-family: inherit;
-            background: rgba(255,255,255,0.07);
-            color: var(--clr-text);
-            outline: none;
-            transition: border-color 0.2s, background 0.2s;
+            width: 100%; padding: 15px 18px; border: 1.5px solid var(--clr-border); border-radius: var(--radius-sm);
+            font-size: 1.1rem; font-family: inherit; background: rgba(255,255,255,0.07); color: var(--clr-text); outline: none; transition: border-color 0.2s, background 0.2s;
         }
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--clr-accent);
-            background: rgba(0,212,170,0.07);
-        }
+        input:focus, select:focus, textarea:focus { border-color: var(--clr-accent); background: rgba(0,212,170,0.07); }
         select option { background: #0d1b2e; color: var(--clr-text); font-size: 1.1rem;}
         textarea { resize: vertical; min-height: 100px; }
-        input[type="file"] {
-            padding: 12px 14px;
-            cursor: pointer;
-            font-size: 1rem;
-            color: var(--clr-muted);
-        }
+        input[type="file"] { padding: 12px 14px; cursor: pointer; font-size: 1rem; color: var(--clr-muted); }
 
         /* ============ BUTTONS ============ */
         button {
-            width: 100%;
-            padding: 18px;
-            border: none;
-            border-radius: 14px;
-            font-size: 1.25rem; /* ขยายขนาดใหญ่ขึ้น */
-            font-weight: 600;
-            font-family: inherit;
-            cursor: pointer;
-            color: white;
-            transition: all 0.22s ease;
-            margin-bottom: 14px;
-            letter-spacing: 0.3px;
+            width: 100%; padding: 18px; border: none; border-radius: 14px; font-size: 1.25rem; font-weight: 600;
+            font-family: inherit; cursor: pointer; color: white; transition: all 0.22s ease; margin-bottom: 14px; letter-spacing: 0.3px;
         }
-        .btn-primary {
-            background: linear-gradient(100deg, #00d4aa, #0ea5e9);
-            box-shadow: 0 4px 18px rgba(0,212,170,0.3);
-            color: #041224;
-            font-weight: 700;
-        }
+        .btn-primary { background: linear-gradient(100deg, #00d4aa, #0ea5e9); box-shadow: 0 4px 18px rgba(0,212,170,0.3); color: #041224; font-weight: 700; }
         .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,212,170,0.45); }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-secondary {
-            background: rgba(255,255,255,0.07);
-            border: 1.5px solid rgba(255,255,255,0.18);
-            color: var(--clr-text);
-        }
+        .btn-secondary { background: rgba(255,255,255,0.07); border: 1.5px solid rgba(255,255,255,0.18); color: var(--clr-text); }
         .btn-secondary:hover { background: rgba(255,255,255,0.13); }
-        .btn-danger {
-            background: rgba(239,68,68,0.15);
-            border: 1.5px solid rgba(239,68,68,0.35);
-            color: #fca5a5;
-        }
+        .btn-danger { background: rgba(239,68,68,0.15); border: 1.5px solid rgba(239,68,68,0.35); color: #fca5a5; }
         .btn-danger:hover { background: rgba(239,68,68,0.25); }
 
-        /* ============ IMAGE PREVIEW ============ */
         .preview { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
-        .preview img {
-            width: 90px; height: 90px;
-            object-fit: cover;
-            border-radius: 10px;
-            border: 2px solid var(--clr-accent);
-            box-shadow: 0 2px 10px rgba(0,212,170,0.25);
-        }
+        .preview img { width: 90px; height: 90px; object-fit: cover; border-radius: 10px; border: 2px solid var(--clr-accent); }
 
         /* ============ DASHBOARD ============ */
-        .filter-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 26px;
-        }
-        .filter-grid label { font-size: 1.05rem; } /* ขยายขนาดใหญ่ขึ้น */
-        .kpi-cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* ปรับเป็นแบบ 2x2 ให้กล่องใหญ่ขึ้น */
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        .kpi-card {
-            background: rgba(0,0,0,0.25);
-            border: 1px solid var(--clr-border);
-            padding: 22px 16px;
-            border-radius: 18px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .kpi-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--clr-accent), var(--clr-accent2));
-            border-radius: 99px;
-        }
+        .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 26px; }
+        .filter-grid label { font-size: 1.05rem; }
+        .kpi-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+        .kpi-card { background: rgba(0,0,0,0.25); border: 1px solid var(--clr-border); padding: 22px 16px; border-radius: 18px; text-align: center; position: relative; overflow: hidden; }
+        .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--clr-accent), var(--clr-accent2)); border-radius: 99px; }
         .kpi-title { font-size: 1.05rem; color: var(--clr-muted); margin-bottom: 8px; font-weight: 500; }
         .kpi-value { font-size: 2.4rem; font-weight: 700; color: #fff; }
 
-        .view-toggle {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 14px;
-            padding: 6px;
-        }
-        .toggle-btn {
-            flex: 1;
-            padding: 14px;
-            border-radius: 10px;
-            background: transparent;
-            border: none;
-            color: var(--clr-muted);
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1.1rem; /* ขยายขนาดใหญ่ขึ้น */
-            transition: all 0.22s;
-            margin-bottom: 0;
-        }
-        .toggle-btn.active {
-            background: linear-gradient(100deg, var(--clr-accent), var(--clr-accent2));
-            color: #041224;
-        }
+        .view-toggle { display: flex; gap: 12px; margin-bottom: 24px; background: rgba(0,0,0,0.2); border-radius: 14px; padding: 6px; }
+        .toggle-btn { flex: 1; padding: 14px; border-radius: 10px; background: transparent; border: none; color: var(--clr-muted); cursor: pointer; font-weight: 600; font-size: 1.1rem; transition: all 0.22s; margin-bottom: 0; }
+        .toggle-btn.active { background: linear-gradient(100deg, var(--clr-accent), var(--clr-accent2)); color: #041224; }
         .dash-section { display: none; animation: fadeSlide 0.3s; }
         .dash-section.active { display: block; }
-
-        .chart-container {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--clr-border);
-            border-radius: 18px;
-            padding: 24px 18px;
-        }
+        .chart-container { background: rgba(255,255,255,0.03); border: 1px solid var(--clr-border); border-radius: 18px; padding: 24px 18px; }
 
         /* ============ TABLE ============ */
-        .table-container {
-            background: #ffffff;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-        }
-        table { width: 100%; border-collapse: collapse; color: #1a2332; font-size: 1.1rem; } /* ขยายขนาดใหญ่ขึ้น */
+        .table-container { background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+        table { width: 100%; border-collapse: collapse; color: #1a2332; font-size: 1.1rem; }
         th, td { padding: 16px 18px; text-align: left; border-bottom: 1px solid #e8edf5; }
-        th {
-            background: linear-gradient(90deg, #0f4c81, #1a6394);
-            color: white;
-            font-weight: 600;
-            font-size: 1.05rem; /* ขยายขนาดใหญ่ขึ้น */
-            letter-spacing: 0.3px;
-        }
+        th { background: linear-gradient(90deg, #0f4c81, #1a6394); color: white; font-weight: 600; font-size: 1.05rem; }
         tr:hover td { background: #f0f7ff; }
-        .text-pass {
-            color: #15803d;
-            font-weight: 700;
-            background: rgba(21,128,61,0.1);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 1rem;
+        .text-pass { color: #15803d; font-weight: 700; background: rgba(21,128,61,0.1); padding: 4px 12px; border-radius: 20px; font-size: 1rem; }
+        .text-fail { color: #b45309; font-weight: 700; background: rgba(180,83,9,0.1); padding: 4px 12px; border-radius: 20px; font-size: 1rem; }
+
+        /* ============ MODAL (ดูข้อมูลภาพ) ============ */
+        #caseModal {
+            display: none; position: fixed; inset: 0;
+            background: rgba(6,13,26,0.85); backdrop-filter: blur(8px);
+            z-index: 10000; justify-content: center; align-items: center; padding: 20px;
         }
-        .text-fail {
-            color: #b45309;
-            font-weight: 700;
-            background: rgba(180,83,9,0.1);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 1rem;
+        #caseModal.show { display: flex; animation: fadeSlide 0.3s; }
+        .modal-content {
+            background: linear-gradient(145deg, #0d2240, #0a1929); border: 1px solid var(--clr-border);
+            border-radius: 24px; padding: 30px; width: 100%; max-width: 750px;
+            max-height: 85vh; overflow-y: auto; box-shadow: var(--shadow); position: relative;
         }
+        .close-modal {
+            position: absolute; top: 20px; right: 24px; background: rgba(255,255,255,0.1); border: none; color: white;
+            font-size: 1.5rem; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0; padding: 0;
+        }
+        .close-modal:hover { background: var(--clr-red); }
+        
+        .case-card {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; padding: 20px; margin-bottom: 16px;
+        }
+        .case-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; }
+        .case-header h4 { color: var(--clr-accent); font-size: 1.2rem; margin: 0; }
+        .case-date { color: var(--clr-muted); font-size: 1rem; }
+        .case-detail { color: var(--clr-text); font-size: 1.05rem; margin-bottom: 8px; line-height: 1.5; }
+        .case-gallery { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 15px; }
+        .case-gallery img {
+            width: 120px; height: 120px; object-fit: cover; border-radius: 12px;
+            border: 2px solid var(--clr-accent2); cursor: pointer; transition: transform 0.2s;
+        }
+        .case-gallery img:hover { transform: scale(1.05); }
 
         /* ============ OVERLAYS ============ */
-        #loadingOverlay, #successPopup {
-            display: none; position: fixed; inset: 0;
-            background: rgba(6,13,26,0.80); backdrop-filter: blur(8px);
-            z-index: 9998; justify-content: center; align-items: center;
-        }
+        #loadingOverlay, #successPopup { display: none; position: fixed; inset: 0; background: rgba(6,13,26,0.80); backdrop-filter: blur(8px); z-index: 9998; justify-content: center; align-items: center; }
         #loadingOverlay.show { display: flex; flex-direction: column; gap: 16px; }
         #successPopup.show { display: flex; padding: 24px; z-index: 9999; }
-        .spinner {
-            width: 55px; height: 55px;
-            border: 5px solid rgba(0,212,170,0.2);
-            border-top-color: var(--clr-accent);
-            border-radius: 50%; animation: spin 0.8s linear infinite;
-        }
+        .spinner { width: 55px; height: 55px; border: 5px solid rgba(0,212,170,0.2); border-top-color: var(--clr-accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        .popup-card {
-            background: linear-gradient(145deg, #0d2240, #0a1929);
-            border: 1px solid rgba(0,212,170,0.3);
-            border-radius: 24px; padding: 40px 36px; max-width: 420px;
-            width: 100%; text-align: center;
-            box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 60px rgba(0,212,170,0.1);
-        }
+        .popup-card { background: linear-gradient(145deg, #0d2240, #0a1929); border: 1px solid rgba(0,212,170,0.3); border-radius: 24px; padding: 40px 36px; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 60px rgba(0,212,170,0.1); }
         .popup-card h3 { font-size: 1.7rem; font-weight: 700; color: var(--clr-accent); margin-bottom: 12px; }
         .popup-card p { color: var(--clr-muted); font-size: 1.1rem; line-height: 1.6; margin-bottom: 28px; }
-        .popup-ok {
-            background: linear-gradient(100deg, var(--clr-accent), var(--clr-accent2));
-            color: #041224; padding: 16px 40px; border-radius: 12px; margin: 0; width: auto;
-        }
+        .popup-ok { background: linear-gradient(100deg, var(--clr-accent), var(--clr-accent2)); color: #041224; padding: 16px 40px; border-radius: 12px; margin: 0; width: auto; }
 
-        #errorToast {
-            display: none; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: linear-gradient(135deg, #450a0a, #7f1d1d);
-            border: 1px solid rgba(239,68,68,0.4); color: #fca5a5;
-            padding: 16px 28px; border-radius: 12px; font-weight: 600; font-size: 1.05rem; z-index: 9999;
-        }
+        #errorToast { display: none; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #450a0a, #7f1d1d); border: 1px solid rgba(239,68,68,0.4); color: #fca5a5; padding: 16px 28px; border-radius: 12px; font-weight: 600; font-size: 1.05rem; z-index: 9999; }
         #errorToast.show { display: block; }
 
         @media (max-width: 600px) {
@@ -363,17 +189,16 @@
     <div class="spinner"></div>
     <p id="loadingMsg" style="color:var(--clr-accent); font-weight:600; font-size:1.1rem;">กำลังโหลดข้อมูล...</p>
 </div>
+<div id="successPopup"><div class="popup-card"><div style="font-size:3.5rem; margin-bottom:20px;">✅</div><h3>บันทึกสำเร็จ!</h3><p id="successMsg">ข้อมูลจุดเสี่ยงของคุณถูกบันทึกและส่งไปยังระบบเรียบร้อยแล้ว</p><button class="btn-primary popup-ok" onclick="closeSuccessPopup()">ตกลง</button></div></div>
+<div id="errorToast"></div>
 
-<div id="successPopup">
-    <div class="popup-card">
-        <div style="font-size:3.5rem; margin-bottom:20px;">✅</div>
-        <h3>บันทึกสำเร็จ!</h3>
-        <p id="successMsg">ข้อมูลจุดเสี่ยงของคุณถูกบันทึกและส่งไปยังระบบเรียบร้อยแล้ว</p>
-        <button class="btn-primary popup-ok" onclick="closeSuccessPopup()">ตกลง</button>
+<div id="caseModal">
+    <div class="modal-content">
+        <button class="close-modal" onclick="closeCaseModal()">×</button>
+        <h3 id="modalEmpName" style="color: var(--clr-accent); font-size: 1.6rem; margin-bottom: 20px;">ประวัติการแจ้งของพนักงาน</h3>
+        <div id="modalCaseList"></div>
     </div>
 </div>
-
-<div id="errorToast"></div>
 
 <div class="container">
 
@@ -382,34 +207,23 @@
             <div class="helmet-wrap">
                 <svg viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                        <radialGradient id="helmetGrad" cx="40%" cy="30%" r="70%">
-                            <stop offset="0%" stop-color="#facc15"/>
-                            <stop offset="100%" stop-color="#d97706"/>
-                        </radialGradient>
-                        <radialGradient id="helmetShine" cx="35%" cy="25%" r="40%">
-                            <stop offset="0%" stop-color="rgba(255,255,255,0.5)"/>
-                            <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
-                        </radialGradient>
+                        <radialGradient id="helmetGrad" cx="40%" cy="30%" r="70%"><stop offset="0%" stop-color="#facc15"/><stop offset="100%" stop-color="#d97706"/></radialGradient>
+                        <radialGradient id="helmetShine" cx="35%" cy="25%" r="40%"><stop offset="0%" stop-color="rgba(255,255,255,0.5)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient>
                     </defs>
                     <path d="M55 15 C30 15, 12 34, 12 56 L12 66 L98 66 L98 56 C98 34, 80 15, 55 15 Z" fill="url(#helmetGrad)" />
                     <path d="M55 15 C30 15, 12 34, 12 56 L12 66 L98 66 L98 56 C98 34, 80 15, 55 15 Z" fill="url(#helmetShine)" />
-                    <!-- CPF text on helmet -->
-                    <text x="55" y="52" text-anchor="middle" fill="rgba(255,255,255,0.85)"
-                          font-family="Arial, sans-serif" font-weight="800" font-size="13" letter-spacing="2">SRF</text>
                     <rect x="5" y="62" width="100" height="9" rx="4.5" fill="#b45309" />
                     <path d="M40 25 Q55 20 70 25" stroke="rgba(255,255,255,0.35)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
                     <path d="M20 71 Q17 80 22 88" stroke="#92400e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
                     <path d="M90 71 Q93 80 88 88" stroke="#92400e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
                 </svg>
             </div>
-
             <div class="home-title">
                 <h1>ระบบแจ้งจุดเสี่ยง<br>โรงงานอาหารสัตว์ศรีราชา</h1>
                 <p>Safety Risk Reporting System</p>
                 <div class="home-divider"></div>
             </div>
         </div>
-
         <div class="home-btns">
             <button class="btn-primary" onclick="switchView('viewForm')">🚧 พนักงานส่งจุดเสี่ยง</button>
             <button class="btn-secondary" onclick="switchView('viewLogin')">📊 รายงานสรุป (ผู้บริหาร)</button>
@@ -417,56 +231,21 @@
     </div>
 
     <div id="viewForm" class="view">
-        <div class="page-header">
-            <div class="page-header-icon">🚧</div>
-            <div>
-                <h2>ส่งรายงานจุดเสี่ยง</h2>
-                <p>กรอกข้อมูลให้ครบถ้วนก่อนกดบันทึก</p>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>หน่วยงาน</label>
-            <select id="department"><option value="">กำลังโหลด...</option></select>
-        </div>
-        <div class="form-group">
-            <label>ชื่อพนักงาน</label>
-            <select id="employee" disabled><option value="">เลือกพนักงาน</option></select>
-        </div>
-        <div class="form-group">
-            <label>จุดพบความเสี่ยง</label>
-            <textarea id="locationText" placeholder="ระบุสถานที่หรือจุดที่พบความเสี่ยง"></textarea>
-        </div>
-        <div class="form-group">
-            <label>ประเภทความเสี่ยง</label>
-            <select id="riskType"></select>
-        </div>
-        <div class="form-group">
-            <label>ระดับความเสี่ยง</label>
-            <select id="riskLevel"></select>
-        </div>
-        <div class="form-group">
-            <label>แนบรูปภาพ</label>
-            <input type="file" id="images" multiple accept="image/*" />
-            <div class="preview" id="preview"></div>
-        </div>
-        <div class="form-group">
-            <label>หมายเหตุ (ถ้ามี)</label>
-            <textarea id="note" placeholder="รายละเอียดเพิ่มเติม..."></textarea>
-        </div>
+        <div class="page-header"><div class="page-header-icon">🚧</div><div><h2>ส่งรายงานจุดเสี่ยง</h2><p>กรอกข้อมูลให้ครบถ้วนก่อนกดบันทึก</p></div></div>
+        <div class="form-group"><label>หน่วยงาน</label><select id="department"><option value="">กำลังโหลด...</option></select></div>
+        <div class="form-group"><label>ชื่อพนักงาน</label><select id="employee" disabled><option value="">เลือกพนักงาน</option></select></div>
+        <div class="form-group"><label>จุดพบความเสี่ยง</label><textarea id="locationText" placeholder="ระบุสถานที่หรือจุดที่พบความเสี่ยง"></textarea></div>
+        <div class="form-group"><label>ประเภทความเสี่ยง</label><select id="riskType"></select></div>
+        <div class="form-group"><label>ระดับความเสี่ยง</label><select id="riskLevel"></select></div>
+        <div class="form-group"><label>แนบรูปภาพ</label><input type="file" id="images" multiple accept="image/*" /><div class="preview" id="preview"></div></div>
+        <div class="form-group"><label>หมายเหตุ (ถ้ามี)</label><textarea id="note" placeholder="รายละเอียดเพิ่มเติม..."></textarea></div>
         <button id="submitBtn" class="btn-primary">💾 บันทึกข้อมูล</button>
         <button class="btn-secondary" onclick="switchView('viewHome')">← ย้อนกลับ</button>
         <div id="status"></div>
     </div>
 
     <div id="viewLogin" class="view">
-        <div class="page-header">
-            <div class="page-header-icon">🔐</div>
-            <div>
-                <h2>เข้าสู่ระบบรายงานสรุป</h2>
-                <p>สำหรับผู้บริหารและเจ้าหน้าที่</p>
-            </div>
-        </div>
+        <div class="page-header"><div class="page-header-icon">🔐</div><div><h2>เข้าสู่ระบบรายงานสรุป</h2><p>สำหรับผู้บริหารและเจ้าหน้าที่</p></div></div>
         <div class="form-group"><label>ชื่อผู้ใช้</label><input type="text" id="loginUser" placeholder="Username" autocomplete="username"></div>
         <div class="form-group"><label>รหัสผ่าน</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
         <button id="btnLogin" class="btn-primary">เข้าสู่ระบบ →</button>
@@ -475,13 +254,7 @@
     </div>
 
     <div id="viewDashboard" class="view">
-        <div class="page-header">
-            <div class="page-header-icon">📊</div>
-            <div>
-                <h2>รายงานสรุปเทียบเป้าหมาย</h2>
-                <p>ข้อมูลการรายงานจุดเสี่ยงของโรงงาน</p>
-            </div>
-        </div>
+        <div class="page-header"><div class="page-header-icon">📊</div><div><h2>รายงานสรุปเทียบเป้าหมาย</h2><p>ข้อมูลการรายงานจุดเสี่ยงของโรงงาน</p></div></div>
 
         <div class="filter-grid">
             <div><label>ปี</label><select id="dashYear" onchange="renderDashboard()"></select></div>
@@ -521,6 +294,7 @@
         <div id="secGraph" class="dash-section active">
             <div class="chart-container"><canvas id="deptChart"></canvas></div>
         </div>
+        
         <div id="secTable" class="dash-section">
             <div class="table-container">
                 <table>
@@ -528,7 +302,7 @@
                         <th>ชื่อพนักงาน</th>
                         <th style="text-align:center;">ส่ง / เป้า</th>
                         <th style="text-align:center;">สถานะ</th>
-                    </tr></thead>
+                        <th style="text-align:center;">ข้อมูล</th> </tr></thead>
                     <tbody id="dashTableBody"></tbody>
                 </table>
             </div>
@@ -540,41 +314,24 @@
 </div>
 
 <script>
-// *** โปรดระบุ Web App URL ตัวใหม่ (หากมีการแก้ไขโค้ด .gs) ***
-const API_URL = "https://script.google.com/macros/s/AKfycbwj54KJuuBb0lAsXvlIuc-DxDBR42B4ItPAQTZPW5HPsZrV7e7QNgZSmaRvvX5Hfk0W/exec";
+// *** โปรดระบุ Web App URL ตัวใหม่ (เพื่อรองรับระบบดูภาพ) ***
+const API_URL = "https://script.google.com/macros/s/AKfycbzLR6Y-d3jO1_OBFVAigLByExRlzN_e3NmpQgol_AOelyJvO7r3TxD3kJQPYe0DLqhj/exec";
 
 let masterData = {};
 let dashboardData = [];
 let dashboardTargets = {};
 let chartInstance = null;
 
-function showLoading(msg) {
-    document.getElementById('loadingMsg').textContent = msg || 'กำลังโหลดข้อมูล...';
-    document.getElementById('loadingOverlay').classList.add('show');
-}
+function showLoading(msg) { document.getElementById('loadingMsg').textContent = msg || 'กำลังโหลดข้อมูล...'; document.getElementById('loadingOverlay').classList.add('show'); }
 function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
-function showSuccess(msg) {
-    document.getElementById('successMsg').textContent = msg || 'ดำเนินการสำเร็จแล้ว';
-    document.getElementById('successPopup').classList.add('show');
-}
-function closeSuccessPopup() {
-    document.getElementById('successPopup').classList.remove('show');
-    switchView('viewHome');
-}
-function showError(msg) {
-    const toast = document.getElementById('errorToast');
-    toast.textContent = '❌ ' + msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 4000);
-}
+function showSuccess(msg) { document.getElementById('successMsg').textContent = msg || 'ดำเนินการสำเร็จแล้ว'; document.getElementById('successPopup').classList.add('show'); }
+function closeSuccessPopup() { document.getElementById('successPopup').classList.remove('show'); switchView('viewHome'); }
+function showError(msg) { const toast = document.getElementById('errorToast'); toast.textContent = '❌ ' + msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 4000); }
 
 function switchView(viewId) {
     document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
-    document.getElementById('status').innerHTML = '';
-    document.getElementById('loginStatus').innerHTML = '';
-    document.getElementById('loginPass').value = '';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('status').innerHTML = ''; document.getElementById('loginStatus').innerHTML = ''; document.getElementById('loginPass').value = ''; window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function toggleDashView(mode) {
     ['btnGraph','btnTable','secGraph','secTable'].forEach(id => document.getElementById(id).classList.remove('active'));
@@ -588,119 +345,67 @@ window.onload = async () => {
     try {
         const res = await fetch(API_URL + "?action=master");
         const data = await res.json();
-        if (data.success) {
-            masterData = data;
-            sessionStorage.setItem('cpf_master', JSON.stringify(data));
-            setupDropdowns();
-        }
+        if (data.success) { masterData = data; sessionStorage.setItem('cpf_master', JSON.stringify(data)); setupDropdowns(); }
     } catch(e) {}
 };
 
 function setupDropdowns() {
-    const dept = document.getElementById("department");
-    dept.innerHTML = '<option value="">-- เลือกหน่วยงาน --</option>';
+    const dept = document.getElementById("department"); dept.innerHTML = '<option value="">-- เลือกหน่วยงาน --</option>';
     masterData.departments.forEach(d => dept.innerHTML += `<option value="${d}">${d}</option>`);
     dept.onchange = () => {
-        const emp = document.getElementById("employee");
-        emp.innerHTML = '<option value="">เลือกพนักงาน</option>';
+        const emp = document.getElementById("employee"); emp.innerHTML = '<option value="">เลือกพนักงาน</option>';
         if (!dept.value) { emp.disabled = true; return; }
         emp.disabled = false;
-        masterData.staffs.filter(s => s.department === dept.value).forEach(s =>
-            emp.innerHTML += `<option value="${s.name}" data-id="${s.empId}">${s.name}</option>`);
+        masterData.staffs.filter(s => s.department === dept.value).forEach(s => emp.innerHTML += `<option value="${s.name}" data-id="${s.empId}">${s.name}</option>`);
     };
-    const rt = document.getElementById("riskType");
-    rt.innerHTML = '<option value="">-- เลือกประเภท --</option>';
+    const rt = document.getElementById("riskType"); rt.innerHTML = '<option value="">-- เลือกประเภท --</option>';
     masterData.riskTypes.forEach(r => rt.innerHTML += `<option value="${r}">${r}</option>`);
-    const rl = document.getElementById("riskLevel");
-    rl.innerHTML = '<option value="">-- เลือกระดับ --</option>';
+    const rl = document.getElementById("riskLevel"); rl.innerHTML = '<option value="">-- เลือกระดับ --</option>';
     masterData.riskLevels.forEach(r => rl.innerHTML += `<option value="${r}">${r}</option>`);
 }
 
 document.getElementById("images").onchange = function() {
     const preview = document.getElementById("preview"); preview.innerHTML = "";
-    [...this.files].forEach(file => {
-        const r = new FileReader();
-        r.onload = e => { const i = document.createElement("img"); i.src = e.target.result; preview.appendChild(i); };
-        r.readAsDataURL(file);
-    });
+    [...this.files].forEach(file => { const r = new FileReader(); r.onload = e => { const i = document.createElement("img"); i.src = e.target.result; preview.appendChild(i); }; r.readAsDataURL(file); });
 };
-
 async function compressFile(file) {
     return new Promise(res => {
-        const img = new Image(); const r = new FileReader(); r.readAsDataURL(file);
-        r.onload = e => img.src = e.target.result;
+        const img = new Image(); const r = new FileReader(); r.readAsDataURL(file); r.onload = e => img.src = e.target.result;
         img.onload = () => {
-            const cvs = document.createElement("canvas"); let w = img.width, h = img.height;
-            if (w > 1200) { h *= 1200/w; w = 1200; }
-            cvs.width = w; cvs.height = h; cvs.getContext("2d").drawImage(img, 0, 0, w, h);
-            res(cvs.toDataURL("image/jpeg", 0.7).split(',')[1]);
+            const cvs = document.createElement("canvas"); let w = img.width, h = img.height; if (w > 1200) { h *= 1200/w; w = 1200; }
+            cvs.width = w; cvs.height = h; cvs.getContext("2d").drawImage(img, 0, 0, w, h); res(cvs.toDataURL("image/jpeg", 0.7).split(',')[1]);
         };
     });
 }
-
 document.getElementById("submitBtn").onclick = async function() {
-    const emp = document.getElementById("employee");
-    const imgIn = document.getElementById("images");
-    const loc = document.getElementById("locationText").value.trim();
+    const emp = document.getElementById("employee"); const imgIn = document.getElementById("images"); const loc = document.getElementById("locationText").value.trim();
     if (!emp.value || !loc || imgIn.files.length === 0) { showError("กรุณากรอกข้อมูลและแนบรูปภาพให้ครบ"); return; }
     this.disabled = true;
-
     try {
-        const empId = emp.options[emp.selectedIndex].getAttribute("data-id");
-        const d = new Date();
-        const imgBase = empId + String(d.getDate()).padStart(2,'0') + String(d.getMonth()+1).padStart(2,'0') + String(d.getFullYear()).slice(-2);
-
+        const empId = emp.options[emp.selectedIndex].getAttribute("data-id"); const d = new Date(); const imgBase = empId + String(d.getDate()).padStart(2,'0') + String(d.getMonth()+1).padStart(2,'0') + String(d.getFullYear()).slice(-2);
         showLoading('กำลังบันทึกข้อมูล...');
-        const r1 = await fetch(API_URL, { method: "POST", body: JSON.stringify({
-            action: "saveForm", reporter: emp.value, department: document.getElementById("department").value,
-            location: loc, riskType: document.getElementById("riskType").value,
-            riskLevel: document.getElementById("riskLevel").value, note: document.getElementById("note").value,
-            totalImages: imgIn.files.length, imageId: imgBase
-        })});
+        const r1 = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveForm", reporter: emp.value, department: document.getElementById("department").value, location: loc, riskType: document.getElementById("riskType").value, riskLevel: document.getElementById("riskLevel").value, note: document.getElementById("note").value, totalImages: imgIn.files.length, imageId: imgBase })});
         const textRes = await r1.json();
         if (!textRes.success) throw new Error(textRes.error || "บันทึกข้อมูลล้มเหลว");
-
-        const uploadPromises = [...imgIn.files].map((file, i) =>
-            compressFile(file).then(b64 => fetch(API_URL, { method: "POST", body: JSON.stringify({
-                action: "uploadImage", base64: b64, rowNumber: textRes.rowNumber, imageId: imgBase + "_" + (i+1)
-            })}))
-        );
-        showLoading(`กำลังอัปโหลดรูปภาพ ${imgIn.files.length} รูป...`);
-        await Promise.all(uploadPromises);
-        hideLoading();
-        
-        document.getElementById("locationText").value = ''; document.getElementById("note").value = '';
-        document.getElementById("images").value = ''; document.getElementById("preview").innerHTML = '';
-        document.getElementById("department").value = ''; document.getElementById("employee").innerHTML = '<option value="">เลือกพนักงาน</option>';
-        document.getElementById("employee").disabled = true;
-
+        const uploadPromises = [...imgIn.files].map((file, i) => compressFile(file).then(b64 => fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "uploadImage", base64: b64, rowNumber: textRes.rowNumber, imageId: imgBase + "_" + (i+1) }) })));
+        showLoading(`กำลังอัปโหลดรูปภาพ ${imgIn.files.length} รูป...`); await Promise.all(uploadPromises); hideLoading();
+        document.getElementById("locationText").value = ''; document.getElementById("note").value = ''; document.getElementById("images").value = ''; document.getElementById("preview").innerHTML = ''; document.getElementById("department").value = ''; document.getElementById("employee").innerHTML = '<option value="">เลือกพนักงาน</option>'; document.getElementById("employee").disabled = true;
         showSuccess(`บันทึกจุดเสี่ยงสำเร็จ!\nอัปโหลดรูปภาพ ${imgIn.files.length} รูปเรียบร้อยแล้ว`);
-    } catch(e) {
-        hideLoading(); showError(e.message || "เกิดข้อผิดพลาด กรุณาลองใหม่");
-    } finally { this.disabled = false; }
+    } catch(e) { hideLoading(); showError(e.message || "เกิดข้อผิดพลาด กรุณาลองใหม่"); } finally { this.disabled = false; }
 };
 
 document.getElementById("btnLogin").onclick = async function() {
-    const u = document.getElementById("loginUser").value.trim();
-    const p = document.getElementById("loginPass").value;
-    if (!u || !p) return;
-    this.disabled = true;
-    document.getElementById("loginStatus").innerHTML = "⏳ กำลังตรวจสอบ...";
+    const u = document.getElementById("loginUser").value.trim(); const p = document.getElementById("loginPass").value; if (!u || !p) return;
+    this.disabled = true; document.getElementById("loginStatus").innerHTML = "⏳ กำลังตรวจสอบ...";
     try {
         showLoading('กำลังตรวจสอบสิทธิ์...');
-        const [loginRes, dashRes] = await Promise.all([
-            fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "checkLogin", user: u, pass: p }) }),
-            fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getDashboard" }) })
-        ]);
-        const loginData = await loginRes.json();
-        hideLoading();
+        const [loginRes, dashRes] = await Promise.all([ fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "checkLogin", user: u, pass: p }) }), fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getDashboard" }) }) ]);
+        const loginData = await loginRes.json(); hideLoading();
         if (loginData.success) {
             const dashData = await dashRes.json();
             if (dashData.success) { dashboardData = dashData.records; dashboardTargets = dashData.targets; setupDashFilters(); renderDashboard(); }
             switchView('viewDashboard');
-        } else {
-            document.getElementById("loginStatus").innerHTML = loginData.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
-        }
+        } else { document.getElementById("loginStatus").innerHTML = loginData.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง"; }
     } catch(e) { hideLoading(); document.getElementById("loginStatus").innerHTML = "เกิดข้อผิดพลาด"; } finally { this.disabled = false; }
 };
 
@@ -713,86 +418,110 @@ function setupDashFilters() {
 }
 
 function renderDashboard() {
-    const selY = document.getElementById("dashYear").value;
-    const selM = document.getElementById("dashMonth").value;
-    const selD = document.getElementById("dashDept").value;
-    const selS = document.getElementById("dashStatus").value;
-
+    const selY = document.getElementById("dashYear").value; const selM = document.getElementById("dashMonth").value; const selD = document.getElementById("dashDept").value; const selS = document.getElementById("dashStatus").value;
     const tFactory = (selM === "all") ? dashboardTargets.factoryYear : dashboardTargets.factoryMonth;
     const tPerson  = (selM === "all") ? dashboardTargets.personYear  : dashboardTargets.personMonth;
 
     document.getElementById("kpiTargetTitle").innerText = (selM === "all") ? "เป้าโรงงาน (ปี)" : "เป้าโรงงาน (เดือน)";
     document.getElementById("kpiTarget").innerText = tFactory;
 
-    // หาจำนวนพนักงานตามเงื่อนไขเพื่อเป็นฐานในการคิด %
-    let staffCount = {};
-    let staffInFocus = masterData.staffs.filter(s => selD === "all" || s.department === selD);
-    let totalStaffScope = staffInFocus.length;
+    let staffCount = {}; let staffInFocus = masterData.staffs.filter(s => selD === "all" || s.department === selD); let totalStaffScope = staffInFocus.length;
     staffInFocus.forEach(s => { staffCount[s.department] = (staffCount[s.department] || 0) + 1; });
 
     let filtered = dashboardData.filter(d => d.year === selY && (selM === "all" || d.month === selM) && (selD === "all" || d.dept === selD));
     let reportsByDept = {}, reportsByPerson = {};
-    filtered.forEach(d => {
-        reportsByDept[d.dept] = (reportsByDept[d.dept] || 0) + 1;
-        if(d.reporter) reportsByPerson[d.reporter] = (reportsByPerson[d.reporter] || 0) + 1;
-    });
+    filtered.forEach(d => { reportsByDept[d.dept] = (reportsByDept[d.dept] || 0) + 1; if(d.reporter) reportsByPerson[d.reporter] = (reportsByPerson[d.reporter] || 0) + 1; });
 
-    // --- กราฟ Chart.js ---
     let labels = [], dataVals = [], bgColors = [], borderColors = [], targetVals = [];
     (selD === "all" ? Object.keys(staffCount) : [selD]).forEach(dept => {
-        let actual = reportsByDept[dept] || 0;
-        let expected = (staffCount[dept] || 0) * tPerson;
+        let actual = reportsByDept[dept] || 0; let expected = (staffCount[dept] || 0) * tPerson;
         labels.push(dept); dataVals.push(actual); targetVals.push(expected);
         const ratio = expected > 0 ? actual / expected : 1;
-        if (ratio >= 1) {
-            bgColors.push('rgba(34,197,94,0.75)'); borderColors.push('#16a34a');
-        } else if (ratio >= 0.6) {
-            bgColors.push('rgba(245,158,11,0.75)'); borderColors.push('#d97706');
-        } else {
-            bgColors.push('rgba(239,68,68,0.75)'); borderColors.push('#dc2626');
-        }
+        if (ratio >= 1) { bgColors.push('rgba(34,197,94,0.75)'); borderColors.push('#16a34a'); } else if (ratio >= 0.6) { bgColors.push('rgba(245,158,11,0.75)'); borderColors.push('#d97706'); } else { bgColors.push('rgba(239,68,68,0.75)'); borderColors.push('#dc2626'); }
     });
 
     if(chartInstance) chartInstance.destroy();
-    chartInstance = new Chart(document.getElementById('deptChart'), {
-        type: 'bar',
-        data: {
-            labels,
-            datasets: [
-                { type: 'line', label: 'เส้นเป้าหมาย', data: targetVals, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.15)', borderWidth: 2.5, borderDash: [6,4], pointBackgroundColor: '#ef4444', pointRadius: 5, fill: false, tension: 0.2, order: 1 },
-                { type: 'bar', label: 'รายงานที่ส่ง', data: dataVals, backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1.5, borderRadius: 7, order: 2 }
-            ]
-        },
-        options: { responsive: true, plugins: { legend: { position: 'top', labels: { color: '#c8d8ef', font: { size: 14, family: 'Noto Sans Thai' }, usePointStyle: true } }, tooltip: { backgroundColor: 'rgba(10,22,44,0.92)', titleColor: '#00d4aa', bodyColor: '#c8d8ef', borderColor: 'rgba(0,212,170,0.3)', borderWidth: 1, padding: 14, titleFont: { size: 14, family: 'Noto Sans Thai' }, bodyFont: { size: 13, family: 'Noto Sans Thai' } } }, scales: { y: { beginAtZero: true, ticks: { color: '#8ca3c4', font: { size: 12 } }, grid: { color: 'rgba(255,255,255,0.06)' } }, x: { ticks: { color: '#8ca3c4', font: { size: 12 }, maxRotation: 30 }, grid: { color: 'rgba(255,255,255,0.04)' } } } }
-    });
+    chartInstance = new Chart(document.getElementById('deptChart'), { type: 'bar', data: { labels, datasets: [ { type: 'line', label: 'เส้นเป้าหมาย', data: targetVals, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.15)', borderWidth: 2.5, borderDash: [6,4], pointBackgroundColor: '#ef4444', pointRadius: 5, fill: false, tension: 0.2, order: 1 }, { type: 'bar', label: 'รายงานที่ส่ง', data: dataVals, backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1.5, borderRadius: 7, order: 2 } ] }, options: { responsive: true, plugins: { legend: { position: 'top', labels: { color: '#c8d8ef', font: { size: 14, family: 'Noto Sans Thai' }, usePointStyle: true } }, tooltip: { backgroundColor: 'rgba(10,22,44,0.92)', titleColor: '#00d4aa', bodyColor: '#c8d8ef', borderColor: 'rgba(0,212,170,0.3)', borderWidth: 1, padding: 14, titleFont: { size: 14, family: 'Noto Sans Thai' }, bodyFont: { size: 13, family: 'Noto Sans Thai' } } }, scales: { y: { beginAtZero: true, ticks: { color: '#8ca3c4', font: { size: 12 } }, grid: { color: 'rgba(255,255,255,0.06)' } }, x: { ticks: { color: '#8ca3c4', font: { size: 12 }, maxRotation: 30 }, grid: { color: 'rgba(255,255,255,0.04)' } } } } });
 
-    // --- ตารางรายบุคคล และ คำนวณ KPI การผ่าน ---
     let tbody = "", passCount = 0;
     staffInFocus.forEach(s => {
-        let actual = reportsByPerson[s.name] || 0;
-        let isPass = actual >= tPerson;
+        let actual = reportsByPerson[s.name] || 0; let isPass = actual >= tPerson;
         if(isPass) passCount++;
+        if(selS === "pass" && !isPass) return; if(selS === "fail" && isPass) return;
+        let cls = isPass ? 'text-pass' : 'text-fail'; let txt = isPass ? '✔ ผ่าน' : '✖ ยังไม่ผ่าน';
         
-        // การกรองแสดงผลในตาราง
-        if(selS === "pass" && !isPass) return;
-        if(selS === "fail" && isPass) return;
-        
-        let cls = isPass ? 'text-pass' : 'text-fail';
-        let txt = isPass ? '✔ ผ่าน' : '✖ ยังไม่ผ่าน';
+        // เพิ่มปุ่ม 🔍 ดูข้อมูล เข้าไปในตาราง
         tbody += `<tr>
             <td>${s.name}${selD === 'all' ? ` <br><small style="color:#6b7280;font-size:0.9rem;">${s.department}</small>` : ''}</td>
             <td style="text-align:center;"><b>${actual}</b> <span style="color:#9ca3af;">/ ${tPerson}</span></td>
             <td style="text-align:center;"><span class="${cls}">${txt}</span></td>
+            <td style="text-align:center;">
+                <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.95rem; margin:0; width: auto;" onclick="viewEmployeeCases('${s.name}')">🔍 ดูข้อมูล</button>
+            </td>
         </tr>`;
     });
     
-    // คำนวณ % การผ่าน (จำนวนคนผ่าน / จำนวนคนในเงื่อนไขการกรอง)
     let passPercent = totalStaffScope > 0 ? Math.round((passCount / totalStaffScope) * 100) : 0;
-
-    document.getElementById("dashTableBody").innerHTML = tbody || '<tr><td colspan="3" style="text-align:center;color:#9ca3af;padding:24px;">ไม่พบข้อมูล</td></tr>';
+    document.getElementById("dashTableBody").innerHTML = tbody || '<tr><td colspan="4" style="text-align:center;color:#9ca3af;padding:24px;">ไม่พบข้อมูล</td></tr>';
     document.getElementById("kpiActual").innerText = filtered.length;
     document.getElementById("kpiPass").innerText = passCount;
     document.getElementById("kpiPercent").innerText = passPercent + "%";
+}
+
+// ============ ดูข้อมูลภาพรายบุคคล (MODAL) ============
+function viewEmployeeCases(empName) {
+    const selY = document.getElementById("dashYear").value;
+    const selM = document.getElementById("dashMonth").value;
+    const selD = document.getElementById("dashDept").value;
+
+    // กรองหาเคสของคนๆ นี้ เฉพาะในเดือน/ปีที่กำลังดูอยู่
+    let empCases = dashboardData.filter(d => 
+        d.reporter === empName && 
+        d.year === selY && 
+        (selM === "all" || d.month === selM) && 
+        (selD === "all" || d.dept === selD)
+    );
+    
+    // เรียงให้เคสล่าสุดขึ้นก่อน
+    empCases.sort((a, b) => b.timestamp - a.timestamp);
+
+    document.getElementById("modalEmpName").innerText = `ประวัติการแจ้งของ: ${empName}`;
+    
+    let html = "";
+    if(empCases.length === 0) {
+        html = "<p style='text-align:center; color: var(--clr-muted);'>ไม่พบข้อมูลการแจ้งจุดเสี่ยงในเงื่อนไขที่เลือก</p>";
+    } else {
+        empCases.forEach((c, idx) => {
+            // แปลงเวลาให้เป็นวันที่ดูง่ายๆ
+            let dateStr = c.timestamp ? new Date(c.timestamp).toLocaleString('th-TH', { dateStyle: 'long', timeStyle: 'short' }) : "ไม่ระบุเวลา";
+            
+            // นำลิงก์รูปมาสร้าง tag <img> ให้กดคลิกเพื่อขยายได้
+            let imgsHtml = "";
+            if (c.images && c.images.length > 0) {
+                imgsHtml = c.images.map(img => `<a href="${img}" target="_blank"><img src="${img}" alt="Risk Image"></a>`).join('');
+            } else {
+                imgsHtml = "<span style='color: var(--clr-muted); font-size: 0.9rem;'>ไม่มีรูปภาพแนบ</span>";
+            }
+            
+            html += `<div class="case-card">
+                <div class="case-header">
+                    <h4>เคสที่ ${empCases.length - idx}</h4>
+                    <span class="case-date">📅 ${dateStr} น.</span>
+                </div>
+                <div class="case-detail"><b>📍 สถานที่/จุดเสี่ยง:</b> ${c.location || '-'}</div>
+                <div class="case-detail"><b>⚠️ ประเภท:</b> ${c.riskType || '-'} | <b>ระดับ:</b> ${c.riskLevel || '-'}</div>
+                <div class="case-detail"><b>📝 หมายเหตุ:</b> ${c.note || '-'}</div>
+                <div class="case-gallery">${imgsHtml}</div>
+            </div>`;
+        });
+    }
+    
+    document.getElementById("modalCaseList").innerHTML = html;
+    document.getElementById("caseModal").classList.add("show");
+}
+
+function closeCaseModal() {
+    document.getElementById("caseModal").classList.remove("show");
 }
 </script>
 </body>
