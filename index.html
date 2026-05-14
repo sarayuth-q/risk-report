@@ -204,6 +204,7 @@
                 </defs>
                 <path d="M55 15 C30 15, 12 34, 12 56 L12 66 L98 66 L98 56 C98 34, 80 15, 55 15 Z" fill="url(#helmetGrad)" />
                 <path d="M55 15 C30 15, 12 34, 12 56 L12 66 L98 66 L98 56 C98 34, 80 15, 55 15 Z" fill="url(#helmetShine)" />
+                <text x="55" y="52" font-family="'Segoe UI', sans-serif" font-size="22" font-weight="900" fill="#042424" text-anchor="middle">CPF</text>
                 <rect x="5" y="62" width="100" height="9" rx="4.5" fill="#b45309" />
                 <path d="M40 25 Q55 20 70 25" stroke="rgba(255,255,255,0.35)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
             </svg>
@@ -281,9 +282,12 @@
         <div id="secGraph" class="dash-section active">
             <div class="charts-wrapper">
                 <div class="chart-container"><canvas id="deptChart"></canvas></div>
-                <div class="chart-container">
+                
+                <div class="chart-container" style="display:flex; flex-direction:column; align-items:center; justify-content: center;">
                     <h4 style="text-align:center; color:#8fffe0; margin-top:0; margin-bottom:10px;">ระดับความเสี่ยง</h4>
-                    <canvas id="riskDonutChart"></canvas>
+                    <div style="height: 250px; width: 100%; position: relative;">
+                        <canvas id="riskDonutChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -312,7 +316,7 @@
 Chart.register(ChartDataLabels);
 
 // ==========================================
-// *** ใส่ Web App URL ล่าสุดของคุณตรงนี้ ***
+// *** ใส่ Web App URL ของคุณตรงนี้ ***
 const API_URL = "https://script.google.com/macros/s/AKfycbwnwYsX_ii5HaHFx8Qdhx52rUfRpoauPs5c1dsMX2x5xuArIPobbEHGu6W91KxD5mgP/exec";
 // ==========================================
 
@@ -407,21 +411,19 @@ document.getElementById("submitBtn").onclick = async function() {
         const empId = emp.options[emp.selectedIndex].getAttribute("data-id"); const d = new Date();
         const imgBase = empId + String(d.getDate()).padStart(2,'0') + String(d.getMonth()+1).padStart(2,'0') + String(d.getFullYear()).slice(-2);
         
-        // 1. โชว์หน้าจอโหลดแบบเต็มจอ
         showLoading("กำลังบันทึกข้อมูล...");
 
         const r1 = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveForm", reporter: emp.value, department: document.getElementById("department").value, location: document.getElementById("locationText").value, riskType: document.getElementById("riskType").value, riskLevel: document.getElementById("riskLevel").value, note: document.getElementById("note").value, totalImages: imgIn.files.length, imageId: imgBase }) });
         const textRes = await r1.json(); if (!textRes.success) throw new Error(textRes.error);
         
         for (let i = 0; i < imgIn.files.length; i++) {
-            // อัปเดตข้อความบนหน้าจอโหลด
             showLoading(`กำลังอัปโหลดรูปภาพ ${i+1} จาก ${imgIn.files.length}...`);
             await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "uploadImage", base64: await compressFile(imgIn.files[i]), rowNumber: textRes.rowNumber, imageId: imgBase + "_" + (i+1) }) });
         }
         
         hideLoading();
         
-        // ล้างข้อมูลหน้าฟอร์ม
+        // ล้างข้อมูลฟอร์ม
         document.getElementById("locationText").value = "";
         document.getElementById("note").value = "";
         document.getElementById("images").value = "";
@@ -430,7 +432,6 @@ document.getElementById("submitBtn").onclick = async function() {
         document.getElementById("employee").innerHTML = '<option value="">เลือกพนักงาน</option>';
         document.getElementById("employee").disabled = true;
         
-        // 2. โชว์ป๊อปอัปสำเร็จ!
         showSuccess("ข้อมูลจุดเสี่ยงถูกบันทึกเข้าระบบเรียบร้อยแล้ว");
 
     } catch (e) { 
@@ -447,7 +448,6 @@ document.getElementById("btnLogin").onclick = async function() {
     if(!u || !p) return;
     this.disabled = true; document.getElementById("loginStatus").innerHTML = "";
     try {
-        // ใช้ Overlay ตอน Login ด้วย
         showLoading("กำลังตรวจสอบสิทธิ์...");
         const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "checkLogin", user: u, pass: p }) });
         const d = await res.json();
@@ -554,16 +554,22 @@ function renderDashboard() {
     document.getElementById("kpiPass").innerText = passCount;
 }
 
-// ============ ฟังก์ชันแปลง URL และแสดงประวัติ (MODAL) ============
+// ============ สำคัญ: แปลงลิงก์ Google Drive ให้แสดงรูปได้ 100% ============
 function getDirectDriveLink(url) {
     if (!url) return "";
     let fileId = "";
-    let match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-    if (match && match[1]) fileId = match[1];
-    else if (url.includes('id=')) fileId = url.split('id=')[1].split('&')[0];
     
+    // ดึงรหัสไฟล์ (ID) ออกมาจากลิงก์
+    let match = url.match(/(?:id=|v=|vi=|v\/|vi\/|youtu\.be\/|\/d\/)([a-zA-Z0-9_-]{25,33})/);
+    if (match && match[1]) fileId = match[1];
+    else {
+        match = url.match(/id=([a-zA-Z0-9_-]+)/);
+        if (match && match[1]) fileId = match[1];
+    }
+    
+    // แปลงให้เป็น Thumbnail API (Google อนุญาตให้ฝังรูปวิธีนี้ได้ชัวร์ๆ)
     if (fileId) {
-        return `https://drive.google.com/uc?export=view&id=${fileId}`;
+        return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
     }
     return url;
 }
@@ -587,9 +593,10 @@ function viewEmployeeCases(empName) {
             
             let imgsHtml = "";
             if (c.images && c.images.length > 0) {
+                // เรียกใช้ฟังก์ชันดึงภาพแบบไม่ติดบล็อกมาแสดง
                 imgsHtml = c.images.map(imgUrl => {
                     let directUrl = getDirectDriveLink(imgUrl);
-                    return `<img src="${directUrl}" onclick="openLightbox('${directUrl}')" title="คลิกเพื่อขยายภาพ" onerror="this.onerror=null; this.src='https://placehold.co/100x100?text=ภาพถูกล็อก';">`;
+                    return `<img src="${directUrl}" onclick="openLightbox('${directUrl}')" title="คลิกเพื่อขยายภาพ" onerror="this.onerror=null; this.src='https://placehold.co/100x100?text=Load+Error';">`;
                 }).join('');
             } else {
                 imgsHtml = "<span style='color: #8ca3c4; font-size: 1rem;'>ไม่มีรูปภาพแนบ</span>";
