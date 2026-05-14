@@ -5,86 +5,620 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ระบบรายงานและสรุปจุดเสี่ยง โรงงานอาหารสัตว์ศรีราชา</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { margin: 0; min-height: 100vh; background: linear-gradient(135deg, #0f766e, #042424, #000000); padding: 20px; color: white; display: flex; justify-content: center; align-items: flex-start; }
-        .container { width: 100%; max-width: 850px; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border-radius: 24px; padding: 30px; box-shadow: 0 0 30px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); margin-top: 20px; }
-        h1 { text-align: center; color: #8fffe0; margin-bottom: 25px; font-size: 1.8rem; }
-        h2 { color: #00c9a7; text-align: center; margin-bottom: 20px; }
-        .view { display: none; animation: fadeIn 0.3s; }
+        :root {
+            --clr-bg: #060d1a;
+            --clr-surface: rgba(255,255,255,0.055);
+            --clr-border: rgba(255,255,255,0.10);
+            --clr-accent: #00d4aa;
+            --clr-accent2: #0ea5e9;
+            --clr-text: #e8f0fe;
+            --clr-muted: #8ca3c4;
+            --clr-green: #22c55e;
+            --clr-yellow: #f59e0b;
+            --clr-red: #ef4444;
+            --clr-green-bg: rgba(34,197,94,0.15);
+            --clr-yellow-bg: rgba(245,158,11,0.15);
+            --clr-red-bg: rgba(239,68,68,0.15);
+            --radius: 18px;
+            --radius-sm: 10px;
+            --shadow: 0 8px 40px rgba(0,0,0,0.55);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Noto Sans Thai', 'IBM Plex Sans Thai', sans-serif;
+            min-height: 100vh;
+            background: var(--clr-bg);
+            background-image:
+                radial-gradient(ellipse 80% 50% at 20% 0%, rgba(0,212,170,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(14,165,233,0.10) 0%, transparent 60%);
+            padding: 20px 16px 60px;
+            color: var(--clr-text);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            width: 100%;
+            max-width: 880px;
+            background: var(--clr-surface);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 28px;
+            padding: 36px 32px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--clr-border);
+            margin-top: 20px;
+        }
+        .view { display: none; animation: fadeSlide 0.35s ease; }
         .view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-size: 1rem; font-weight: bold; color: #8fffe0; }
-        input, select, textarea { width: 100%; padding: 12px; border: none; border-radius: 12px; font-size: 1rem; background: rgba(255, 255, 255, 0.95); color: #1a1a1a; outline: none;}
-        button { width: 100%; padding: 16px; border: none; border-radius: 14px; font-size: 1.1rem; font-weight: bold; cursor: pointer; color: white; transition: 0.3s; margin-bottom: 15px; }
-        .btn-primary { background: linear-gradient(90deg, #00c9a7, #00e5ff); box-shadow: 0 4px 15px rgba(0,201,167,0.3); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,201,167,0.5); }
-        .btn-secondary { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.3); }
-        .btn-secondary:hover { background: rgba(255, 255, 255, 0.2); }
-        
-        /* Dashboard */
-        .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .kpi-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 25px; }
-        .kpi-card { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); padding: 15px; border-radius: 16px; text-align: center; }
-        .kpi-title { font-size: 0.9rem; color: #ccffef; margin-bottom: 5px; }
-        .kpi-value { font-size: 1.8rem; font-weight: bold; color: #fff; margin: 0; }
-        
-        .view-toggle { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-        .toggle-btn { flex: 1; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.1); border: 1px solid #00c9a7; color: white; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .toggle-btn.active { background: #00c9a7; color: #000; }
-        .dash-section { display: none; animation: fadeIn 0.3s; }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============ HOME PAGE ============ */
+        .home-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0 36px;
+            gap: 0;
+        }
+        .helmet-wrap {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            margin-bottom: 6px;
+        }
+        .helmet-wrap svg { width: 110px; height: 110px; filter: drop-shadow(0 4px 18px rgba(0,212,170,0.4)); }
+        .cpf-logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 14px;
+        }
+        .cpf-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e8000d, #c00009);
+            border-radius: 10px;
+            padding: 6px 14px;
+            box-shadow: 0 3px 14px rgba(232,0,13,0.45);
+        }
+        .cpf-badge span {
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+        .cpf-tagline {
+            font-size: 0.72rem;
+            color: var(--clr-muted);
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+        .home-title {
+            text-align: center;
+            margin-top: 8px;
+        }
+        .home-title h1 {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: var(--clr-accent);
+            line-height: 1.35;
+            letter-spacing: 0.2px;
+        }
+        .home-title p {
+            font-size: 0.92rem;
+            color: var(--clr-muted);
+            margin-top: 5px;
+        }
+        .home-divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--clr-accent), var(--clr-accent2));
+            border-radius: 99px;
+            margin: 14px auto 0;
+        }
+        .home-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 32px;
+        }
+
+        /* ============ PAGE HEADER ============ */
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+        .page-header-icon {
+            width: 46px; height: 46px;
+            background: linear-gradient(135deg, var(--clr-accent), var(--clr-accent2));
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+        .page-header h2 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--clr-text);
+        }
+        .page-header p {
+            font-size: 0.82rem;
+            color: var(--clr-muted);
+            margin-top: 2px;
+        }
+
+        /* ============ FORM ============ */
+        .form-group { margin-bottom: 18px; }
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--clr-accent);
+            letter-spacing: 0.2px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1.5px solid var(--clr-border);
+            border-radius: var(--radius-sm);
+            font-size: 0.97rem;
+            font-family: inherit;
+            background: rgba(255,255,255,0.07);
+            color: var(--clr-text);
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--clr-accent);
+            background: rgba(0,212,170,0.07);
+        }
+        select option { background: #0d1b2e; color: var(--clr-text); }
+        textarea { resize: vertical; min-height: 85px; }
+        input[type="file"] {
+            padding: 10px 12px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            color: var(--clr-muted);
+        }
+
+        /* ============ BUTTONS ============ */
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            color: white;
+            transition: all 0.22s ease;
+            margin-bottom: 12px;
+            letter-spacing: 0.2px;
+        }
+        .btn-primary {
+            background: linear-gradient(100deg, #00d4aa, #0ea5e9);
+            box-shadow: 0 4px 18px rgba(0,212,170,0.3);
+            color: #041224;
+            font-weight: 700;
+        }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,212,170,0.45); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-secondary {
+            background: rgba(255,255,255,0.07);
+            border: 1.5px solid rgba(255,255,255,0.18);
+            color: var(--clr-text);
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.13); }
+        .btn-danger {
+            background: rgba(239,68,68,0.15);
+            border: 1.5px solid rgba(239,68,68,0.35);
+            color: #fca5a5;
+        }
+        .btn-danger:hover { background: rgba(239,68,68,0.25); }
+
+        /* ============ IMAGE PREVIEW ============ */
+        .preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .preview img {
+            width: 82px; height: 82px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid var(--clr-accent);
+            box-shadow: 0 2px 10px rgba(0,212,170,0.25);
+        }
+
+        /* ============ STATUS ============ */
+        #status {
+            text-align: center;
+            font-weight: 600;
+            color: var(--clr-accent);
+            font-size: 0.93rem;
+            min-height: 22px;
+            margin-top: 4px;
+        }
+        #loginStatus {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #fca5a5;
+            margin-top: 6px;
+            min-height: 22px;
+        }
+
+        /* ============ DASHBOARD ============ */
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+        .filter-grid label { font-size: 0.82rem; }
+        .kpi-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .kpi-card {
+            background: rgba(0,0,0,0.25);
+            border: 1px solid var(--clr-border);
+            padding: 18px 14px;
+            border-radius: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--clr-accent), var(--clr-accent2));
+            border-radius: 99px;
+        }
+        .kpi-title { font-size: 0.78rem; color: var(--clr-muted); margin-bottom: 6px; font-weight: 500; }
+        .kpi-value { font-size: 2rem; font-weight: 700; color: #fff; }
+
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 5px;
+        }
+        .toggle-btn {
+            flex: 1;
+            padding: 11px;
+            border-radius: 9px;
+            background: transparent;
+            border: none;
+            color: var(--clr-muted);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.22s;
+            margin-bottom: 0;
+        }
+        .toggle-btn.active {
+            background: linear-gradient(100deg, var(--clr-accent), var(--clr-accent2));
+            color: #041224;
+        }
+        .dash-section { display: none; animation: fadeSlide 0.3s; }
         .dash-section.active { display: block; }
 
-        .chart-container { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 15px; }
-        .table-container { background: rgba(255,255,255,0.95); border-radius: 16px; overflow: hidden; }
-        table { width: 100%; border-collapse: collapse; color: #000; font-size: 0.95rem; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background: #0f766e; color: white; font-weight: bold; }
-        .text-pass { color: #15803d; font-weight: bold; } /* เขียว */
-        .text-fail { color: #d97706; font-weight: bold; } /* เหลืองเข้ม */
-        
-        .preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-        .preview img { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; border: 2px solid #00c9a7; }
-        #status { text-align: center; font-weight: bold; color: #8fffe0; }
+        .chart-container {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--clr-border);
+            border-radius: 16px;
+            padding: 20px 16px;
+        }
+
+        /* ============ TABLE ============ */
+        .table-container {
+            background: #ffffff;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+        table { width: 100%; border-collapse: collapse; color: #1a2332; font-size: 0.9rem; }
+        th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid #e8edf5; }
+        th {
+            background: linear-gradient(90deg, #0f4c81, #1a6394);
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+        }
+        tr:hover td { background: #f0f7ff; }
+        .text-pass {
+            color: #15803d;
+            font-weight: 700;
+            background: rgba(21,128,61,0.1);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        .text-fail {
+            color: #b45309;
+            font-weight: 700;
+            background: rgba(180,83,9,0.1);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        /* ============ LOADING OVERLAY ============ */
+        #loadingOverlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(6,13,26,0.75);
+            backdrop-filter: blur(8px);
+            z-index: 9998;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 16px;
+        }
+        #loadingOverlay.show { display: flex; }
+        .spinner {
+            width: 50px; height: 50px;
+            border: 4px solid rgba(0,212,170,0.2);
+            border-top-color: var(--clr-accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #loadingOverlay p { color: var(--clr-accent); font-weight: 600; font-size: 1rem; }
+
+        /* ============ SUCCESS POPUP ============ */
+        #successPopup {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(6,13,26,0.80);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+        #successPopup.show { display: flex; animation: fadeSlide 0.4s ease; }
+        .popup-card {
+            background: linear-gradient(145deg, #0d2240, #0a1929);
+            border: 1px solid rgba(0,212,170,0.3);
+            border-radius: 24px;
+            padding: 40px 36px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 60px rgba(0,212,170,0.1);
+        }
+        .popup-icon-ring {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(0,212,170,0.2), rgba(14,165,233,0.2));
+            border: 2px solid rgba(0,212,170,0.5);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2.8rem;
+            animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @keyframes popIn {
+            from { transform: scale(0); opacity: 0; }
+            to   { transform: scale(1); opacity: 1; }
+        }
+        .popup-card h3 { font-size: 1.5rem; font-weight: 700; color: var(--clr-accent); margin-bottom: 10px; }
+        .popup-card p { color: var(--clr-muted); font-size: 0.95rem; line-height: 1.55; margin-bottom: 24px; }
+        .popup-ok {
+            background: linear-gradient(100deg, var(--clr-accent), var(--clr-accent2));
+            color: #041224;
+            font-weight: 700;
+            padding: 14px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: auto;
+            margin: 0;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .popup-ok:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,212,170,0.4); }
+
+        /* ============ ERROR TOAST ============ */
+        #errorToast {
+            display: none;
+            position: fixed;
+            bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(135deg, #450a0a, #7f1d1d);
+            border: 1px solid rgba(239,68,68,0.4);
+            color: #fca5a5;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            z-index: 9999;
+            box-shadow: 0 8px 30px rgba(239,68,68,0.3);
+            white-space: nowrap;
+        }
+        #errorToast.show { display: block; animation: slideUp 0.3s ease; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(16px); }
+            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 560px) {
+            .container { padding: 24px 18px; border-radius: 20px; }
+            .kpi-cards { grid-template-columns: 1fr 1fr; }
+            .kpi-cards .kpi-card:last-child { grid-column: span 2; }
+            .filter-grid { grid-template-columns: 1fr; }
+            .home-title h1 { font-size: 1.35rem; }
+        }
     </style>
 </head>
 <body>
 
+<!-- Loading Overlay -->
+<div id="loadingOverlay">
+    <div class="spinner"></div>
+    <p id="loadingMsg">กำลังโหลดข้อมูล...</p>
+</div>
+
+<!-- Success Popup -->
+<div id="successPopup">
+    <div class="popup-card">
+        <div class="popup-icon-ring">✅</div>
+        <h3>บันทึกสำเร็จ!</h3>
+        <p id="successMsg">ข้อมูลจุดเสี่ยงของคุณถูกบันทึกและส่งไปยังระบบเรียบร้อยแล้ว</p>
+        <button class="popup-ok" onclick="closeSuccessPopup()">ตกลง</button>
+    </div>
+</div>
+
+<!-- Error Toast -->
+<div id="errorToast"></div>
+
 <div class="container">
+
+    <!-- HOME VIEW -->
     <div id="viewHome" class="view active">
-        <h1>ระบบแจ้งจุดเสี่ยง<br>โรงงานอาหารสัตว์ศรีราชา</h1>
-        <div style="margin-top: 40px;">
+        <div class="home-header">
+            <!-- Safety Helmet SVG -->
+            <div class="helmet-wrap">
+                <svg viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <radialGradient id="helmetGrad" cx="40%" cy="30%" r="70%">
+                            <stop offset="0%" stop-color="#facc15"/>
+                            <stop offset="100%" stop-color="#d97706"/>
+                        </radialGradient>
+                        <radialGradient id="helmetShine" cx="35%" cy="25%" r="40%">
+                            <stop offset="0%" stop-color="rgba(255,255,255,0.5)"/>
+                            <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+                        </radialGradient>
+                    </defs>
+                    <!-- Helmet dome -->
+                    <path d="M55 15 C30 15, 12 34, 12 56 L12 66 L98 66 L98 56 C98 34, 80 15, 55 15 Z"
+                          fill="url(#helmetGrad)" />
+                    <!-- Shine -->
+                    <path d="M55 15 C30 15, 12 34, 12 56 L12 66 L98 66 L98 56 C98 34, 80 15, 55 15 Z"
+                          fill="url(#helmetShine)" />
+                    <!-- Brim -->
+                    <rect x="5" y="62" width="100" height="9" rx="4.5"
+                          fill="#b45309" />
+                    <!-- Ventilation stripe -->
+                    <path d="M40 25 Q55 20 70 25" stroke="rgba(255,255,255,0.35)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                    <!-- CPF text on helmet -->
+                    <text x="55" y="52" text-anchor="middle" fill="rgba(255,255,255,0.85)"
+                          font-family="Arial, sans-serif" font-weight="800" font-size="13" letter-spacing="2">CPF</text>
+                    <!-- Chin strap hints -->
+                    <path d="M20 71 Q17 80 22 88" stroke="#92400e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                    <path d="M90 71 Q93 80 88 88" stroke="#92400e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <!-- CPF Logo Badge -->
+            <!-- <div class="cpf-logo-wrap">
+                <div class="cpf-badge">
+                    <span>CPF</span>
+                </div>
+            </div>
+            <div class="cpf-tagline">Charoen Pokphand Foods PCL.</div> -->
+
+            <!-- Title -->
+            <div class="home-title">
+                <h1>ระบบแจ้งจุดเสี่ยง<br>โรงงานอาหารสัตว์ศรีราชา</h1>
+                <p>Safety Risk Reporting System</p>
+                <div class="home-divider"></div>
+            </div>
+        </div>
+
+        <div class="home-btns">
             <button class="btn-primary" onclick="switchView('viewForm')">🚧 พนักงานส่งจุดเสี่ยง</button>
             <button class="btn-secondary" onclick="switchView('viewLogin')">📊 รายงานสรุป (ผู้บริหาร)</button>
         </div>
     </div>
 
+    <!-- FORM VIEW -->
     <div id="viewForm" class="view">
-        <h1>ส่งรายงานจุดเสี่ยง</h1>
-        <div class="form-group"><label>หน่วยงาน</label><select id="department"><option value="">กำลังโหลด...</option></select></div>
-        <div class="form-group"><label>ชื่อพนักงาน</label><select id="employee" disabled><option value="">เลือกพนักงาน</option></select></div>
-        <div class="form-group"><label>จุดพบความเสี่ยง</label><textarea id="locationText" placeholder="แจ้งสถานที่หรือจุดเสี่ยง"></textarea></div>
-        <div class="form-group"><label>ประเภทความเสี่ยง</label><select id="riskType"></select></div>
-        <div class="form-group"><label>ระดับความเสี่ยง</label><select id="riskLevel"></select></div>
-        <div class="form-group"><label>แนบรูปภาพ</label><input type="file" id="images" multiple accept="image/*" /><div class="preview" id="preview"></div></div>
-        <div class="form-group"><label>หมายเหตุ</label><textarea id="note"></textarea></div>
-        <button id="submitBtn" class="btn-primary">บันทึกข้อมูล</button>
-        <button class="btn-secondary" onclick="switchView('viewHome')">ย้อนกลับ</button>
+        <div class="page-header">
+            <div class="page-header-icon">🚧</div>
+            <div>
+                <h2>ส่งรายงานจุดเสี่ยง</h2>
+                <p>กรอกข้อมูลให้ครบถ้วนก่อนกดบันทึก</p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>หน่วยงาน</label>
+            <select id="department"><option value="">กำลังโหลด...</option></select>
+        </div>
+        <div class="form-group">
+            <label>ชื่อพนักงาน</label>
+            <select id="employee" disabled><option value="">เลือกพนักงาน</option></select>
+        </div>
+        <div class="form-group">
+            <label>จุดพบความเสี่ยง</label>
+            <textarea id="locationText" placeholder="ระบุสถานที่หรือจุดที่พบความเสี่ยง"></textarea>
+        </div>
+        <div class="form-group">
+            <label>ประเภทความเสี่ยง</label>
+            <select id="riskType"></select>
+        </div>
+        <div class="form-group">
+            <label>ระดับความเสี่ยง</label>
+            <select id="riskLevel"></select>
+        </div>
+        <div class="form-group">
+            <label>แนบรูปภาพ</label>
+            <input type="file" id="images" multiple accept="image/*" />
+            <div class="preview" id="preview"></div>
+        </div>
+        <div class="form-group">
+            <label>หมายเหตุ (ถ้ามี)</label>
+            <textarea id="note" placeholder="รายละเอียดเพิ่มเติม..."></textarea>
+        </div>
+        <button id="submitBtn" class="btn-primary">💾 บันทึกข้อมูล</button>
+        <button class="btn-secondary" onclick="switchView('viewHome')">← ย้อนกลับ</button>
         <div id="status"></div>
     </div>
 
+    <!-- LOGIN VIEW -->
     <div id="viewLogin" class="view">
-        <h2>เข้าสู่ระบบรายงานสรุป</h2>
-        <div class="form-group"><label>User</label><input type="text" id="loginUser"></div>
-        <div class="form-group"><label>Password</label><input type="password" id="loginPass"></div>
-        <button id="btnLogin" class="btn-primary">เข้าสู่ระบบ</button>
-        <button class="btn-secondary" onclick="switchView('viewHome')">ย้อนกลับ</button>
-        <div id="loginStatus" style="text-align: center; color: #ff8f8f;"></div>
+        <div class="page-header">
+            <div class="page-header-icon">🔐</div>
+            <div>
+                <h2>เข้าสู่ระบบรายงานสรุป</h2>
+                <p>สำหรับผู้บริหารและเจ้าหน้าที่ที่ได้รับสิทธิ์</p>
+            </div>
+        </div>
+        <div class="form-group"><label>ชื่อผู้ใช้</label><input type="text" id="loginUser" placeholder="Username" autocomplete="username"></div>
+        <div class="form-group"><label>รหัสผ่าน</label><input type="password" id="loginPass" placeholder="Password" autocomplete="current-password"></div>
+        <button id="btnLogin" class="btn-primary">เข้าสู่ระบบ →</button>
+        <button class="btn-secondary" onclick="switchView('viewHome')">← ย้อนกลับ</button>
+        <div id="loginStatus"></div>
     </div>
 
+    <!-- DASHBOARD VIEW -->
     <div id="viewDashboard" class="view">
-        <h2>รายงานสรุปเทียบเป้าหมาย</h2>
+        <div class="page-header">
+            <div class="page-header-icon">📊</div>
+            <div>
+                <h2>รายงานสรุปเทียบเป้าหมาย</h2>
+                <p>ข้อมูลการรายงานจุดเสี่ยงของโรงงาน</p>
+            </div>
+        </div>
+
         <div class="filter-grid">
             <div><label>ปี</label><select id="dashYear" onchange="renderDashboard()"></select></div>
             <div>
@@ -107,10 +641,10 @@
                 </select>
             </div>
         </div>
-        
+
         <div class="kpi-cards">
             <div class="kpi-card"><div class="kpi-title">แจ้งแล้ว (เรื่อง)</div><div class="kpi-value" id="kpiActual">0</div></div>
-            <div class="kpi-card"><div class="kpi-title" id="kpiTargetTitle">เป้าโรงงาน (เรื่อง)</div><div class="kpi-value" id="kpiTarget">0</div></div>
+            <div class="kpi-card"><div class="kpi-title" id="kpiTargetTitle">เป้าโรงงาน</div><div class="kpi-value" id="kpiTarget">0</div></div>
             <div class="kpi-card"><div class="kpi-title">คนผ่านเกณฑ์</div><div class="kpi-value" id="kpiPass">0</div></div>
         </div>
 
@@ -122,124 +656,263 @@
         <div id="secGraph" class="dash-section active">
             <div class="chart-container"><canvas id="deptChart"></canvas></div>
         </div>
-
         <div id="secTable" class="dash-section">
             <div class="table-container">
                 <table>
-                    <thead><tr><th>ชื่อพนักงาน</th><th style="text-align: center;">ส่ง / เป้าส่วนตัว</th><th style="text-align: center;">สถานะ</th></tr></thead>
+                    <thead><tr>
+                        <th>ชื่อพนักงาน</th>
+                        <th style="text-align:center;">ส่ง / เป้าส่วนตัว</th>
+                        <th style="text-align:center;">สถานะ</th>
+                    </tr></thead>
                     <tbody id="dashTableBody"></tbody>
                 </table>
             </div>
         </div>
 
-        <button class="btn-secondary" onclick="switchView('viewHome')" style="margin-top: 20px;">ออกจากระบบ</button>
+        <button class="btn-danger" onclick="switchView('viewHome')" style="margin-top:22px;">🚪 ออกจากระบบ</button>
     </div>
-</div>
+
+</div><!-- end .container -->
 
 <script>
-// *** วางลิงก์ที่ Deploy ใหม่ตรงนี้ ***
-const API_URL = "https://script.google.com/macros/s/AKfycbxqzyUIvAeVOU8pBekfZvWoHrrdH36IBF29UpmQmp1sjiVjnzLaCqBMWlgYxCcji5i7/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwj54KJuuBb0lAsXvlIuc-DxDBR42B4ItPAQTZPW5HPsZrV7e7QNgZSmaRvvX5Hfk0W/exec";
 
-let masterData = {}; let dashboardData = []; let dashboardTargets = {};
+let masterData = {};
+let dashboardData = [];
+let dashboardTargets = {};
 let chartInstance = null;
 
+// ============ UTILITY ============
+function showLoading(msg) {
+    document.getElementById('loadingMsg').textContent = msg || 'กำลังโหลดข้อมูล...';
+    document.getElementById('loadingOverlay').classList.add('show');
+}
+function hideLoading() {
+    document.getElementById('loadingOverlay').classList.remove('show');
+}
+function showSuccess(msg) {
+    document.getElementById('successMsg').textContent = msg || 'ดำเนินการสำเร็จแล้ว';
+    document.getElementById('successPopup').classList.add('show');
+}
+function closeSuccessPopup() {
+    document.getElementById('successPopup').classList.remove('show');
+    switchView('viewHome');
+}
+function showError(msg) {
+    const toast = document.getElementById('errorToast');
+    toast.textContent = '❌ ' + msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+// ============ NAVIGATION ============
 function switchView(viewId) {
     document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
-    document.getElementById('status').innerHTML = ""; document.getElementById('loginStatus').innerHTML = "";
-    document.getElementById('loginPass').value = ""; window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('status').innerHTML = '';
+    document.getElementById('loginStatus').innerHTML = '';
+    document.getElementById('loginPass').value = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
 function toggleDashView(mode) {
-    document.getElementById("btnGraph").classList.remove("active");
-    document.getElementById("btnTable").classList.remove("active");
-    document.getElementById("secGraph").classList.remove("active");
-    document.getElementById("secTable").classList.remove("active");
-
-    if (mode === 'graph') {
-        document.getElementById("btnGraph").classList.add("active");
-        document.getElementById("secGraph").classList.add("active");
-    } else {
-        document.getElementById("btnTable").classList.add("active");
-        document.getElementById("secTable").classList.add("active");
-    }
+    ['btnGraph','btnTable','secGraph','secTable'].forEach(id => document.getElementById(id).classList.remove('active'));
+    document.getElementById(mode === 'graph' ? 'btnGraph' : 'btnTable').classList.add('active');
+    document.getElementById(mode === 'graph' ? 'secGraph' : 'secTable').classList.add('active');
 }
 
+// ============ MASTER DATA (cached in sessionStorage) ============
 window.onload = async () => {
-    try { const res = await fetch(API_URL + "?action=master"); const data = await res.json(); if (data.success) { masterData = data; setupDropdowns(); } } catch(e) {}
+    const cached = sessionStorage.getItem('cpf_master');
+    if (cached) {
+        try {
+            masterData = JSON.parse(cached);
+            setupDropdowns();
+            return;
+        } catch(e) {}
+    }
+    try {
+        const res = await fetch(API_URL + "?action=master");
+        const data = await res.json();
+        if (data.success) {
+            masterData = data;
+            sessionStorage.setItem('cpf_master', JSON.stringify(data));
+            setupDropdowns();
+        }
+    } catch(e) {}
 };
 
 function setupDropdowns() {
     const dept = document.getElementById("department");
+    dept.innerHTML = '<option value="">-- เลือกหน่วยงาน --</option>';
     masterData.departments.forEach(d => dept.innerHTML += `<option value="${d}">${d}</option>`);
     dept.onchange = () => {
-        const emp = document.getElementById("employee"); emp.innerHTML = '<option value="">เลือกพนักงาน</option>';
+        const emp = document.getElementById("employee");
+        emp.innerHTML = '<option value="">เลือกพนักงาน</option>';
         if (!dept.value) { emp.disabled = true; return; }
         emp.disabled = false;
-        masterData.staffs.filter(s => s.department === dept.value).forEach(s => emp.innerHTML += `<option value="${s.name}" data-id="${s.empId}">${s.name}</option>`);
+        masterData.staffs.filter(s => s.department === dept.value).forEach(s =>
+            emp.innerHTML += `<option value="${s.name}" data-id="${s.empId}">${s.name}</option>`);
     };
-    masterData.riskTypes.forEach(r => document.getElementById("riskType").innerHTML += `<option value="${r}">${r}</option>`);
-    masterData.riskLevels.forEach(r => document.getElementById("riskLevel").innerHTML += `<option value="${r}">${r}</option>`);
+    const rt = document.getElementById("riskType");
+    rt.innerHTML = '<option value="">-- เลือกประเภท --</option>';
+    masterData.riskTypes.forEach(r => rt.innerHTML += `<option value="${r}">${r}</option>`);
+    const rl = document.getElementById("riskLevel");
+    rl.innerHTML = '<option value="">-- เลือกระดับ --</option>';
+    masterData.riskLevels.forEach(r => rl.innerHTML += `<option value="${r}">${r}</option>`);
 }
 
-// ---------------------- ระบบส่ง Form ---------------------- //
+// ============ IMAGE PREVIEW ============
 document.getElementById("images").onchange = function() {
     const preview = document.getElementById("preview"); preview.innerHTML = "";
-    [...this.files].forEach(file => { const r = new FileReader(); r.onload = e => { const i = document.createElement("img"); i.src = e.target.result; preview.appendChild(i); }; r.readAsDataURL(file); });
+    [...this.files].forEach(file => {
+        const r = new FileReader();
+        r.onload = e => { const i = document.createElement("img"); i.src = e.target.result; preview.appendChild(i); };
+        r.readAsDataURL(file);
+    });
 };
+
+// ============ COMPRESS IMAGE ============
 async function compressFile(file) {
     return new Promise(res => {
-        const img = new Image(); const r = new FileReader(); r.readAsDataURL(file); r.onload = e => img.src = e.target.result;
+        const img = new Image(); const r = new FileReader();
+        r.readAsDataURL(file);
+        r.onload = e => img.src = e.target.result;
         img.onload = () => {
-            const cvs = document.createElement("canvas"); let w = img.width, h = img.height; if (w > 1200) { h *= 1200 / w; w = 1200; }
-            cvs.width = w; cvs.height = h; cvs.getContext("2d").drawImage(img, 0, 0, w, h); res(cvs.toDataURL("image/jpeg", 0.7).split(',')[1]);
+            const cvs = document.createElement("canvas");
+            let w = img.width, h = img.height;
+            if (w > 1200) { h *= 1200/w; w = 1200; }
+            cvs.width = w; cvs.height = h;
+            cvs.getContext("2d").drawImage(img, 0, 0, w, h);
+            res(cvs.toDataURL("image/jpeg", 0.7).split(',')[1]);
         };
     });
 }
+
+// ============ SUBMIT FORM ============
 document.getElementById("submitBtn").onclick = async function() {
-    const emp = document.getElementById("employee"); const imgIn = document.getElementById("images");
-    if (!emp.value || !document.getElementById("locationText").value || imgIn.files.length === 0) return alert("กรอกข้อมูลและแนบรูปให้ครบ");
-    this.disabled = true; document.getElementById("status").innerHTML = "⌛ บันทึกข้อมูล...";
+    const emp = document.getElementById("employee");
+    const imgIn = document.getElementById("images");
+    const loc = document.getElementById("locationText").value.trim();
+    if (!emp.value || !loc || imgIn.files.length === 0) {
+        showError("กรุณากรอกหน่วยงาน ชื่อพนักงาน จุดเสี่ยง และแนบรูปภาพ");
+        return;
+    }
+    this.disabled = true;
+    document.getElementById("status").innerHTML = "";
+
     try {
-        const empId = emp.options[emp.selectedIndex].getAttribute("data-id"); const d = new Date();
+        const empId = emp.options[emp.selectedIndex].getAttribute("data-id");
+        const d = new Date();
         const imgBase = empId + String(d.getDate()).padStart(2,'0') + String(d.getMonth()+1).padStart(2,'0') + String(d.getFullYear()).slice(-2);
-        const r1 = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveForm", reporter: emp.value, department: document.getElementById("department").value, location: document.getElementById("locationText").value, riskType: document.getElementById("riskType").value, riskLevel: document.getElementById("riskLevel").value, note: document.getElementById("note").value, totalImages: imgIn.files.length, imageId: imgBase }) });
-        const textRes = await r1.json(); if (!textRes.success) throw new Error(textRes.error);
-        for (let i = 0; i < imgIn.files.length; i++) {
-            document.getElementById("status").innerHTML = `📸 อัปโหลด ${i+1}/${imgIn.files.length}...`;
-            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "uploadImage", base64: await compressFile(imgIn.files[i]), rowNumber: textRes.rowNumber, imageId: imgBase + "_" + (i+1) }) });
-        }
-        alert("✅ สำเร็จ"); switchView('viewHome');
-    } catch (e) { alert("❌ พลาด: " + e.message); } finally { this.disabled = false; }
+
+        showLoading('กำลังบันทึกข้อมูล...');
+        const r1 = await fetch(API_URL, { method: "POST", body: JSON.stringify({
+            action: "saveForm",
+            reporter: emp.value,
+            department: document.getElementById("department").value,
+            location: loc,
+            riskType: document.getElementById("riskType").value,
+            riskLevel: document.getElementById("riskLevel").value,
+            note: document.getElementById("note").value,
+            totalImages: imgIn.files.length,
+            imageId: imgBase
+        })});
+        const textRes = await r1.json();
+        if (!textRes.success) throw new Error(textRes.error || "บันทึกข้อมูลล้มเหลว");
+
+        // อัปโหลดรูปภาพพร้อมกัน (parallel)
+        const uploadPromises = [...imgIn.files].map((file, i) =>
+            compressFile(file).then(b64 =>
+                fetch(API_URL, { method: "POST", body: JSON.stringify({
+                    action: "uploadImage",
+                    base64: b64,
+                    rowNumber: textRes.rowNumber,
+                    imageId: imgBase + "_" + (i+1)
+                })})
+            )
+        );
+        showLoading(`กำลังอัปโหลดรูปภาพ ${imgIn.files.length} รูป...`);
+        await Promise.all(uploadPromises);
+
+        hideLoading();
+        // Reset form
+        document.getElementById("locationText").value = '';
+        document.getElementById("note").value = '';
+        document.getElementById("images").value = '';
+        document.getElementById("preview").innerHTML = '';
+        document.getElementById("department").value = '';
+        document.getElementById("employee").innerHTML = '<option value="">เลือกพนักงาน</option>';
+        document.getElementById("employee").disabled = true;
+
+        showSuccess(`บันทึกจุดเสี่ยงสำเร็จ!\nอัปโหลดรูปภาพ ${imgIn.files.length} รูปเรียบร้อยแล้ว`);
+    } catch(e) {
+        hideLoading();
+        showError(e.message || "เกิดข้อผิดพลาด กรุณาลองใหม่");
+    } finally {
+        this.disabled = false;
+    }
 };
 
-// ---------------------- ระบบ Dashboard ---------------------- //
+// ============ LOGIN ============
 document.getElementById("btnLogin").onclick = async function() {
-    const u = document.getElementById("loginUser").value, p = document.getElementById("loginPass").value;
-    if(!u || !p) return;
-    this.disabled = true; document.getElementById("loginStatus").innerHTML = "กำลังตรวจสอบ...";
+    const u = document.getElementById("loginUser").value.trim();
+    const p = document.getElementById("loginPass").value;
+    if (!u || !p) return;
+    this.disabled = true;
+    document.getElementById("loginStatus").innerHTML = "⏳ กำลังตรวจสอบ...";
     try {
-        const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "checkLogin", user: u, pass: p }) });
-        const d = await res.json();
-        if(d.success) { await loadDash(); switchView('viewDashboard'); } else document.getElementById("loginStatus").innerHTML = d.message;
-    } catch(e) {} finally { this.disabled = false; }
+        showLoading('กำลังตรวจสอบสิทธิ์...');
+        const [loginRes, dashRes] = await Promise.all([
+            fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "checkLogin", user: u, pass: p }) }),
+            // pre-fetch dashboard ไปพร้อมกัน ถ้า login สำเร็จก็ใช้ได้ทันที
+            fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getDashboard" }) })
+        ]);
+        const loginData = await loginRes.json();
+        hideLoading();
+        if (loginData.success) {
+            const dashData = await dashRes.json();
+            if (dashData.success) {
+                dashboardData = dashData.records;
+                dashboardTargets = dashData.targets;
+                setupDashFilters();
+                renderDashboard();
+            }
+            switchView('viewDashboard');
+        } else {
+            document.getElementById("loginStatus").innerHTML = loginData.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
+        }
+    } catch(e) {
+        hideLoading();
+        document.getElementById("loginStatus").innerHTML = "เกิดข้อผิดพลาด กรุณาลองใหม่";
+    } finally {
+        this.disabled = false;
+    }
 };
 
 async function loadDash() {
-    const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getDashboard" }) });
-    const d = await res.json();
-    if(d.success) {
-        dashboardData = d.records; dashboardTargets = d.targets;
-        
-        let years = [...new Set(dashboardData.map(r => r.year))].filter(y => y !== "N/A").sort().reverse();
-        const ySel = document.getElementById("dashYear"); ySel.innerHTML = "";
-        years.forEach(y => ySel.innerHTML += `<option value="${y}">${y}</option>`);
-        
-        const dpSel = document.getElementById("dashDept"); dpSel.innerHTML = '<option value="all">รวมทุกหน่วยงาน</option>';
-        [...new Set(masterData.staffs.map(s => s.department))].sort().forEach(dp => dpSel.innerHTML += `<option value="${dp}">${dp}</option>`);
-        
-        renderDashboard();
-    }
+    showLoading('กำลังโหลดรายงาน...');
+    try {
+        const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getDashboard" }) });
+        const d = await res.json();
+        if (d.success) {
+            dashboardData = d.records;
+            dashboardTargets = d.targets;
+            setupDashFilters();
+            renderDashboard();
+        }
+    } catch(e) {}
+    hideLoading();
+}
+
+function setupDashFilters() {
+    let years = [...new Set(dashboardData.map(r => r.year))].filter(y => y !== "N/A").sort().reverse();
+    const ySel = document.getElementById("dashYear");
+    ySel.innerHTML = "";
+    years.forEach(y => ySel.innerHTML += `<option value="${y}">${y}</option>`);
+    const dpSel = document.getElementById("dashDept");
+    dpSel.innerHTML = '<option value="all">รวมทุกหน่วยงาน</option>';
+    [...new Set(masterData.staffs.map(s => s.department))].sort().forEach(dp =>
+        dpSel.innerHTML += `<option value="${dp}">${dp}</option>`);
 }
 
 function renderDashboard() {
@@ -248,89 +921,135 @@ function renderDashboard() {
     const selD = document.getElementById("dashDept").value;
     const selS = document.getElementById("dashStatus").value;
 
-    // เลือกเป้าหมาย (รายเดือน หรือ รายปี)
     const tFactory = (selM === "all") ? dashboardTargets.factoryYear : dashboardTargets.factoryMonth;
     const tPerson  = (selM === "all") ? dashboardTargets.personYear  : dashboardTargets.personMonth;
 
     document.getElementById("kpiTargetTitle").innerText = (selM === "all") ? "เป้าโรงงาน (ปี)" : "เป้าโรงงาน (เดือน)";
     document.getElementById("kpiTarget").innerText = tFactory;
 
-    // หาจำนวนพนักงานในแต่ละหน่วยงาน เพื่อทำเส้นเป้าหมายในกราฟ (เป้าคน * จำนวนคน)
-    let staffCount = {}; 
+    let staffCount = {};
     let staffInFocus = masterData.staffs.filter(s => selD === "all" || s.department === selD);
     staffInFocus.forEach(s => { staffCount[s.department] = (staffCount[s.department] || 0) + 1; });
 
-    let filtered = dashboardData.filter(d => d.year === selY && (selM === "all" || d.month === selM) && (selD === "all" || d.dept === selD));
-    let reportsByDept = {}; let reportsByPerson = {};
+    let filtered = dashboardData.filter(d =>
+        d.year === selY &&
+        (selM === "all" || d.month === selM) &&
+        (selD === "all" || d.dept === selD)
+    );
+    let reportsByDept = {}, reportsByPerson = {};
     filtered.forEach(d => {
         reportsByDept[d.dept] = (reportsByDept[d.dept] || 0) + 1;
         if(d.reporter) reportsByPerson[d.reporter] = (reportsByPerson[d.reporter] || 0) + 1;
     });
 
-    // --- ส่วนกราฟ ---
-    let labels = [], dataVals = [], bgColors = [], targetVals = [];
+    // --- กราฟ (โทนสีทันสมัย แต่ยังคง เขียว/เหลือง/แดง) ---
+    let labels = [], dataVals = [], bgColors = [], borderColors = [], targetVals = [];
     (selD === "all" ? Object.keys(staffCount) : [selD]).forEach(dept => {
         let actual = reportsByDept[dept] || 0;
-        let expected = (staffCount[dept] || 0) * tPerson; // เส้นเป้าหมาย = เป้าคน * จำนวนคนในแผนก
-        
-        labels.push(dept); 
+        let expected = (staffCount[dept] || 0) * tPerson;
+        labels.push(dept);
         dataVals.push(actual);
         targetVals.push(expected);
-        bgColors.push(actual >= expected ? '#10b981' : '#eab308'); // เขียว / เหลือง
+        const ratio = expected > 0 ? actual / expected : 1;
+        if (ratio >= 1) {
+            bgColors.push('rgba(34,197,94,0.75)');
+            borderColors.push('#16a34a');
+        } else if (ratio >= 0.6) {
+            bgColors.push('rgba(245,158,11,0.75)');
+            borderColors.push('#d97706');
+        } else {
+            bgColors.push('rgba(239,68,68,0.75)');
+            borderColors.push('#dc2626');
+        }
     });
 
     if(chartInstance) chartInstance.destroy();
     chartInstance = new Chart(document.getElementById('deptChart'), {
         type: 'bar',
-        data: { 
-            labels: labels, 
+        data: {
+            labels,
             datasets: [
                 {
                     type: 'line',
-                    label: 'เส้นเป้าหมาย (ตามจำนวนคน)',
+                    label: 'เส้นเป้าหมาย',
                     data: targetVals,
-                    borderColor: '#ef4444', // สีแดง
-                    backgroundColor: '#ef4444',
-                    borderWidth: 2, fill: false, tension: 0.1
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239,68,68,0.15)',
+                    borderWidth: 2.5,
+                    borderDash: [6,4],
+                    pointBackgroundColor: '#ef4444',
+                    pointRadius: 5,
+                    fill: false,
+                    tension: 0.2,
+                    order: 1
                 },
                 {
                     type: 'bar',
                     label: 'จำนวนรายงานที่ส่ง',
                     data: dataVals,
-                    backgroundColor: bgColors
+                    backgroundColor: bgColors,
+                    borderColor: borderColors,
+                    borderWidth: 1.5,
+                    borderRadius: 7,
+                    borderSkipped: false,
+                    order: 2
                 }
-            ] 
+            ]
         },
-        options: { 
-            responsive: true, 
-            plugins: { legend: { position: 'top', labels: { color: 'white' } } }, 
-            scales: { 
-                y: { beginAtZero: true, ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                x: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } }
-            } 
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        color: '#c8d8ef',
+                        font: { size: 12, family: 'Noto Sans Thai, sans-serif' },
+                        padding: 16,
+                        usePointStyle: true
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(10,22,44,0.92)',
+                    titleColor: '#00d4aa',
+                    bodyColor: '#c8d8ef',
+                    borderColor: 'rgba(0,212,170,0.3)',
+                    borderWidth: 1,
+                    padding: 12,
+                    titleFont: { size: 13, family: 'Noto Sans Thai' },
+                    bodyFont: { size: 12, family: 'Noto Sans Thai' }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: '#8ca3c4', font: { size: 11 } },
+                    grid: { color: 'rgba(255,255,255,0.06)' }
+                },
+                x: {
+                    ticks: { color: '#8ca3c4', font: { size: 11 }, maxRotation: 30 },
+                    grid: { color: 'rgba(255,255,255,0.04)' }
+                }
+            }
         }
     });
 
-    // --- ส่วนตารางพนักงาน ---
+    // --- ตารางรายบุคคล ---
     let tbody = "", passCount = 0;
     staffInFocus.forEach(s => {
         let actual = reportsByPerson[s.name] || 0;
         let isPass = actual >= tPerson;
         if(isPass) passCount++;
-        
         if(selS === "pass" && !isPass) return;
         if(selS === "fail" && isPass) return;
-
         let cls = isPass ? 'text-pass' : 'text-fail';
-        let txt = isPass ? 'ผ่าน' : 'ไม่ผ่าน';
+        let txt = isPass ? '✔ ผ่าน' : '✖ ยังไม่ผ่าน';
         tbody += `<tr>
-            <td>${s.name} ${selD === 'all' ? `<br><small style="color:gray;">(${s.department})</small>` : ''}</td>
-            <td style="text-align: center;"><b>${actual}</b> / ${tPerson}</td>
-            <td style="text-align: center;" class="${cls}">${txt}</td>
+            <td>${s.name}${selD === 'all' ? ` <br><small style="color:#6b7280;font-size:0.78rem;">${s.department}</small>` : ''}</td>
+            <td style="text-align:center;"><b>${actual}</b> <span style="color:#9ca3af;">/ ${tPerson}</span></td>
+            <td style="text-align:center;"><span class="${cls}">${txt}</span></td>
         </tr>`;
     });
-
-    document.getElementById("dashTableBody").innerHTML = tbody || '<tr><td colspan="3" style="text-align:center;">ไม่พบข้อมูล</td></tr>';
+    document.getElementById("dashTableBody").innerHTML = tbody || '<tr><td colspan="3" style="text-align:center;color:#9ca3af;padding:24px;">ไม่พบข้อมูล</td></tr>';
     document.getElementById("kpiActual").innerText = filtered.length;
     document.getElementById("kpiPass").innerText = passCount;
 }
