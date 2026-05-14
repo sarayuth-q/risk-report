@@ -50,6 +50,37 @@
         .btn-secondary:hover { background: rgba(255, 255, 255, 0.2); }
         button:disabled { opacity: 0.6; cursor: not-allowed; }
 
+        /* ============ OVERLAYS (หน้าจอโหลด & ป๊อปอัปสำเร็จ) ============ */
+        #loadingOverlay {
+            display: none; position: fixed; inset: 0; background: rgba(4, 36, 36, 0.85); backdrop-filter: blur(8px);
+            z-index: 99998; justify-content: center; align-items: center; flex-direction: column; gap: 16px;
+        }
+        #loadingOverlay.show { display: flex; animation: fadeIn 0.3s; }
+        .spinner {
+            width: 60px; height: 60px; border: 5px solid rgba(0, 201, 167, 0.2);
+            border-top-color: #00c9a7; border-radius: 50%; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #loadingMsg { color: #8fffe0; font-size: 1.2rem; font-weight: bold; }
+
+        #successPopup {
+            display: none; position: fixed; inset: 0; background: rgba(4, 36, 36, 0.85); backdrop-filter: blur(8px);
+            z-index: 99999; justify-content: center; align-items: center; padding: 20px;
+        }
+        #successPopup.show { display: flex; animation: fadeIn 0.3s; }
+        .popup-card {
+            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(15px);
+            border-radius: 24px; padding: 40px; text-align: center; max-width: 400px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        .popup-icon-ring { font-size: 4rem; margin-bottom: 20px; }
+        .popup-card h3 { color: #00c9a7; font-size: 1.8rem; margin: 0 0 10px; }
+        .popup-card p { color: #e8f0fe; font-size: 1.1rem; margin-bottom: 25px; }
+        .popup-ok {
+            background: linear-gradient(90deg, #00c9a7, #00e5ff); color: #000; font-weight: bold; padding: 12px 30px;
+            border: none; border-radius: 12px; font-size: 1.1rem; cursor: pointer; transition: 0.3s; width: auto; margin: 0;
+        }
+        .popup-ok:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 201, 167, 0.5); }
+
         /* ============ DASHBOARD ============ */
         .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .kpi-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 25px; }
@@ -79,7 +110,7 @@
         /* ============ UPLOAD PREVIEW ============ */
         .preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
         .preview img { width: 90px; height: 90px; object-fit: cover; border-radius: 12px; border: 2px solid #00c9a7; }
-        #status { margin-top: 15px; text-align: center; font-weight: bold; color: #8fffe0; font-size:1.1rem; }
+        #loginStatus { text-align: center; font-size: 1.1rem; color: #ff8f8f; margin-top: 10px; min-height: 25px; }
 
         /* ============ MODAL (ประวัติการแจ้ง) ============ */
         #caseModal {
@@ -136,6 +167,20 @@
 </head>
 <body>
 
+<div id="loadingOverlay">
+    <div class="spinner"></div>
+    <p id="loadingMsg">กำลังโหลดข้อมูล...</p>
+</div>
+
+<div id="successPopup">
+    <div class="popup-card">
+        <div class="popup-icon-ring">✅</div>
+        <h3>บันทึกสำเร็จ!</h3>
+        <p id="successMsg">ข้อมูลจุดเสี่ยงถูกบันทึกเข้าระบบเรียบร้อยแล้ว</p>
+        <button class="popup-ok" onclick="closeSuccessPopup()">ตกลง</button>
+    </div>
+</div>
+
 <div id="lightbox" onclick="closeLightbox()">
     <img id="lightboxImg" src="">
 </div>
@@ -159,9 +204,6 @@
                 </defs>
                 <path d="M55 15 C30 15, 12 34, 12 56 L12 66 L98 66 L98 56 C98 34, 80 15, 55 15 Z" fill="url(#helmetGrad)" />
                 <path d="M55 15 C30 15, 12 34, 12 56 L12 66 L98 66 L98 56 C98 34, 80 15, 55 15 Z" fill="url(#helmetShine)" />
-                <!-- CPF text on helmet -->
-                <text x="55" y="52" text-anchor="middle" fill="rgba(255,255,255,0.85)"
-                    font-family="Arial, sans-serif" font-weight="800" font-size="13" letter-spacing="2">SRF</text>
                 <rect x="5" y="62" width="100" height="9" rx="4.5" fill="#b45309" />
                 <path d="M40 25 Q55 20 70 25" stroke="rgba(255,255,255,0.35)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
             </svg>
@@ -176,7 +218,6 @@
     </div>
 
     <div id="viewForm" class="view">
-        <h2>ส่งรายงานจุดเสี่ยง</h2>
         <div class="form-group"><label>หน่วยงาน</label><select id="department"><option value="">กำลังโหลด...</option></select></div>
         <div class="form-group"><label>ชื่อพนักงาน</label><select id="employee" disabled><option value="">เลือกพนักงาน</option></select></div>
         <div class="form-group"><label>จุดพบความเสี่ยง</label><textarea id="locationText" placeholder="แจ้งสถานที่หรือจุดเสี่ยง"></textarea></div>
@@ -190,7 +231,6 @@
         <div class="form-group"><label>หมายเหตุ</label><textarea id="note"></textarea></div>
         <button id="submitBtn" class="btn-primary">บันทึกข้อมูล</button>
         <button class="btn-secondary" onclick="switchView('viewHome')">ย้อนกลับ</button>
-        <div id="status"></div>
     </div>
 
     <div id="viewLogin" class="view">
@@ -199,7 +239,7 @@
         <div class="form-group"><label>รหัสผ่าน (Password)</label><input type="password" id="loginPass"></div>
         <button id="btnLogin" class="btn-primary">เข้าสู่ระบบ</button>
         <button class="btn-secondary" onclick="switchView('viewHome')">ย้อนกลับ</button>
-        <div id="loginStatus" style="text-align: center; color: #ff8f8f; font-size:1.1rem; margin-top: 10px;"></div>
+        <div id="loginStatus"></div>
     </div>
 
     <div id="viewDashboard" class="view">
@@ -272,15 +312,31 @@
 Chart.register(ChartDataLabels);
 
 // ==========================================
-// *** ใส่ Web App URL ของคุณตรงนี้ ***
-const API_URL = "https://script.google.com/macros/s/AKfycbz07IDlxEvOCjsYXp6C-vKuNj-L2h5jTOfIo4r3Y3J7hxPyhClrZ63Jt6M0Nf725C2d/exec";
+// *** ใส่ Web App URL ล่าสุดของคุณตรงนี้ ***
+const API_URL = "https://script.google.com/macros/s/AKfycbwnwYsX_ii5HaHFx8Qdhx52rUfRpoauPs5c1dsMX2x5xuArIPobbEHGu6W91KxD5mgP/exec";
 // ==========================================
 
 let masterData = {}; let dashboardData = []; let dashboardTargets = {};
 let barChartInstance = null;
 let donutChartInstance = null;
 
-// ============ LIGHTBOX FUNCTIONS ============
+// ============ UI & OVERLAY FUNCTIONS ============
+function showLoading(msg) {
+    document.getElementById('loadingMsg').textContent = msg || 'กำลังโหลด...';
+    document.getElementById('loadingOverlay').classList.add('show');
+}
+function hideLoading() {
+    document.getElementById('loadingOverlay').classList.remove('show');
+}
+function showSuccess(msg) {
+    if(msg) document.getElementById('successMsg').textContent = msg;
+    document.getElementById('successPopup').classList.add('show');
+}
+function closeSuccessPopup() {
+    document.getElementById('successPopup').classList.remove('show');
+    switchView('viewHome');
+}
+
 function openLightbox(url) {
     document.getElementById('lightboxImg').src = url;
     document.getElementById('lightbox').style.display = 'flex';
@@ -293,7 +349,7 @@ function closeLightbox() {
 function switchView(viewId) {
     document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
-    document.getElementById('status').innerHTML = ""; document.getElementById('loginStatus').innerHTML = "";
+    document.getElementById('loginStatus').innerHTML = "";
     document.getElementById('loginPass').value = ""; window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -346,30 +402,66 @@ async function compressFile(file) {
 document.getElementById("submitBtn").onclick = async function() {
     const emp = document.getElementById("employee"); const imgIn = document.getElementById("images");
     if (!emp.value || !document.getElementById("locationText").value || imgIn.files.length === 0) return alert("กรอกข้อมูลและแนบรูปให้ครบ");
-    this.disabled = true; document.getElementById("status").innerHTML = "⌛ บันทึกข้อมูล...";
+    this.disabled = true; 
     try {
         const empId = emp.options[emp.selectedIndex].getAttribute("data-id"); const d = new Date();
         const imgBase = empId + String(d.getDate()).padStart(2,'0') + String(d.getMonth()+1).padStart(2,'0') + String(d.getFullYear()).slice(-2);
+        
+        // 1. โชว์หน้าจอโหลดแบบเต็มจอ
+        showLoading("กำลังบันทึกข้อมูล...");
+
         const r1 = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveForm", reporter: emp.value, department: document.getElementById("department").value, location: document.getElementById("locationText").value, riskType: document.getElementById("riskType").value, riskLevel: document.getElementById("riskLevel").value, note: document.getElementById("note").value, totalImages: imgIn.files.length, imageId: imgBase }) });
         const textRes = await r1.json(); if (!textRes.success) throw new Error(textRes.error);
+        
         for (let i = 0; i < imgIn.files.length; i++) {
-            document.getElementById("status").innerHTML = `📸 อัปโหลด ${i+1}/${imgIn.files.length}...`;
+            // อัปเดตข้อความบนหน้าจอโหลด
+            showLoading(`กำลังอัปโหลดรูปภาพ ${i+1} จาก ${imgIn.files.length}...`);
             await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "uploadImage", base64: await compressFile(imgIn.files[i]), rowNumber: textRes.rowNumber, imageId: imgBase + "_" + (i+1) }) });
         }
-        alert("✅ สำเร็จ"); switchView('viewHome');
-    } catch (e) { alert("❌ พลาด: " + e.message); } finally { this.disabled = false; }
+        
+        hideLoading();
+        
+        // ล้างข้อมูลหน้าฟอร์ม
+        document.getElementById("locationText").value = "";
+        document.getElementById("note").value = "";
+        document.getElementById("images").value = "";
+        document.getElementById("preview").innerHTML = "";
+        document.getElementById("department").value = "";
+        document.getElementById("employee").innerHTML = '<option value="">เลือกพนักงาน</option>';
+        document.getElementById("employee").disabled = true;
+        
+        // 2. โชว์ป๊อปอัปสำเร็จ!
+        showSuccess("ข้อมูลจุดเสี่ยงถูกบันทึกเข้าระบบเรียบร้อยแล้ว");
+
+    } catch (e) { 
+        hideLoading(); 
+        alert("❌ เกิดข้อผิดพลาด: " + e.message); 
+    } finally { 
+        this.disabled = false; 
+    }
 };
 
 // ---------------------- ระบบ Dashboard ---------------------- //
 document.getElementById("btnLogin").onclick = async function() {
     const u = document.getElementById("loginUser").value, p = document.getElementById("loginPass").value;
     if(!u || !p) return;
-    this.disabled = true; document.getElementById("loginStatus").innerHTML = "กำลังตรวจสอบ...";
+    this.disabled = true; document.getElementById("loginStatus").innerHTML = "";
     try {
+        // ใช้ Overlay ตอน Login ด้วย
+        showLoading("กำลังตรวจสอบสิทธิ์...");
         const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "checkLogin", user: u, pass: p }) });
         const d = await res.json();
-        if(d.success) { await loadDash(); switchView('viewDashboard'); } else document.getElementById("loginStatus").innerHTML = d.message;
-    } catch(e) {} finally { this.disabled = false; }
+        
+        if(d.success) { 
+            showLoading("กำลังโหลดรายงาน...");
+            await loadDash(); 
+            hideLoading();
+            switchView('viewDashboard'); 
+        } else { 
+            hideLoading();
+            document.getElementById("loginStatus").innerHTML = d.message; 
+        }
+    } catch(e) { hideLoading(); } finally { this.disabled = false; }
 };
 
 async function loadDash() {
@@ -403,10 +495,7 @@ function renderDashboard() {
     let staffInFocus = masterData.staffs.filter(s => selD === "all" || s.department === selD);
     staffInFocus.forEach(s => { staffCount[s.department] = (staffCount[s.department] || 0) + 1; });
 
-    // ดึงข้อมูลที่ตรงเงื่อนไข
     let filtered = dashboardData.filter(d => d.year === selY && (selM === "all" || d.month === selM) && (selD === "all" || d.dept === selD));
-    
-    // นับแยกแผนก, บุคคล และระดับความเสี่ยง
     let reportsByDept = {}; let reportsByPerson = {}; let riskLevelCount = {};
     filtered.forEach(d => {
         reportsByDept[d.dept] = (reportsByDept[d.dept] || 0) + 1;
@@ -414,39 +503,17 @@ function renderDashboard() {
         if(d.riskLevel) riskLevelCount[d.riskLevel] = (riskLevelCount[d.riskLevel] || 0) + 1;
     });
 
-    // --- กราฟแท่ง (Bar Chart) ---
-    let labels = [], dataVals = [], bgColors = [], targetVals = [];
+    let labels = [], dataVals = [], bgColors = [], borderColors = [], targetVals = [];
     (selD === "all" ? Object.keys(staffCount) : [selD]).forEach(dept => {
-        let actual = reportsByDept[dept] || 0;
-        let expected = (staffCount[dept] || 0) * tPerson; 
+        let actual = reportsByDept[dept] || 0; let expected = (staffCount[dept] || 0) * tPerson;
         labels.push(dept); dataVals.push(actual); targetVals.push(expected);
-        bgColors.push(actual >= expected ? '#10b981' : '#f59e0b');
+        const ratio = expected > 0 ? actual / expected : 1;
+        if (ratio >= 1) { bgColors.push('rgba(34,197,94,0.75)'); borderColors.push('#16a34a'); } else if (ratio >= 0.6) { bgColors.push('rgba(245,158,11,0.75)'); borderColors.push('#d97706'); } else { bgColors.push('rgba(239,68,68,0.75)'); borderColors.push('#dc2626'); }
     });
 
     if(barChartInstance) barChartInstance.destroy();
-    barChartInstance = new Chart(document.getElementById('deptChart'), {
-        type: 'bar',
-        data: { 
-            labels: labels, 
-            datasets: [
-                { type: 'line', label: 'เป้าหมาย', data: targetVals, borderColor: '#ef4444', backgroundColor: '#ef4444', borderWidth: 2, borderDash: [5,5], fill: false, tension: 0.1 },
-                { type: 'bar', label: 'จำนวนรายงาน', data: dataVals, backgroundColor: bgColors, borderRadius: 5 }
-            ] 
-        },
-        options: { 
-            responsive: true, 
-            plugins: { 
-                legend: { labels: { color: 'white', font: { size: 14 } } },
-                datalabels: { display: false } // ปิดเลขในกราฟแท่ง
-            }, 
-            scales: { 
-                y: { beginAtZero: true, ticks: { color: 'white', font: {size: 14} }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                x: { ticks: { color: 'white', font: {size: 14} }, grid: { display: false } }
-            } 
-        }
-    });
+    barChartInstance = new Chart(document.getElementById('deptChart'), { type: 'bar', data: { labels, datasets: [ { type: 'line', label: 'เส้นเป้าหมาย', data: targetVals, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.15)', borderWidth: 2.5, borderDash: [6,4], pointBackgroundColor: '#ef4444', pointRadius: 5, fill: false, tension: 0.2, order: 1 }, { type: 'bar', label: 'รายงานที่ส่ง', data: dataVals, backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1.5, borderRadius: 7, borderSkipped: false, order: 2 } ] }, options: { responsive: true, plugins: { legend: { position: 'top', labels: { color: '#c8d8ef', font: { size: 11 }, usePointStyle: true } }, datalabels: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#8ca3c4', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.06)' } }, x: { ticks: { color: '#8ca3c4', font: { size: 11 }, maxRotation: 30 }, grid: { color: 'rgba(255,255,255,0.04)' } } } } });
 
-    // --- กราฟโดนัท (Donut Chart) แสดงระดับความเสี่ยง พร้อมตัวเลข ---
     let riskLabels = Object.keys(riskLevelCount);
     let riskData = Object.values(riskLevelCount);
     let riskColors = riskLabels.map(l => l.includes('สูง') ? '#ef4444' : l.includes('กลาง') ? '#f59e0b' : '#10b981');
@@ -456,48 +523,51 @@ function renderDashboard() {
         type: 'doughnut',
         data: { labels: riskLabels, datasets: [{ data: riskData, backgroundColor: riskColors, borderWidth: 0 }] },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'bottom', labels: { color: 'white', padding: 15, font: {size: 14} } },
-                // ตั้งค่าปลั๊กอิน Datalabels ให้แสดงตัวเลขชัดๆ
+                legend: { position: 'bottom', labels: { color: '#c8d8ef', font: { size: 11 } } },
                 datalabels: {
-                    color: '#ffffff',
-                    font: { weight: 'bold', size: 20 },
-                    formatter: (value) => value > 0 ? value : '' // ซ่อนถ้าเป็น 0
+                    color: '#ffffff', font: { weight: 'bold', size: 16 },
+                    formatter: (value) => value > 0 ? value : ''
                 }
             }
         }
     });
 
-    // --- ส่วนตารางพนักงาน ---
     let tbody = "", passCount = 0;
     staffInFocus.forEach(s => {
-        let actual = reportsByPerson[s.name] || 0;
-        let isPass = actual >= tPerson;
+        let actual = reportsByPerson[s.name] || 0; let isPass = actual >= tPerson;
         if(isPass) passCount++;
-        
-        if(selS === "pass" && !isPass) return;
-        if(selS === "fail" && isPass) return;
-
-        let cls = isPass ? 'text-pass' : 'text-fail';
-        let txt = isPass ? 'ผ่าน' : 'ไม่ผ่าน';
+        if(selS === "pass" && !isPass) return; if(selS === "fail" && isPass) return;
+        let cls = isPass ? 'text-pass' : 'text-fail'; let txt = isPass ? '✔ ผ่าน' : '✖ ยังไม่ผ่าน';
         tbody += `<tr>
-            <td>${s.name} ${selD === 'all' ? `<br><small style="color:#8ca3c4; font-size:1rem;">(${s.department})</small>` : ''}</td>
-            <td style="text-align: center; font-size:1.15rem;"><b>${actual}</b> / ${tPerson}</td>
-            <td style="text-align: center;" class="${cls}">${txt}</td>
-            <td style="text-align: center;">
+            <td>${s.name}${selD === 'all' ? ` <br><small style="color:#6b7280;font-size:0.78rem;">${s.department}</small>` : ''}</td>
+            <td style="text-align:center; font-size:1.15rem;"><b>${actual}</b> / ${tPerson}</td>
+            <td style="text-align:center;"><span class="${cls}">${txt}</span></td>
+            <td style="text-align:center;">
                 <button class="btn-secondary" style="padding: 8px 16px; font-size: 1.1rem; margin:0; width: auto;" onclick="viewEmployeeCases('${s.name}')">🔍 ดูข้อมูล</button>
             </td>
         </tr>`;
     });
-
     document.getElementById("dashTableBody").innerHTML = tbody || '<tr><td colspan="4" style="text-align:center; padding: 20px;">ไม่พบข้อมูล</td></tr>';
     document.getElementById("kpiActual").innerText = filtered.length;
     document.getElementById("kpiPass").innerText = passCount;
 }
 
-// ============ ดูข้อมูลประวัติรายบุคคล (MODAL & LIGHTBOX) ============
+// ============ ฟังก์ชันแปลง URL และแสดงประวัติ (MODAL) ============
+function getDirectDriveLink(url) {
+    if (!url) return "";
+    let fileId = "";
+    let match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (match && match[1]) fileId = match[1];
+    else if (url.includes('id=')) fileId = url.split('id=')[1].split('&')[0];
+    
+    if (fileId) {
+        return `https://drive.google.com/uc?export=view&id=${fileId}`;
+    }
+    return url;
+}
+
 function viewEmployeeCases(empName) {
     const selY = document.getElementById("dashYear").value;
     const selM = document.getElementById("dashMonth").value;
@@ -515,11 +585,12 @@ function viewEmployeeCases(empName) {
         empCases.forEach((c, idx) => {
             let dateStr = c.timestamp ? new Date(c.timestamp).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }) : "ไม่ระบุเวลา";
             
-            // สร้างรูปภาพพร้อมผูกฟังก์ชันคลิกเปิด Lightbox
             let imgsHtml = "";
             if (c.images && c.images.length > 0) {
-                // วนลูปสร้างรูปภาพและผูก onclick
-                imgsHtml = c.images.map(img => `<img src="${img}" onclick="openLightbox('${img}')" title="คลิกเพื่อขยายภาพ">`).join('');
+                imgsHtml = c.images.map(imgUrl => {
+                    let directUrl = getDirectDriveLink(imgUrl);
+                    return `<img src="${directUrl}" onclick="openLightbox('${directUrl}')" title="คลิกเพื่อขยายภาพ" onerror="this.onerror=null; this.src='https://placehold.co/100x100?text=ภาพถูกล็อก';">`;
+                }).join('');
             } else {
                 imgsHtml = "<span style='color: #8ca3c4; font-size: 1rem;'>ไม่มีรูปภาพแนบ</span>";
             }
