@@ -3,192 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ระบบรายงานและสรุปจุดเสี่ยง โรงงานอาหารสัตว์ศรีราชา</title>
+    <title>Risk Reporting System - CPF Sriracha</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        /* ============ CLAUDE / MODERN AI THEME ============ */
+        :root {
+            --bg-body: #09090b;       /* Zinc 950 */
+            --bg-card: #18181b;       /* Zinc 900 */
+            --bg-input: #09090b;      /* Zinc 950 */
+            --bg-hover: #27272a;      /* Zinc 800 */
+            --border: #27272a;        /* Zinc 800 */
+            --border-light: #3f3f46;  /* Zinc 700 */
+            --text-main: #f4f4f5;     /* Zinc 100 */
+            --text-muted: #a1a1aa;    /* Zinc 400 */
+            --primary: #fafafa;       /* White-ish for primary buttons */
+            --primary-text: #09090b;  /* Dark text for primary buttons */
+            --accent: #2dd4bf;        /* Subtle Teal */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', 'Noto Sans Thai', sans-serif; margin: 0; padding: 0; }
+        
         body {
-            margin: 0; min-height: 100vh;
-            background: linear-gradient(135deg, #0f766e, #042424, #000000);
+            background-color: var(--bg-body);
+            color: var(--text-main);
             display: flex; justify-content: center; align-items: flex-start;
-            padding: 20px; color: white;
+            padding: 40px 20px; min-height: 100vh;
+            line-height: 1.6;
         }
+
         .container {
-            width: 100%; max-width: 900px;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(12px); border-radius: 24px;
-            padding: 30px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 20px;
+            width: 100%; max-width: 860px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: var(--shadow-subtle);
         }
-        h1 { text-align: center; color: #8fffe0; margin-bottom: 25px; font-size: 2rem; }
-        h2 { color: #00c9a7; text-align: center; margin-bottom: 20px; font-size: 1.8rem; }
-        
-        .view { display: none; animation: fadeIn 0.3s; }
-        .view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ============ FORM & INPUTS ============ */
+        h1, h2, h3, h4 { color: var(--text-main); font-weight: 600; line-height: 1.3; }
+        
+        .view { display: none; opacity: 0; transition: opacity 0.4s ease, transform 0.4s ease; transform: translateY(10px); }
+        .view.active { display: block; opacity: 1; transform: translateY(0); animation: slideUpFade 0.4s ease forwards; }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ============ HOME PAGE ============ */
+        .home-header { display: flex; flex-direction: column; align-items: center; padding-bottom: 30px; text-align: center; }
+        .helmet-wrap { position: relative; width: 90px; height: 90px; margin-bottom: 20px; }
+        .helmet-wrap svg { width: 100%; height: 100%; drop-shadow: 0 10px 15px rgba(0,0,0,0.5); }
+        .home-title h1 { font-size: 1.75rem; letter-spacing: -0.02em; margin-bottom: 8px; }
+        .home-title p { font-size: 1rem; color: var(--text-muted); }
+        .home-btns { display: flex; flex-direction: column; gap: 12px; max-width: 400px; margin: 0 auto; width: 100%; }
+
+        /* ============ PAGE HEADERS ============ */
+        .page-header { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+        .page-header h2 { font-size: 1.5rem; margin-bottom: 4px; letter-spacing: -0.02em; }
+        .page-header p { font-size: 0.95rem; color: var(--text-muted); }
+
+        /* ============ FORMS & INPUTS ============ */
         .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-size: 1.15rem; font-weight: bold; color: #8fffe0; }
+        label { display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); }
         input, select, textarea {
-            width: 100%; padding: 14px; border: none; border-radius: 12px;
-            font-size: 1.1rem; background: rgba(255, 255, 255, 0.95); color: #1a1a1a;
+            width: 100%; padding: 14px 16px;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-main); font-size: 1rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            outline: none;
         }
-        textarea { min-height: 100px; resize: vertical; }
-        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--border-light);
+            box-shadow: 0 0 0 3px rgba(255,255,255,0.05);
+        }
+        select option { background-color: var(--bg-card); color: var(--text-main); }
+        textarea { resize: vertical; min-height: 100px; }
+        input[type="file"] { padding: 10px; color: var(--text-muted); font-size: 0.9rem; cursor: pointer; }
+
+        /* ============ BUTTONS ============ */
         button {
-            width: 100%; padding: 16px; border: none; border-radius: 14px;
-            font-size: 1.25rem; font-weight: bold; cursor: pointer; color: white;
-            transition: 0.3s; margin-bottom: 15px;
+            width: 100%; padding: 14px 20px;
+            border: none; border-radius: var(--radius-md);
+            font-size: 1rem; font-weight: 500; cursor: pointer;
+            transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn-primary { background: linear-gradient(90deg, #00c9a7, #00e5ff); box-shadow: 0 4px 15px rgba(0, 201, 167, 0.3); color: #000; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 201, 167, 0.5); }
-        .btn-secondary { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.3); }
-        .btn-secondary:hover { background: rgba(255, 255, 255, 0.2); }
-        button:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        /* ============ OVERLAYS (หน้าจอโหลด & ป๊อปอัปสำเร็จ) ============ */
-        #loadingOverlay {
-            display: none; position: fixed; inset: 0; background: rgba(4, 36, 36, 0.85); backdrop-filter: blur(8px);
-            z-index: 99998; justify-content: center; align-items: center; flex-direction: column; gap: 16px;
-        }
-        #loadingOverlay.show { display: flex; animation: fadeIn 0.3s; }
-        .spinner {
-            width: 60px; height: 60px; border: 5px solid rgba(0, 201, 167, 0.2);
-            border-top-color: #00c9a7; border-radius: 50%; animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        #loadingMsg { color: #8fffe0; font-size: 1.2rem; font-weight: bold; }
-
-        #successPopup {
-            display: none; position: fixed; inset: 0; background: rgba(4, 36, 36, 0.85); backdrop-filter: blur(8px);
-            z-index: 99999; justify-content: center; align-items: center; padding: 20px;
-        }
-        #successPopup.show { display: flex; animation: fadeIn 0.3s; }
-        .popup-card {
-            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(15px);
-            border-radius: 24px; padding: 40px; text-align: center; max-width: 400px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        }
-        .popup-icon-ring { font-size: 4rem; margin-bottom: 20px; }
-        .popup-card h3 { color: #00c9a7; font-size: 1.8rem; margin: 0 0 10px; }
-        .popup-card p { color: #e8f0fe; font-size: 1.1rem; margin-bottom: 25px; }
-        .popup-ok {
-            background: linear-gradient(90deg, #00c9a7, #00e5ff); color: #000; font-weight: bold; padding: 12px 30px;
-            border: none; border-radius: 12px; font-size: 1.1rem; cursor: pointer; transition: 0.3s; width: auto; margin: 0;
-        }
-        .popup-ok:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 201, 167, 0.5); }
-
-        /* ============ DASHBOARD ============ */
-        .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .kpi-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .kpi-card {
-            background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.2);
-            padding: 15px; border-radius: 16px; text-align: center;
-        }
-        .kpi-title { font-size: 1.05rem; color: #ccffef; margin-bottom: 5px; }
-        .kpi-value { font-size: 2.2rem; font-weight: bold; color: #fff; margin: 0; }
+        .btn-primary { background-color: var(--primary); color: var(--primary-text); }
+        .btn-primary:hover:not(:disabled) { background-color: #e4e4e7; transform: translateY(-1px); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
         
-        .view-toggle { display: flex; gap: 10px; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 14px; }
-        .toggle-btn { flex: 1; padding: 12px; border-radius: 10px; background: transparent; border: none; color: white; cursor: pointer; font-weight: bold; transition: 0.3s; margin-bottom: 0;}
-        .toggle-btn.active { background: #00c9a7; color: #000; }
-        .dash-section { display: none; animation: fadeIn 0.3s; }
+        .btn-secondary { background-color: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-secondary:hover { background-color: var(--bg-hover); }
+        
+        .btn-danger { background-color: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .btn-danger:hover { background-color: rgba(239, 68, 68, 0.15); }
+
+        /* ============ IMAGE PREVIEW ============ */
+        .preview { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+        .preview img {
+            width: 80px; height: 80px; object-fit: cover;
+            border-radius: var(--radius-sm); border: 1px solid var(--border);
+        }
+
+        #status, #loginStatus { text-align: center; font-size: 0.95rem; margin-top: 10px; min-height: 24px; }
+        #loginStatus { color: var(--danger); }
+
+        /* ============ DASHBOARD ELEMENTS ============ */
+        .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        
+        .kpi-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 30px; }
+        .kpi-card {
+            background-color: var(--bg-input); border: 1px solid var(--border);
+            padding: 20px; border-radius: var(--radius-md); text-align: left;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .kpi-title { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
+        .kpi-value { font-size: 2rem; font-weight: 600; color: var(--text-main); line-height: 1; }
+
+        .view-toggle { display: flex; gap: 8px; margin-bottom: 24px; background-color: var(--bg-input); padding: 6px; border-radius: var(--radius-md); border: 1px solid var(--border); }
+        .toggle-btn { flex: 1; padding: 10px; background: transparent; border: none; color: var(--text-muted); border-radius: 8px; font-weight: 500; font-size: 0.95rem; transition: 0.2s; }
+        .toggle-btn.active { background-color: var(--bg-hover); color: var(--text-main); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        
+        .dash-section { display: none; animation: slideUpFade 0.3s ease; }
         .dash-section.active { display: block; }
 
-        .charts-wrapper { display: grid; grid-template-columns: 1.8fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .chart-container { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 15px; }
+        .charts-wrapper { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .chart-container { background-color: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; }
 
-        .table-container { background: rgba(255,255,255,0.95); border-radius: 16px; overflow: hidden; }
-        table { width: 100%; border-collapse: collapse; color: #000; font-size: 1.05rem; }
-        th, td { padding: 14px 15px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background: #0f766e; color: white; font-weight: bold; font-size: 1.1rem; }
-        .text-pass { color: #15803d; font-weight: bold; }
-        .text-fail { color: #d97706; font-weight: bold; }
+        /* ============ TABLE ============ */
+        .table-container { background-color: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+        th, td { padding: 16px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { color: var(--text-muted); font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; background-color: rgba(255,255,255,0.02); }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background-color: rgba(255,255,255,0.02); }
         
-        /* ============ UPLOAD PREVIEW ============ */
-        .preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-        .preview img { width: 90px; height: 90px; object-fit: cover; border-radius: 12px; border: 2px solid #00c9a7; }
-        #loginStatus { text-align: center; font-size: 1.1rem; color: #ff8f8f; margin-top: 10px; min-height: 25px; }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; display: inline-block; }
+        .status-pass { background-color: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .status-fail { background-color: rgba(245, 158, 11, 0.1); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); }
 
-        /* ============ MODAL (ประวัติการแจ้ง) ============ */
-        #caseModal {
-            display: none; position: fixed; inset: 0;
-            background: rgba(4, 36, 36, 0.85); backdrop-filter: blur(8px);
-            z-index: 10000; justify-content: center; align-items: center; padding: 20px;
+        /* ============ MODALS & OVERLAYS ============ */
+        #loadingOverlay, #successPopup, #caseModal, #lightbox {
+            display: none; position: fixed; inset: 0; z-index: 9999;
+            background-color: rgba(0, 0, 0, 0.8); backdrop-filter: blur(4px);
+            justify-content: center; align-items: center;
         }
-        #caseModal.show { display: flex; animation: fadeIn 0.3s; }
-        .modal-content {
-            background: rgba(15, 118, 110, 0.95); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 24px; padding: 30px; width: 100%; max-width: 800px;
-            max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5); position: relative;
+        #loadingOverlay.show, #successPopup.show, #caseModal.show { display: flex; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Custom Modern Spinner */
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--text-main); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .modal-card {
+            background-color: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 32px;
+            width: 100%; max-width: 400px; text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            animation: slideUpFade 0.3s ease;
+        }
+        .modal-icon { font-size: 3rem; margin-bottom: 16px; display: inline-block; }
+        .modal-card h3 { font-size: 1.4rem; margin-bottom: 8px; }
+        .modal-card p { color: var(--text-muted); margin-bottom: 24px; font-size: 0.95rem; }
+
+        /* Case History Modal */
+        #caseModal { padding: 20px; }
+        .case-modal-content {
+            background-color: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 32px; width: 100%; max-width: 700px;
+            max-height: 85vh; overflow-y: auto; position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
         .close-modal {
-            position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: none; color: white;
-            font-size: 1.5rem; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0;
+            position: absolute; top: 20px; right: 20px; background: transparent; border: none; color: var(--text-muted);
+            font-size: 1.5rem; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border-radius: var(--radius-sm); padding: 0; margin: 0;
         }
-        .close-modal:hover { background: #ef4444; }
+        .close-modal:hover { background-color: var(--bg-hover); color: var(--text-main); }
         
         .case-card {
-            background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px; padding: 20px; margin-bottom: 16px;
+            background-color: var(--bg-input); border: 1px solid var(--border);
+            border-radius: var(--radius-md); padding: 20px; margin-bottom: 16px;
+            text-align: left;
         }
-        .case-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; }
-        .case-header h4 { color: #00c9a7; font-size: 1.3rem; margin: 0; }
-        .case-detail { color: #e8f0fe; font-size: 1.1rem; margin-bottom: 8px; line-height: 1.5; }
+        .case-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .case-header h4 { font-size: 1.1rem; color: var(--text-main); margin: 0; }
+        .case-detail { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 6px; line-height: 1.5; }
+        .case-detail b { color: var(--text-main); font-weight: 500; }
         
-        .case-gallery { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .case-gallery { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
         .case-gallery img {
-            width: 110px; height: 110px; object-fit: cover; border-radius: 10px;
-            border: 2px solid #0ea5e9; cursor: zoom-in; transition: transform 0.2s;
+            width: 100px; height: 100px; object-fit: cover; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); cursor: zoom-in; transition: opacity 0.2s;
         }
-        .case-gallery img:hover { transform: scale(1.05); }
+        .case-gallery img:hover { opacity: 0.8; }
 
-        /* ============ LIGHTBOX (ระบบแสดงภาพขยายหน้าเดิม) ============ */
-        #lightbox {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.92); z-index: 99999; 
-            justify-content: center; align-items: center; cursor: zoom-out;
-            padding: 20px;
-        }
-        #lightbox img {
-            max-width: 95%; max-height: 95vh; border-radius: 12px; 
-            box-shadow: 0 0 30px rgba(0, 201, 167, 0.4);
-            animation: fadeIn 0.3s; object-fit: contain;
-        }
+        /* Lightbox */
+        #lightbox { padding: 20px; cursor: zoom-out; }
+        #lightbox img { max-width: 100%; max-height: 90vh; border-radius: var(--radius-md); box-shadow: 0 10px 40px rgba(0,0,0,0.6); object-fit: contain; }
 
         @media (max-width: 768px) {
-            .filter-grid { grid-template-columns: 1fr; }
+            body { padding: 20px 10px; }
+            .container { padding: 24px; border-radius: var(--radius-md); }
             .charts-wrapper { grid-template-columns: 1fr; }
-            .kpi-cards { grid-template-columns: 1fr; }
+            .kpi-cards { grid-template-columns: 1fr; gap: 12px; }
         }
     </style>
 </head>
 <body>
 
 <div id="loadingOverlay">
-    <div class="spinner"></div>
-    <p id="loadingMsg">กำลังโหลดข้อมูล...</p>
-</div>
-
-<div id="successPopup">
-    <div class="popup-card">
-        <div class="popup-icon-ring">✅</div>
-        <h3>บันทึกสำเร็จ!</h3>
-        <p id="successMsg">ข้อมูลจุดเสี่ยงถูกบันทึกเข้าระบบเรียบร้อยแล้ว</p>
-        <button class="popup-ok" onclick="closeSuccessPopup()">ตกลง</button>
+    <div style="text-align: center;">
+        <div class="spinner"></div>
+        <p id="loadingMsg" style="color: var(--text-main); font-weight: 500; letter-spacing: 0.5px;">กำลังโหลดข้อมูล...</p>
     </div>
 </div>
 
-<div id="lightbox" onclick="closeLightbox()">
-    <img id="lightboxImg" src="">
+<div id="successPopup">
+    <div class="modal-card">
+        <span class="modal-icon">✨</span>
+        <h3>บันทึกข้อมูลสำเร็จ</h3>
+        <p id="successMsg">ข้อมูลจุดเสี่ยงถูกบันทึกเข้าระบบเรียบร้อยแล้ว</p>
+        <button class="btn-primary" onclick="closeSuccessPopup()" style="margin: 0;">ตกลง</button>
+    </div>
 </div>
 
+<div id="lightbox" onclick="closeLightbox()"><img id="lightboxImg" src=""></div>
+
 <div id="caseModal">
-    <div class="modal-content">
-        <button class="close-modal" onclick="closeCaseModal()">×</button>
-        <h3 id="modalEmpName" style="color: #8fffe0; font-size: 1.8rem; margin-bottom: 20px; margin-top:0;">ประวัติการแจ้งของพนักงาน</h3>
+    <div class="case-modal-content">
+        <button class="close-modal" onclick="closeCaseModal()">✕</button>
+        <div class="page-header" style="margin-bottom: 20px; border-bottom: none; padding-bottom: 0;">
+            <h2 id="modalEmpName" style="font-size: 1.4rem;">ประวัติการแจ้ง</h2>
+        </div>
         <div id="modalCaseList"></div>
     </div>
 </div>
@@ -196,58 +252,85 @@
 <div class="container">
 
     <div id="viewHome" class="view active">
-        <div style="text-align: center; margin-bottom: 15px;">
-            <svg width="120" height="120" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <radialGradient id="helmetGrad" cx="40%" cy="30%" r="70%"><stop offset="0%" stop-color="#facc15"/><stop offset="100%" stop-color="#d97706"/></radialGradient>
-                    <radialGradient id="helmetShine" cx="35%" cy="25%" r="40%"><stop offset="0%" stop-color="rgba(255,255,255,0.5)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient>
-                </defs>
-                <path d="M55 15 C30 15, 12 34, 12 56 L12 66 L98 66 L98 56 C98 34, 80 15, 55 15 Z" fill="url(#helmetGrad)" />
-                <path d="M55 15 C30 15, 12 34, 12 56 L12 66 L98 66 L98 56 C98 34, 80 15, 55 15 Z" fill="url(#helmetShine)" />
-                <text x="55" y="52" font-family="'Segoe UI', sans-serif" font-size="22" font-weight="900" fill="#042424" text-anchor="middle">CPF</text>
-                <rect x="5" y="62" width="100" height="9" rx="4.5" fill="#b45309" />
-                <path d="M40 25 Q55 20 70 25" stroke="rgba(255,255,255,0.35)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            </svg>
+        <div class="home-header">
+            <div class="helmet-wrap">
+                <svg viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="helmetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#fcd34d" />
+                            <stop offset="100%" stop-color="#f59e0b" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M55 15 C30 15, 12 34, 12 56 L12 66 L98 66 L98 56 C98 34, 80 15, 55 15 Z" fill="url(#helmetGrad)" />
+                    <text x="55" y="52" font-family="'Inter', sans-serif" font-size="20" font-weight="700" fill="#18181b" text-anchor="middle" letter-spacing="1">CPF</text>
+                    <rect x="5" y="62" width="100" height="8" rx="4" fill="#b45309" />
+                    <path d="M40 25 Q55 20 70 25" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="home-title">
+                <h1>ระบบแจ้งจุดเสี่ยง</h1>
+                <p>โรงงานอาหารสัตว์ศรีราชา</p>
+            </div>
         </div>
-
-        <h1>ระบบแจ้งจุดเสี่ยง<br>โรงงานอาหารสัตว์ศรีราชา</h1>
-        
-        <div style="max-width: 450px; margin: 40px auto 0;">
-            <button class="btn-primary" onclick="switchView('viewForm')">🚧 พนักงานส่งจุดเสี่ยง</button>
-            <button class="btn-secondary" onclick="switchView('viewLogin')">📊 รายงานสรุป (ผู้บริหาร)</button>
+        <div class="home-btns">
+            <button class="btn-primary" onclick="switchView('viewForm')">ส่งรายงานจุดเสี่ยง</button>
+            <button class="btn-secondary" onclick="switchView('viewLogin')">เข้าสู่ระบบ (สำหรับผู้บริหาร)</button>
         </div>
     </div>
 
     <div id="viewForm" class="view">
+        <div class="page-header">
+            <h2>ส่งรายงานจุดเสี่ยง</h2>
+            <p>กรอกข้อมูลและแนบรูปภาพเพื่อแจ้งประเมินความเสี่ยง</p>
+        </div>
+
         <div class="form-group"><label>หน่วยงาน</label><select id="department"><option value="">กำลังโหลด...</option></select></div>
         <div class="form-group"><label>ชื่อพนักงาน</label><select id="employee" disabled><option value="">เลือกพนักงาน</option></select></div>
-        <div class="form-group"><label>จุดพบความเสี่ยง</label><textarea id="locationText" placeholder="แจ้งสถานที่หรือจุดเสี่ยง"></textarea></div>
-        <div class="form-group"><label>ประเภทความเสี่ยง</label><select id="riskType"></select></div>
-        <div class="form-group"><label>ระดับความเสี่ยง</label><select id="riskLevel"></select></div>
+        <div class="form-group"><label>สถานที่พบความเสี่ยง</label><textarea id="locationText" placeholder="ระบุรายละเอียดสถานที่..."></textarea></div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group"><label>ประเภทความเสี่ยง</label><select id="riskType"></select></div>
+            <div class="form-group"><label>ระดับความเสี่ยง</label><select id="riskLevel"></select></div>
+        </div>
+
         <div class="form-group">
-            <label>แนบรูปภาพ</label>
+            <label>แนบรูปภาพหลักฐาน</label>
             <input type="file" id="images" multiple accept="image/*" />
             <div class="preview" id="preview"></div>
         </div>
-        <div class="form-group"><label>หมายเหตุ</label><textarea id="note"></textarea></div>
-        <button id="submitBtn" class="btn-primary">บันทึกข้อมูล</button>
-        <button class="btn-secondary" onclick="switchView('viewHome')">ย้อนกลับ</button>
+        <div class="form-group"><label>หมายเหตุเพิ่มเติม (ถ้ามี)</label><textarea id="note" placeholder="รายละเอียดอื่นๆ..."></textarea></div>
+        
+        <div style="margin-top: 30px;">
+            <button id="submitBtn" class="btn-primary">บันทึกข้อมูล</button>
+            <button class="btn-secondary" onclick="switchView('viewHome')">ย้อนกลับ</button>
+        </div>
+        <div id="status"></div>
     </div>
 
     <div id="viewLogin" class="view">
-        <h2>เข้าสู่ระบบรายงานสรุป</h2>
-        <div class="form-group"><label>ชื่อผู้ใช้งาน (User)</label><input type="text" id="loginUser"></div>
-        <div class="form-group"><label>รหัสผ่าน (Password)</label><input type="password" id="loginPass"></div>
-        <button id="btnLogin" class="btn-primary">เข้าสู่ระบบ</button>
-        <button class="btn-secondary" onclick="switchView('viewHome')">ย้อนกลับ</button>
+        <div class="page-header">
+            <h2>เข้าสู่ระบบ</h2>
+            <p>กรุณากรอกรหัสผ่านเพื่อดูรายงานสรุป (Dashboard)</p>
+        </div>
+        <div class="form-group"><label>ชื่อผู้ใช้งาน</label><input type="text" id="loginUser" placeholder="Username"></div>
+        <div class="form-group"><label>รหัสผ่าน</label><input type="password" id="loginPass" placeholder="Password"></div>
+        
+        <div style="margin-top: 30px;">
+            <button id="btnLogin" class="btn-primary">เข้าสู่ระบบ</button>
+            <button class="btn-secondary" onclick="switchView('viewHome')">ย้อนกลับ</button>
+        </div>
         <div id="loginStatus"></div>
     </div>
 
     <div id="viewDashboard" class="view">
-        <h2>รายงานสรุปเทียบเป้าหมาย</h2>
+        <div class="page-header">
+            <h2>Dashboard ภาพรวมความเสี่ยง</h2>
+            <p>รายงานสรุปสถิติเปรียบเทียบเป้าหมาย</p>
+        </div>
+
         <div class="filter-grid">
-            <div><label>ปี</label><select id="dashYear" onchange="renderDashboard()"></select></div>
-            <div>
+            <div class="form-group" style="margin:0;"><label>ปี</label><select id="dashYear" onchange="renderDashboard()"></select></div>
+            <div class="form-group" style="margin:0;">
                 <label>เดือน</label>
                 <select id="dashMonth" onchange="renderDashboard()">
                     <option value="all">รวมทั้งปี (ใช้เป้าปี)</option>
@@ -257,8 +340,8 @@
                     <option value="10">ต.ค.</option><option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
                 </select>
             </div>
-            <div><label>หน่วยงาน</label><select id="dashDept" onchange="renderDashboard()"></select></div>
-            <div>
+            <div class="form-group" style="margin:0;"><label>หน่วยงาน</label><select id="dashDept" onchange="renderDashboard()"></select></div>
+            <div class="form-group" style="margin:0;">
                 <label>สถานะรายบุคคล</label>
                 <select id="dashStatus" onchange="renderDashboard()">
                     <option value="all">ทั้งหมด</option>
@@ -269,22 +352,21 @@
         </div>
         
         <div class="kpi-cards">
-            <div class="kpi-card"><div class="kpi-title">แจ้งแล้ว (เรื่อง)</div><div class="kpi-value" id="kpiActual">0</div></div>
-            <div class="kpi-card"><div class="kpi-title" id="kpiTargetTitle">เป้าโรงงาน (เรื่อง)</div><div class="kpi-value" id="kpiTarget">0</div></div>
-            <div class="kpi-card"><div class="kpi-title">คนผ่านเกณฑ์</div><div class="kpi-value" id="kpiPass">0</div></div>
+            <div class="kpi-card"><div class="kpi-title">เรื่องที่แจ้งทั้งหมด</div><div class="kpi-value" id="kpiActual">0</div></div>
+            <div class="kpi-card"><div class="kpi-title" id="kpiTargetTitle">เป้าหมายโรงงาน</div><div class="kpi-value" id="kpiTarget">0</div></div>
+            <div class="kpi-card"><div class="kpi-title">พนักงานที่ผ่านเกณฑ์</div><div class="kpi-value" id="kpiPass">0</div></div>
         </div>
 
         <div class="view-toggle">
-            <button class="toggle-btn active" id="btnGraph" onclick="toggleDashView('graph')">📊 ดูกราฟ</button>
-            <button class="toggle-btn" id="btnTable" onclick="toggleDashView('table')">📋 ดูตารางรายบุคคล</button>
+            <button class="toggle-btn active" id="btnGraph" onclick="toggleDashView('graph')">วิเคราะห์กราฟ</button>
+            <button class="toggle-btn" id="btnTable" onclick="toggleDashView('table')">ข้อมูลรายบุคคล</button>
         </div>
 
         <div id="secGraph" class="dash-section active">
             <div class="charts-wrapper">
                 <div class="chart-container"><canvas id="deptChart"></canvas></div>
-                
-                <div class="chart-container" style="display:flex; flex-direction:column; align-items:center; justify-content: center;">
-                    <h4 style="text-align:center; color:#8fffe0; margin-top:0; margin-bottom:10px;">ระดับความเสี่ยง</h4>
+                <div class="chart-container" style="display:flex; flex-direction:column; justify-content: center;">
+                    <label style="text-align:center; display:block; margin-bottom:15px;">สัดส่วนระดับความเสี่ยง</label>
                     <div style="height: 250px; width: 100%; position: relative;">
                         <canvas id="riskDonutChart"></canvas>
                     </div>
@@ -296,23 +378,22 @@
             <div class="table-container">
                 <table>
                     <thead><tr>
-                        <th>ชื่อพนักงาน</th>
+                        <th>รายชื่อพนักงาน</th>
                         <th style="text-align: center;">ส่ง / เป้า</th>
-                        <th style="text-align: center;">สถานะ</th>
-                        <th style="text-align: center;">ข้อมูล</th>
+                        <th style="text-align: center;">สถานะการประเมิน</th>
+                        <th style="text-align: center; width: 120px;">รายละเอียด</th>
                     </tr></thead>
                     <tbody id="dashTableBody"></tbody>
                 </table>
             </div>
         </div>
 
-        <button class="btn-secondary" onclick="switchView('viewHome')" style="margin-top: 20px;">ออกจากระบบ (กลับหน้าหลัก)</button>
+        <button class="btn-danger" onclick="switchView('viewHome')" style="margin-top: 30px;">ออกจากระบบ</button>
     </div>
 
 </div>
 
 <script>
-// เปิดใช้งาน Plugin ตัวเลขบนกราฟ
 Chart.register(ChartDataLabels);
 
 // ==========================================
@@ -321,34 +402,15 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwnwYsX_ii5HaHFx8Qdhx52
 // ==========================================
 
 let masterData = {}; let dashboardData = []; let dashboardTargets = {};
-let barChartInstance = null;
-let donutChartInstance = null;
+let barChartInstance = null; let donutChartInstance = null;
 
-// ============ UI & OVERLAY FUNCTIONS ============
-function showLoading(msg) {
-    document.getElementById('loadingMsg').textContent = msg || 'กำลังโหลด...';
-    document.getElementById('loadingOverlay').classList.add('show');
-}
-function hideLoading() {
-    document.getElementById('loadingOverlay').classList.remove('show');
-}
-function showSuccess(msg) {
-    if(msg) document.getElementById('successMsg').textContent = msg;
-    document.getElementById('successPopup').classList.add('show');
-}
-function closeSuccessPopup() {
-    document.getElementById('successPopup').classList.remove('show');
-    switchView('viewHome');
-}
-
-function openLightbox(url) {
-    document.getElementById('lightboxImg').src = url;
-    document.getElementById('lightbox').style.display = 'flex';
-}
-function closeLightbox() {
-    document.getElementById('lightbox').style.display = 'none';
-    document.getElementById('lightboxImg').src = '';
-}
+// ============ UI & OVERLAYS ============
+function showLoading(msg) { document.getElementById('loadingMsg').textContent = msg || 'กำลังโหลด...'; document.getElementById('loadingOverlay').classList.add('show'); }
+function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
+function showSuccess(msg) { if(msg) document.getElementById('successMsg').textContent = msg; document.getElementById('successPopup').classList.add('show'); }
+function closeSuccessPopup() { document.getElementById('successPopup').classList.remove('show'); switchView('viewHome'); }
+function openLightbox(url) { document.getElementById('lightboxImg').src = url; document.getElementById('lightbox').style.display = 'flex'; }
+function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; document.getElementById('lightboxImg').src = ''; }
 
 function switchView(viewId) {
     document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
@@ -358,20 +420,13 @@ function switchView(viewId) {
 }
 
 function toggleDashView(mode) {
-    document.getElementById("btnGraph").classList.remove("active");
-    document.getElementById("btnTable").classList.remove("active");
-    document.getElementById("secGraph").classList.remove("active");
-    document.getElementById("secTable").classList.remove("active");
-
-    if (mode === 'graph') {
-        document.getElementById("btnGraph").classList.add("active");
-        document.getElementById("secGraph").classList.add("active");
-    } else {
-        document.getElementById("btnTable").classList.add("active");
-        document.getElementById("secTable").classList.add("active");
-    }
+    document.getElementById("btnGraph").classList.remove("active"); document.getElementById("btnTable").classList.remove("active");
+    document.getElementById("secGraph").classList.remove("active"); document.getElementById("secTable").classList.remove("active");
+    if (mode === 'graph') { document.getElementById("btnGraph").classList.add("active"); document.getElementById("secGraph").classList.add("active"); } 
+    else { document.getElementById("btnTable").classList.add("active"); document.getElementById("secTable").classList.add("active"); }
 }
 
+// ============ MASTER DATA ============
 window.onload = async () => {
     try { const res = await fetch(API_URL + "?action=master"); const data = await res.json(); if (data.success) { masterData = data; setupDropdowns(); } } catch(e) {}
 };
@@ -389,7 +444,7 @@ function setupDropdowns() {
     masterData.riskLevels.forEach(r => document.getElementById("riskLevel").innerHTML += `<option value="${r}">${r}</option>`);
 }
 
-// ---------------------- ระบบส่ง Form ---------------------- //
+// ============ FORM HANDLING ============
 document.getElementById("images").onchange = function() {
     const preview = document.getElementById("preview"); preview.innerHTML = "";
     [...this.files].forEach(file => { const r = new FileReader(); r.onload = e => { const i = document.createElement("img"); i.src = e.target.result; preview.appendChild(i); }; r.readAsDataURL(file); });
@@ -405,62 +460,42 @@ async function compressFile(file) {
 }
 document.getElementById("submitBtn").onclick = async function() {
     const emp = document.getElementById("employee"); const imgIn = document.getElementById("images");
-    if (!emp.value || !document.getElementById("locationText").value || imgIn.files.length === 0) return alert("กรอกข้อมูลและแนบรูปให้ครบ");
+    if (!emp.value || !document.getElementById("locationText").value || imgIn.files.length === 0) return alert("กรุณากรอกข้อมูลและแนบรูปภาพให้ครบถ้วน");
     this.disabled = true; 
     try {
         const empId = emp.options[emp.selectedIndex].getAttribute("data-id"); const d = new Date();
         const imgBase = empId + String(d.getDate()).padStart(2,'0') + String(d.getMonth()+1).padStart(2,'0') + String(d.getFullYear()).slice(-2);
         
         showLoading("กำลังบันทึกข้อมูล...");
-
         const r1 = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveForm", reporter: emp.value, department: document.getElementById("department").value, location: document.getElementById("locationText").value, riskType: document.getElementById("riskType").value, riskLevel: document.getElementById("riskLevel").value, note: document.getElementById("note").value, totalImages: imgIn.files.length, imageId: imgBase }) });
         const textRes = await r1.json(); if (!textRes.success) throw new Error(textRes.error);
         
         for (let i = 0; i < imgIn.files.length; i++) {
-            showLoading(`กำลังอัปโหลดรูปภาพ ${i+1} จาก ${imgIn.files.length}...`);
+            showLoading(`อัปโหลดรูปภาพ ${i+1} / ${imgIn.files.length}...`);
             await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "uploadImage", base64: await compressFile(imgIn.files[i]), rowNumber: textRes.rowNumber, imageId: imgBase + "_" + (i+1) }) });
         }
         
         hideLoading();
+        // Clear Form
+        ["locationText", "note", "images", "department"].forEach(id => document.getElementById(id).value = "");
+        document.getElementById("preview").innerHTML = ""; document.getElementById("employee").innerHTML = '<option value="">เลือกพนักงาน</option>'; document.getElementById("employee").disabled = true;
         
-        // ล้างข้อมูลฟอร์ม
-        document.getElementById("locationText").value = "";
-        document.getElementById("note").value = "";
-        document.getElementById("images").value = "";
-        document.getElementById("preview").innerHTML = "";
-        document.getElementById("department").value = "";
-        document.getElementById("employee").innerHTML = '<option value="">เลือกพนักงาน</option>';
-        document.getElementById("employee").disabled = true;
-        
-        showSuccess("ข้อมูลจุดเสี่ยงถูกบันทึกเข้าระบบเรียบร้อยแล้ว");
-
-    } catch (e) { 
-        hideLoading(); 
-        alert("❌ เกิดข้อผิดพลาด: " + e.message); 
-    } finally { 
-        this.disabled = false; 
-    }
+        showSuccess("ข้อมูลของท่านถูกบันทึกเข้าระบบเรียบร้อยแล้ว");
+    } catch (e) { hideLoading(); alert("เกิดข้อผิดพลาด: " + e.message); } finally { this.disabled = false; }
 };
 
-// ---------------------- ระบบ Dashboard ---------------------- //
+// ============ DASHBOARD & LOGIN ============
 document.getElementById("btnLogin").onclick = async function() {
     const u = document.getElementById("loginUser").value, p = document.getElementById("loginPass").value;
-    if(!u || !p) return;
-    this.disabled = true; document.getElementById("loginStatus").innerHTML = "";
+    if(!u || !p) return; this.disabled = true; document.getElementById("loginStatus").innerHTML = "";
     try {
-        showLoading("กำลังตรวจสอบสิทธิ์...");
+        showLoading("กำลังตรวจสอบข้อมูล...");
         const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "checkLogin", user: u, pass: p }) });
         const d = await res.json();
-        
         if(d.success) { 
-            showLoading("กำลังโหลดรายงาน...");
-            await loadDash(); 
-            hideLoading();
-            switchView('viewDashboard'); 
-        } else { 
-            hideLoading();
-            document.getElementById("loginStatus").innerHTML = d.message; 
-        }
+            showLoading("กำลังจัดเตรียมรายงาน...");
+            await loadDash(); hideLoading(); switchView('viewDashboard'); 
+        } else { hideLoading(); document.getElementById("loginStatus").innerHTML = d.message; }
     } catch(e) { hideLoading(); } finally { this.disabled = false; }
 };
 
@@ -480,19 +515,14 @@ async function loadDash() {
 }
 
 function renderDashboard() {
-    const selY = document.getElementById("dashYear").value;
-    const selM = document.getElementById("dashMonth").value;
-    const selD = document.getElementById("dashDept").value;
-    const selS = document.getElementById("dashStatus").value;
-
+    const selY = document.getElementById("dashYear").value; const selM = document.getElementById("dashMonth").value; const selD = document.getElementById("dashDept").value; const selS = document.getElementById("dashStatus").value;
     const tFactory = (selM === "all") ? dashboardTargets.factoryYear : dashboardTargets.factoryMonth;
     const tPerson  = (selM === "all") ? dashboardTargets.personYear  : dashboardTargets.personMonth;
 
-    document.getElementById("kpiTargetTitle").innerText = (selM === "all") ? "เป้าโรงงาน (ปี)" : "เป้าโรงงาน (เดือน)";
+    document.getElementById("kpiTargetTitle").innerText = (selM === "all") ? "เป้าหมาย (รายปี)" : "เป้าหมาย (รายเดือน)";
     document.getElementById("kpiTarget").innerText = tFactory;
 
-    let staffCount = {}; 
-    let staffInFocus = masterData.staffs.filter(s => selD === "all" || s.department === selD);
+    let staffCount = {}; let staffInFocus = masterData.staffs.filter(s => selD === "all" || s.department === selD);
     staffInFocus.forEach(s => { staffCount[s.department] = (staffCount[s.department] || 0) + 1; });
 
     let filtered = dashboardData.filter(d => d.year === selY && (selM === "all" || d.month === selM) && (selD === "all" || d.dept === selD));
@@ -503,125 +533,111 @@ function renderDashboard() {
         if(d.riskLevel) riskLevelCount[d.riskLevel] = (riskLevelCount[d.riskLevel] || 0) + 1;
     });
 
-    let labels = [], dataVals = [], bgColors = [], borderColors = [], targetVals = [];
+    // --- กราฟแท่ง (Sleek Theme) ---
+    let labels = [], dataVals = [], bgColors = [], targetVals = [];
     (selD === "all" ? Object.keys(staffCount) : [selD]).forEach(dept => {
         let actual = reportsByDept[dept] || 0; let expected = (staffCount[dept] || 0) * tPerson;
         labels.push(dept); dataVals.push(actual); targetVals.push(expected);
-        const ratio = expected > 0 ? actual / expected : 1;
-        if (ratio >= 1) { bgColors.push('rgba(34,197,94,0.75)'); borderColors.push('#16a34a'); } else if (ratio >= 0.6) { bgColors.push('rgba(245,158,11,0.75)'); borderColors.push('#d97706'); } else { bgColors.push('rgba(239,68,68,0.75)'); borderColors.push('#dc2626'); }
+        bgColors.push(actual >= expected ? '#2dd4bf' : '#a1a1aa'); // Teal / Gray
     });
 
-    if(barChartInstance) barChartInstance.destroy();
-    barChartInstance = new Chart(document.getElementById('deptChart'), { type: 'bar', data: { labels, datasets: [ { type: 'line', label: 'เส้นเป้าหมาย', data: targetVals, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.15)', borderWidth: 2.5, borderDash: [6,4], pointBackgroundColor: '#ef4444', pointRadius: 5, fill: false, tension: 0.2, order: 1 }, { type: 'bar', label: 'รายงานที่ส่ง', data: dataVals, backgroundColor: bgColors, borderColor: borderColors, borderWidth: 1.5, borderRadius: 7, borderSkipped: false, order: 2 } ] }, options: { responsive: true, plugins: { legend: { position: 'top', labels: { color: '#c8d8ef', font: { size: 11 }, usePointStyle: true } }, datalabels: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#8ca3c4', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.06)' } }, x: { ticks: { color: '#8ca3c4', font: { size: 11 }, maxRotation: 30 }, grid: { color: 'rgba(255,255,255,0.04)' } } } } });
+    Chart.defaults.color = '#a1a1aa';
+    Chart.defaults.font.family = "'Inter', 'Noto Sans Thai', sans-serif";
 
-    let riskLabels = Object.keys(riskLevelCount);
-    let riskData = Object.values(riskLevelCount);
+    if(barChartInstance) barChartInstance.destroy();
+    barChartInstance = new Chart(document.getElementById('deptChart'), { 
+        type: 'bar', 
+        data: { labels, datasets: [ 
+            { type: 'line', label: 'เส้นเป้าหมาย', data: targetVals, borderColor: '#ef4444', borderWidth: 2, borderDash: [5,5], pointRadius: 0, fill: false, tension: 0.1, order: 1 }, 
+            { type: 'bar', label: 'ผลงานจริง', data: dataVals, backgroundColor: bgColors, borderRadius: 4, order: 2, barPercentage: 0.6 } 
+        ]}, 
+        options: { 
+            responsive: true, 
+            plugins: { 
+                legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } }, 
+                datalabels: { display: false } 
+            }, 
+            scales: { 
+                y: { beginAtZero: true, grid: { color: '#27272a' }, border: { display: false } }, 
+                x: { grid: { display: false }, border: { display: false } } 
+            } 
+        } 
+    });
+
+    // --- กราฟโดนัท ---
+    let riskLabels = Object.keys(riskLevelCount); let riskData = Object.values(riskLevelCount);
     let riskColors = riskLabels.map(l => l.includes('สูง') ? '#ef4444' : l.includes('กลาง') ? '#f59e0b' : '#10b981');
 
     if(donutChartInstance) donutChartInstance.destroy();
     donutChartInstance = new Chart(document.getElementById('riskDonutChart'), {
         type: 'doughnut',
-        data: { labels: riskLabels, datasets: [{ data: riskData, backgroundColor: riskColors, borderWidth: 0 }] },
+        data: { labels: riskLabels, datasets: [{ data: riskData, backgroundColor: riskColors, borderWidth: 0, hoverOffset: 4 }] },
         options: {
-            responsive: true, maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false, cutout: '75%',
             plugins: {
-                legend: { position: 'bottom', labels: { color: '#c8d8ef', font: { size: 11 } } },
-                datalabels: {
-                    color: '#ffffff', font: { weight: 'bold', size: 16 },
-                    formatter: (value) => value > 0 ? value : ''
-                }
+                legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 8 } },
+                datalabels: { color: '#fafafa', font: { weight: '600', size: 14 }, formatter: (value) => value > 0 ? value : '' }
             }
         }
     });
 
+    // --- ตาราง ---
     let tbody = "", passCount = 0;
     staffInFocus.forEach(s => {
         let actual = reportsByPerson[s.name] || 0; let isPass = actual >= tPerson;
         if(isPass) passCount++;
         if(selS === "pass" && !isPass) return; if(selS === "fail" && isPass) return;
-        let cls = isPass ? 'text-pass' : 'text-fail'; let txt = isPass ? '✔ ผ่าน' : '✖ ยังไม่ผ่าน';
+        let cls = isPass ? 'status-pass' : 'status-fail'; let txt = isPass ? 'ผ่านเป้า' : 'ยังไม่ผ่าน';
         tbody += `<tr>
-            <td>${s.name}${selD === 'all' ? ` <br><small style="color:#6b7280;font-size:0.78rem;">${s.department}</small>` : ''}</td>
-            <td style="text-align:center; font-size:1.15rem;"><b>${actual}</b> / ${tPerson}</td>
-            <td style="text-align:center;"><span class="${cls}">${txt}</span></td>
-            <td style="text-align:center;">
-                <button class="btn-secondary" style="padding: 8px 16px; font-size: 1.1rem; margin:0; width: auto;" onclick="viewEmployeeCases('${s.name}')">🔍 ดูข้อมูล</button>
-            </td>
+            <td><div><b>${s.name}</b></div><div style="font-size:0.8rem; color:#a1a1aa; margin-top:2px;">${selD === 'all' ? s.department : ''}</div></td>
+            <td style="text-align:center; font-weight:500;">${actual} <span style="color:#a1a1aa; font-weight:400; font-size:0.9em;">/ ${tPerson}</span></td>
+            <td style="text-align:center;"><span class="status-badge ${cls}">${txt}</span></td>
+            <td style="text-align:center;"><button class="btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;" onclick="viewEmployeeCases('${s.name}')">ดูประวัติ</button></td>
         </tr>`;
     });
-    document.getElementById("dashTableBody").innerHTML = tbody || '<tr><td colspan="4" style="text-align:center; padding: 20px;">ไม่พบข้อมูล</td></tr>';
+    document.getElementById("dashTableBody").innerHTML = tbody || '<tr><td colspan="4" style="text-align:center; color:#a1a1aa; padding: 30px;">ไม่มีข้อมูลในเงื่อนไขที่เลือก</td></tr>';
     document.getElementById("kpiActual").innerText = filtered.length;
     document.getElementById("kpiPass").innerText = passCount;
 }
 
-// ============ สำคัญ: แปลงลิงก์ Google Drive ให้แสดงรูปได้ 100% ============
+// ============ แสดงรูปภาพด้วย Thumbnail API ============
 function getDirectDriveLink(url) {
-    if (!url) return "";
-    let fileId = "";
-    
-    // ดึงรหัสไฟล์ (ID) ออกมาจากลิงก์
+    if (!url) return ""; let fileId = "";
     let match = url.match(/(?:id=|v=|vi=|v\/|vi\/|youtu\.be\/|\/d\/)([a-zA-Z0-9_-]{25,33})/);
-    if (match && match[1]) fileId = match[1];
-    else {
-        match = url.match(/id=([a-zA-Z0-9_-]+)/);
-        if (match && match[1]) fileId = match[1];
-    }
-    
-    // แปลงให้เป็น Thumbnail API (Google อนุญาตให้ฝังรูปวิธีนี้ได้ชัวร์ๆ)
-    if (fileId) {
-        return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
-    }
-    return url;
+    if (match && match[1]) fileId = match[1]; else { match = url.match(/id=([a-zA-Z0-9_-]+)/); if (match && match[1]) fileId = match[1]; }
+    return fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000` : url;
 }
 
 function viewEmployeeCases(empName) {
-    const selY = document.getElementById("dashYear").value;
-    const selM = document.getElementById("dashMonth").value;
-    const selD = document.getElementById("dashDept").value;
-
+    const selY = document.getElementById("dashYear").value; const selM = document.getElementById("dashMonth").value; const selD = document.getElementById("dashDept").value;
     let empCases = dashboardData.filter(d => d.reporter === empName && d.year === selY && (selM === "all" || d.month === selM) && (selD === "all" || d.dept === selD));
     empCases.sort((a, b) => b.timestamp - a.timestamp);
 
-    document.getElementById("modalEmpName").innerText = `ประวัติการแจ้ง: ${empName}`;
-    
+    document.getElementById("modalEmpName").innerText = `ข้อมูลของ ${empName}`;
     let html = "";
-    if(empCases.length === 0) {
-        html = "<p style='text-align:center; color: #8ca3c4; font-size:1.2rem;'>ไม่พบประวัติการแจ้งในเงื่อนไขนี้</p>";
-    } else {
+    if(empCases.length === 0) { html = "<p style='text-align:center; color: var(--text-muted); padding: 20px;'>ไม่พบประวัติในระบบ</p>"; } 
+    else {
         empCases.forEach((c, idx) => {
             let dateStr = c.timestamp ? new Date(c.timestamp).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }) : "ไม่ระบุเวลา";
-            
-            let imgsHtml = "";
-            if (c.images && c.images.length > 0) {
-                // เรียกใช้ฟังก์ชันดึงภาพแบบไม่ติดบล็อกมาแสดง
-                imgsHtml = c.images.map(imgUrl => {
-                    let directUrl = getDirectDriveLink(imgUrl);
-                    return `<img src="${directUrl}" onclick="openLightbox('${directUrl}')" title="คลิกเพื่อขยายภาพ" onerror="this.onerror=null; this.src='https://placehold.co/100x100?text=Load+Error';">`;
-                }).join('');
-            } else {
-                imgsHtml = "<span style='color: #8ca3c4; font-size: 1rem;'>ไม่มีรูปภาพแนบ</span>";
-            }
+            let imgsHtml = (c.images && c.images.length > 0) ? c.images.map(imgUrl => {
+                let directUrl = getDirectDriveLink(imgUrl);
+                return `<img src="${directUrl}" onclick="openLightbox('${directUrl}')" onerror="this.onerror=null; this.src='https://placehold.co/100x100/18181b/a1a1aa?text=Image';">`;
+            }).join('') : "<span style='color: var(--text-muted); font-size: 0.85rem;'>ไม่มีภาพแนบ</span>";
             
             html += `<div class="case-card">
-                <div class="case-header">
-                    <h4>รายการที่ ${empCases.length - idx}</h4>
-                    <span style="color: #8ca3c4; font-size: 1rem;">📅 ${dateStr} น.</span>
-                </div>
-                <div class="case-detail"><b>📍 สถานที่:</b> ${c.location || '-'}</div>
-                <div class="case-detail"><b>⚠️ ระดับ:</b> ${c.riskLevel || '-'} | <b>ประเภท:</b> ${c.riskType || '-'}</div>
-                <div class="case-detail"><b>📝 หมายเหตุ:</b> ${c.note || '-'}</div>
+                <div class="case-header"><h4>เคสที่ ${empCases.length - idx}</h4><span style="color: var(--text-muted); font-size: 0.85rem;">${dateStr} น.</span></div>
+                <div class="case-detail"><b>สถานที่:</b> ${c.location || '-'}</div>
+                <div class="case-detail"><b>ความเสี่ยง:</b> ${c.riskLevel || '-'} (${c.riskType || '-'})</div>
+                <div class="case-detail"><b>หมายเหตุ:</b> ${c.note || '-'}</div>
                 <div class="case-gallery">${imgsHtml}</div>
             </div>`;
         });
     }
-    
     document.getElementById("modalCaseList").innerHTML = html;
     document.getElementById("caseModal").classList.add("show");
 }
 
-function closeCaseModal() {
-    document.getElementById("caseModal").classList.remove("show");
-}
+function closeCaseModal() { document.getElementById("caseModal").classList.remove("show"); }
 </script>
 </body>
 </html>
