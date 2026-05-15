@@ -625,7 +625,7 @@ function renderDashboard() {
 
     // --- กราฟโดนัท (ใช้สี ทอง ส้ม แดง) ---
     let riskLabels = Object.keys(riskLevelCount); let riskData = Object.values(riskLevelCount);
-    let riskColors = riskLabels.map(l => l.includes('สูง') ? '#ef4444' : l.includes('กลาง') ? '#f59e0b' : '#dfbb76');
+    let riskColors = riskLabels.map(l => l.includes('สูง') ? '#ef4444' : l.includes('กลาง') ? '#f59e0b' : '#2dd4bf');
 
     if(donutChartInstance) donutChartInstance.destroy();
     donutChartInstance = new Chart(document.getElementById('riskDonutChart'), {
