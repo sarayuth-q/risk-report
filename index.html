@@ -8,267 +8,741 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ============ LIQUID GLASS & THEME COLORS ============ */
+        /* ============================================================
+           LIQUID GLASS — iOS 18 INSPIRED DESIGN SYSTEM
+           CPF Sriracha — Safety Reporting Dashboard
+        ============================================================ */
         :root {
-            /* โทนสีจากภาพอ้างอิง */
-            --bg-deep: #10333e;       /* สีพื้นหลังหลัก (เขียวอมฟ้าเข้ม) */
-            --bg-darker: #0b2229;     /* สีพื้นหลังเงา */
-            --gold-main: #dfbb76;     /* สีทองหลัก */
-            --gold-light: #f2dbab;    /* สีทองสว่าง */
-            --gold-dark: #b8924b;     /* สีทองเข้ม */
-            --text-main: #ffffff;
-            --text-muted: #a3c1cc;    /* สีฟ้าอ่อนสำหรับข้อความรอง */
-            
-            /* Glassmorphism Variables */
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --glass-highlight: rgba(255, 255, 255, 0.25);
-            --glass-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            
-            --radius-lg: 24px;
-            --radius-md: 16px;
-            --radius-sm: 10px;
+            --bg-deep:       #0d2f3a;
+            --bg-darker:     #081e26;
+            --gold-main:     #dfbb76;
+            --gold-light:    #f2dbab;
+            --gold-dark:     #b8924b;
+            --gold-glow:     rgba(223, 187, 118, 0.25);
+            --text-main:     #ffffff;
+            --text-muted:    #8fb5c4;
+            --text-sub:      #5a8fa3;
+
+            /* Liquid Glass Core */
+            --glass-bg:         rgba(255, 255, 255, 0.055);
+            --glass-bg-hover:   rgba(255, 255, 255, 0.085);
+            --glass-border:     rgba(255, 255, 255, 0.12);
+            --glass-shine:      rgba(255, 255, 255, 0.22);
+            --glass-shadow:     0 24px 64px rgba(0, 0, 0, 0.45), 0 4px 16px rgba(0, 0, 0, 0.25);
+            --glass-inset:      inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(0,0,0,0.1);
+            --blur-lg:          blur(28px) saturate(180%);
+            --blur-md:          blur(16px) saturate(160%);
+            --blur-sm:          blur(10px) saturate(140%);
+
+            --radius-pill: 9999px;
+            --radius-xl:   28px;
+            --radius-lg:   22px;
+            --radius-md:   16px;
+            --radius-sm:   12px;
+            --radius-xs:   8px;
+
+            --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --transition-smooth: cubic-bezier(0.25, 1, 0.5, 1);
+            --transition-fast:   cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { box-sizing: border-box; font-family: 'Noto Sans Thai', sans-serif; margin: 0; padding: 0; }
-        
+        *, *::before, *::after {
+            box-sizing: border-box;
+            font-family: 'Noto Sans Thai', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0; padding: 0;
+        }
+
+        /* ── BODY & AMBIENT LIGHT ── */
         body {
             background-color: var(--bg-deep);
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(223, 187, 118, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-            background-attachment: fixed;
             color: var(--text-main);
-            display: flex; justify-content: center; align-items: flex-start;
-            padding: 2vh 15px 5vh; min-height: 100vh;
-            line-height: 1.5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 24px 16px 60px;
+            line-height: 1.55;
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
-        /* Abstract shapes สำหรับสร้างเอฟเฟกต์ Glassmorphism แบบ iOS */
-        .bg-shape { position: fixed; border-radius: 50%; filter: blur(80px); z-index: -1; pointer-events: none; opacity: 0.6; }
-        .shape-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(223, 187, 118, 0.15); }
-        .shape-2 { bottom: -20%; right: -10%; width: 60vw; height: 60vw; background: rgba(16, 51, 62, 0.8); }
+        /* Ambient orbs — fixed behind everything */
+        .bg-shape {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .shape-1 {
+            top: -15%; left: -15%;
+            width: 55vw; height: 55vw;
+            background: radial-gradient(circle, rgba(223,187,118,0.18) 0%, transparent 65%);
+            filter: blur(60px);
+            animation: orb-drift 18s ease-in-out infinite alternate;
+        }
+        .shape-2 {
+            bottom: -20%; right: -15%;
+            width: 65vw; height: 65vw;
+            background: radial-gradient(circle, rgba(32, 120, 160, 0.15) 0%, transparent 65%);
+            filter: blur(80px);
+            animation: orb-drift 24s ease-in-out infinite alternate-reverse;
+        }
+        .shape-3 {
+            top: 45%; left: 40%;
+            width: 30vw; height: 30vw;
+            background: radial-gradient(circle, rgba(100, 180, 220, 0.08) 0%, transparent 70%);
+            filter: blur(50px);
+            animation: orb-drift 14s ease-in-out infinite alternate;
+        }
+        @keyframes orb-drift {
+            from { transform: translate(0, 0) scale(1); }
+            to   { transform: translate(4%, 6%) scale(1.08); }
+        }
 
-        /* ============ GLASS CONTAINER ============ */
+        /* ── MAIN CONTAINER ── */
         .container {
-            width: 100%; max-width: 860px;
+            width: 100%;
+            max-width: 860px;
             background: var(--glass-bg);
-            backdrop-filter: blur(24px) saturate(160%);
-            -webkit-backdrop-filter: blur(24px) saturate(160%);
+            backdrop-filter: var(--blur-lg);
+            -webkit-backdrop-filter: var(--blur-lg);
             border: 1px solid var(--glass-border);
-            border-top: 1px solid var(--glass-highlight);
-            border-left: 1px solid var(--glass-highlight);
-            border-radius: var(--radius-lg);
-            padding: 35px;
-            box-shadow: var(--glass-shadow);
+            border-top-color: var(--glass-shine);
+            border-left-color: rgba(255,255,255,0.15);
+            border-radius: var(--radius-xl);
+            padding: 36px 32px;
+            box-shadow: var(--glass-shadow), var(--glass-inset);
             position: relative;
             z-index: 1;
+            /* Prevent children from overflowing */
+            overflow: hidden;
         }
+
+        /* Subtle inner shine rim */
+        .container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg,
+                rgba(255,255,255,0.06) 0%,
+                transparent 50%,
+                rgba(0,0,0,0.04) 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container > * { position: relative; z-index: 1; }
 
         h1, h2, h3, h4 { color: var(--gold-light); font-weight: 600; line-height: 1.3; }
-        
-        .view { display: none; opacity: 0; transform: scale(0.98); transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
-        .view.active { display: block; opacity: 1; transform: scale(1); animation: floatUp 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
-        @keyframes floatUp { from { opacity: 0; transform: translateY(15px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-        /* ============ HOME PAGE ============ */
-        .home-header { display: flex; flex-direction: column; align-items: center; padding-bottom: 25px; text-align: center; }
-        .helmet-wrap { position: relative; width: 100px; height: 100px; margin-bottom: 15px; }
-        .helmet-wrap svg { width: 100%; height: 100%; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); }
-        
-        .home-title h1 { 
-            font-size: 1.8rem; 
-            letter-spacing: 0.5px; 
-            margin-bottom: 5px;
-            background: linear-gradient(135deg, #fff, var(--gold-main));
+        /* ── VIEW TRANSITIONS ── */
+        .view {
+            display: none;
+            opacity: 0;
+            transform: translateY(12px) scale(0.99);
+        }
+        .view.active {
+            display: block;
+            animation: view-enter 0.45s var(--transition-smooth) forwards;
+        }
+        @keyframes view-enter {
+            from { opacity: 0; transform: translateY(14px) scale(0.985); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ============================================================
+           HOME PAGE
+        ============================================================ */
+        .home-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 32px;
+            text-align: center;
+            gap: 18px;
+        }
+
+        /* Liquid glass helmet badge */
+        .helmet-wrap {
+            position: relative;
+            width: 96px; height: 96px;
+        }
+        .helmet-wrap::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            background: var(--gold-glow);
+            filter: blur(14px);
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50%       { opacity: 1;   transform: scale(1.08); }
+        }
+        .helmet-wrap svg {
+            width: 100%; height: 100%;
+            position: relative; z-index: 1;
+            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.5))
+                    drop-shadow(0 2px 6px rgba(223,187,118,0.3));
+        }
+
+        .home-title h1 {
+            font-size: 1.75rem;
+            letter-spacing: -0.2px;
+            background: linear-gradient(135deg, #fff 30%, var(--gold-main));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .home-title p { font-size: 1rem; color: var(--text-muted); }
-        .home-btns { display: flex; flex-direction: column; gap: 15px; max-width: 400px; margin: 0 auto; width: 100%; }
+        .home-title p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
 
-        /* ============ PAGE HEADERS ============ */
-        .page-header { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-        .page-header h2 { font-size: 1.4rem; color: var(--gold-main); }
-        .page-header p { font-size: 0.95rem; color: var(--text-muted); }
+        .home-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 380px;
+            margin: 0 auto;
+            width: 100%;
+        }
 
-        /* ============ FORMS & INPUTS ============ */
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-size: 0.95rem; font-weight: 500; color: var(--gold-light); }
+        /* ============================================================
+           PAGE HEADERS
+        ============================================================ */
+        .page-header {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+        .page-header h2 {
+            font-size: 1.4rem;
+            color: var(--gold-main);
+        }
+        .page-header p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* ============================================================
+           LIQUID GLASS BUTTONS
+        ============================================================ */
+        button {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition:
+                transform   0.25s var(--transition-bounce),
+                box-shadow  0.25s var(--transition-smooth),
+                background  0.2s  var(--transition-fast),
+                opacity     0.2s  ease;
+            backdrop-filter: var(--blur-sm);
+            -webkit-backdrop-filter: var(--blur-sm);
+            position: relative;
+            overflow: hidden;
+            /* Prevent button from overflowing container */
+            max-width: 100%;
+        }
+
+        /* Shimmer effect on buttons */
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 60%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+            transform: skewX(-20deg);
+            transition: left 0.5s ease;
+            pointer-events: none;
+        }
+        button:hover:not(:disabled)::after { left: 140%; }
+
+        .btn-primary {
+            background: linear-gradient(140deg, var(--gold-light) 0%, var(--gold-main) 55%, var(--gold-dark) 100%);
+            color: var(--bg-darker);
+            box-shadow: 0 4px 18px rgba(223,187,118,0.35), inset 0 1px 0 rgba(255,255,255,0.4);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 8px 32px rgba(223,187,118,0.5), inset 0 1px 0 rgba(255,255,255,0.5);
+        }
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0) scale(0.99);
+        }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid var(--glass-border);
+            border-top-color: rgba(255,255,255,0.18);
+            color: var(--text-main);
+            box-shadow: var(--glass-inset), 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: rgba(239,68,68,0.12);
+            border: 1px solid rgba(239,68,68,0.25);
+            color: #fca5a5;
+        }
+        .btn-danger:hover {
+            background: rgba(239,68,68,0.2);
+            border-color: rgba(239,68,68,0.4);
+        }
+
+        /* ============================================================
+           FORMS & INPUTS — Liquid Glass
+        ============================================================ */
+        .form-group { margin-bottom: 18px; }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gold-light);
+            letter-spacing: 0.1px;
+        }
+
         input, select, textarea {
-            width: 100%; padding: 14px 16px;
-            background: rgba(0, 0, 0, 0.2);
+            width: 100%;
+            padding: 13px 15px;
+            background: rgba(0,0,0,0.18);
             border: 1px solid rgba(255,255,255,0.1);
+            border-top-color: rgba(255,255,255,0.06);
             border-radius: var(--radius-sm);
-            color: var(--text-main); font-size: 1rem;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            color: var(--text-main);
+            font-size: 0.97rem;
+            backdrop-filter: var(--blur-sm);
+            -webkit-backdrop-filter: var(--blur-sm);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
             outline: none;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.2), inset 0 -1px 0 rgba(255,255,255,0.04);
+            /* CRITICAL: prevent overflow */
+            max-width: 100%;
+            min-width: 0;
         }
         input:focus, select:focus, textarea:focus {
             border-color: var(--gold-main);
-            background: rgba(0, 0, 0, 0.3);
-            box-shadow: 0 0 0 3px rgba(223, 187, 118, 0.15), inset 0 2px 4px rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.25);
+            box-shadow:
+                0 0 0 3px rgba(223,187,118,0.15),
+                inset 0 2px 6px rgba(0,0,0,0.2);
         }
-        select option { background-color: var(--bg-deep); color: var(--text-main); }
-        textarea { resize: vertical; min-height: 90px; }
-        input[type="file"] { padding: 10px; color: var(--text-muted); font-size: 0.9rem; }
-
-        /* ============ BUTTONS (IOS Glass Style) ============ */
-        button {
-            width: 100%; padding: 15px 20px;
-            border: none; border-radius: var(--radius-md);
-            font-size: 1.05rem; font-weight: 600; cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        input::placeholder, textarea::placeholder { color: var(--text-sub); }
+        select option { background-color: #0d2f3a; color: var(--text-main); }
+        textarea { resize: vertical; min-height: 88px; }
+        input[type="file"] {
+            padding: 10px 14px;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            cursor: pointer;
         }
-        .btn-primary { 
-            background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
-            color: var(--bg-darker);
-            box-shadow: 0 4px 15px rgba(223, 187, 118, 0.3);
-        }
-        .btn-primary:hover:not(:disabled) { 
-            transform: translateY(-2px); 
-            box-shadow: 0 8px 25px rgba(223, 187, 118, 0.4);
-            background: linear-gradient(135deg, #fff, var(--gold-main));
-        }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-        
-        .btn-secondary { 
-            background: rgba(255, 255, 255, 0.05); 
-            border: 1px solid var(--glass-border); 
-            color: var(--text-main); 
-        }
-        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
-
-        .btn-danger { 
-            background: rgba(239, 68, 68, 0.15); 
-            border: 1px solid rgba(239, 68, 68, 0.3); 
-            color: #fca5a5; 
+        input[type="file"]::-webkit-file-upload-button {
+            background: rgba(223,187,118,0.15);
+            border: 1px solid rgba(223,187,118,0.3);
+            border-radius: var(--radius-xs);
+            color: var(--gold-light);
+            padding: 5px 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-right: 10px;
         }
 
-        /* ============ IMAGE PREVIEW ============ */
-        .preview { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+        /* ── GRID LAYOUTS (overflow-safe) ── */
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* ============================================================
+           IMAGE PREVIEW
+        ============================================================ */
+        .preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
         .preview img {
-            width: 80px; height: 80px; object-fit: cover;
-            border-radius: var(--radius-sm); border: 2px solid var(--gold-main);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            width: 76px; height: 76px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--gold-dark);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+            transition: transform 0.2s var(--transition-bounce);
         }
+        .preview img:hover { transform: scale(1.08); }
 
-        #status, #loginStatus { text-align: center; font-size: 0.95rem; margin-top: 10px; min-height: 24px; color: var(--gold-light); }
+        #status, #loginStatus {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            min-height: 22px;
+            color: var(--gold-light);
+        }
         #loginStatus { color: #fca5a5; }
 
-        /* ============ DASHBOARD ELEMENTS ============ */
-        .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
-        
-        .kpi-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
-        .kpi-card {
-            background: rgba(255, 255, 255, 0.03); 
-            border: 1px solid var(--glass-border);
-            padding: 15px; border-radius: var(--radius-md); text-align: center;
-            box-shadow: inset 0 1px 1px rgba(255,255,255,0.05);
+        /* ============================================================
+           DASHBOARD — KPI CARDS
+        ============================================================ */
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
         }
-        .kpi-title { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; font-weight: 500; word-break: break-word; }
-        .kpi-value { font-size: 1.8rem; font-weight: 700; color: var(--gold-main); line-height: 1; }
+        .filter-grid .form-group { margin: 0; }
 
-        .view-toggle { display: flex; gap: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.05); }
-        .toggle-btn { flex: 1; padding: 10px; background: transparent; border: none; color: var(--text-muted); border-radius: 12px; font-weight: 500; font-size: 0.9rem; margin-bottom: 0; }
-        .toggle-btn.active { background: rgba(255,255,255,0.1); color: var(--gold-light); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-        
-        .dash-section { display: none; animation: floatUp 0.3s ease; }
+        .kpi-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+        .kpi-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border);
+            border-top-color: rgba(255,255,255,0.12);
+            border-radius: var(--radius-md);
+            padding: 16px 12px;
+            text-align: center;
+            box-shadow: var(--glass-inset), 0 4px 16px rgba(0,0,0,0.15);
+            transition: transform 0.25s var(--transition-bounce), box-shadow 0.25s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glass-inset), 0 8px 24px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.08);
+        }
+        .kpi-title {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 500;
+            word-break: break-word;
+            line-height: 1.3;
+        }
+        .kpi-value {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--gold-main);
+            line-height: 1;
+            letter-spacing: -0.5px;
+        }
+
+        /* ── SEGMENTED CONTROL (iOS toggle) ── */
+        .view-toggle {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            background: rgba(0,0,0,0.25);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .toggle-btn {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 0;
+            transition: all 0.25s var(--transition-smooth);
+            letter-spacing: 0.1px;
+        }
+        .toggle-btn.active {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: var(--blur-sm);
+            color: var(--gold-light);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .dash-section { display: none; animation: view-enter 0.3s var(--transition-smooth); }
         .dash-section.active { display: block; }
 
-        .charts-wrapper { display: grid; grid-template-columns: 1.8fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .chart-container { background: rgba(0,0,0,0.15); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 15px; }
-
-        /* ============ TABLE (พอดีหน้าจอ 100% Fixed Layout) ============ */
-        .table-responsive { width: 100%; border-radius: var(--radius-md); border: 1px solid var(--glass-border); background: rgba(0,0,0,0.15); overflow: hidden; margin-top: 10px; }
-        .table-container { width: 100%; overflow: hidden; } 
-        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; table-layout: fixed; } 
-        th, td { padding: 12px 8px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } 
-        th { color: var(--gold-main); font-weight: 500; font-size: 0.85rem; background: rgba(0,0,0,0.2); }
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: rgba(255,255,255,0.03); }
-        
-        .status-badge { padding: 4px 6px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; display: inline-block; white-space: nowrap; }
-        .status-pass { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .status-fail { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-
-        /* ============ MODALS & OVERLAYS (IOS Blurs) ============ */
-        #loadingOverlay, #successPopup, #caseModal, #lightbox {
-            display: none; position: fixed; inset: 0; z-index: 9999;
-            background: rgba(11, 34, 41, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            justify-content: center; align-items: center;
+        /* ── CHARTS ── */
+        .charts-wrapper {
+            display: grid;
+            grid-template-columns: 1.8fr 1fr;
+            gap: 14px;
+            margin-bottom: 20px;
+            /* Contain within container width */
+            min-width: 0;
         }
-        #loadingOverlay.show, #successPopup.show, #caseModal.show { display: flex; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .chart-container {
+            background: rgba(0,0,0,0.15);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            min-width: 0; /* prevent flex/grid blowout */
+            overflow: hidden;
+        }
 
-        .spinner { width: 45px; height: 45px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--gold-main); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 15px; }
+        /* ============================================================
+           TABLE (overflow-safe, fixed layout)
+        ============================================================ */
+        .table-responsive {
+            width: 100%;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.12);
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* allow horizontal scroll on very small screens */
+            -webkit-overflow-scrolling: touch;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            table-layout: fixed;
+        }
+        th, td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+        th {
+            color: var(--gold-main);
+            font-weight: 500;
+            font-size: 0.82rem;
+            background: rgba(0,0,0,0.2);
+            letter-spacing: 0.2px;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td {
+            background: rgba(255,255,255,0.025);
+            transition: background 0.15s ease;
+        }
+
+        /* Inline table action button */
+        .btn-row {
+            padding: 5px 12px !important;
+            font-size: 0.78rem !important;
+            border-radius: 20px !important;
+            width: auto !important;
+        }
+
+        .status-badge {
+            padding: 4px 9px;
+            border-radius: var(--radius-pill);
+            font-size: 0.73rem;
+            font-weight: 600;
+            display: inline-block;
+            white-space: nowrap;
+            letter-spacing: 0.2px;
+        }
+        .status-pass {
+            background: rgba(16,185,129,0.12);
+            color: #34d399;
+            border: 1px solid rgba(16,185,129,0.25);
+        }
+        .status-fail {
+            background: rgba(245,158,11,0.12);
+            color: #fbbf24;
+            border: 1px solid rgba(245,158,11,0.25);
+        }
+
+        /* ============================================================
+           MODALS & OVERLAYS — Liquid Glass iOS
+        ============================================================ */
+        #loadingOverlay, #successPopup, #caseModal, #lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(8,30,38,0.65);
+            backdrop-filter: blur(16px) saturate(160%);
+            -webkit-backdrop-filter: blur(16px) saturate(160%);
+            justify-content: center;
+            align-items: center;
+        }
+        #loadingOverlay.show,
+        #successPopup.show,
+        #caseModal.show { display: flex; animation: fade-in 0.3s ease; }
+        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Spinner */
+        .spinner {
+            width: 44px; height: 44px;
+            border: 3px solid rgba(255,255,255,0.08);
+            border-top-color: var(--gold-main);
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+            margin-bottom: 14px;
+        }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* Success/info modal card */
         .modal-card {
-            background: rgba(255, 255, 255, 0.08); border: 1px solid var(--glass-highlight);
-            border-radius: var(--radius-lg); padding: 35px 25px;
-            width: 90%; max-width: 380px; text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            animation: floatUp 0.3s ease;
+            background: rgba(255,255,255,0.09);
+            border: 1px solid var(--glass-shine);
+            border-top-color: rgba(255,255,255,0.3);
+            border-radius: var(--radius-xl);
+            padding: 36px 28px;
+            width: 90%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 32px 64px rgba(0,0,0,0.55), var(--glass-inset);
+            animation: modal-pop 0.35s var(--transition-bounce);
         }
-        .modal-icon { font-size: 3.5rem; margin-bottom: 15px; display: inline-block; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
-        .modal-card h3 { font-size: 1.5rem; margin-bottom: 10px; color: var(--gold-main); }
-        .modal-card p { color: var(--text-main); margin-bottom: 25px; font-size: 0.95rem; }
+        @keyframes modal-pop {
+            from { opacity: 0; transform: scale(0.92) translateY(10px); }
+            to   { opacity: 1; transform: scale(1)    translateY(0); }
+        }
+        .modal-icon {
+            font-size: 3.2rem;
+            margin-bottom: 14px;
+            display: inline-block;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+        }
+        .modal-card h3 { font-size: 1.45rem; margin-bottom: 8px; color: var(--gold-main); }
+        .modal-card p  { color: var(--text-main); margin-bottom: 24px; font-size: 0.93rem; line-height: 1.5; }
 
-        /* Case History Modal */
-        #caseModal { padding: 15px; }
+        /* Case history modal */
+        #caseModal { padding: 16px; align-items: center; }
         .case-modal-content {
-            background: rgba(16, 51, 62, 0.85); border: 1px solid var(--glass-highlight);
-            border-radius: var(--radius-lg); padding: 25px; width: 100%; max-width: 700px;
-            max-height: 85vh; overflow-y: auto; position: relative;
+            background: rgba(13,47,58,0.88);
+            border: 1px solid var(--glass-shine);
+            backdrop-filter: var(--blur-lg);
+            -webkit-backdrop-filter: var(--blur-lg);
+            border-radius: var(--radius-xl);
+            padding: 28px 24px;
+            width: 100%;
+            max-width: 680px;
+            max-height: 87vh;
+            overflow-y: auto;
+            position: relative;
             box-shadow: var(--glass-shadow);
+            animation: modal-pop 0.35s var(--transition-bounce);
         }
         .close-modal {
-            position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.1); border: none; color: #fff;
-            font-size: 1.2rem; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; border-radius: 50%; backdrop-filter: blur(5px);
+            position: absolute; top: 14px; right: 14px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            font-size: 1rem;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            border-radius: 50%;
+            backdrop-filter: var(--blur-sm);
+            transition: background 0.2s ease, transform 0.2s var(--transition-bounce);
         }
-        .close-modal:hover { background: #ef4444; }
-        
+        .close-modal:hover { background: #ef4444; transform: scale(1.1); }
+
         .case-card {
-            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08);
-            border-radius: var(--radius-md); padding: 18px; margin-bottom: 15px; text-align: left;
+            background: rgba(0,0,0,0.18);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-top-color: rgba(255,255,255,0.12);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            margin-bottom: 14px;
         }
-        .case-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;}
-        .case-header h4 { font-size: 1.1rem; color: var(--gold-light); margin: 0; }
-        .case-detail { color: var(--text-main); font-size: 0.9rem; margin-bottom: 5px; }
+        .case-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 9px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .case-header h4 { font-size: 1rem; color: var(--gold-light); margin: 0; }
+        .case-detail { color: var(--text-main); font-size: 0.88rem; margin-bottom: 5px; line-height: 1.5; }
         .case-detail b { color: var(--gold-main); font-weight: 500; }
-        
+
         .case-gallery { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
         .case-gallery img {
-            width: 85px; height: 85px; object-fit: cover; border-radius: var(--radius-sm);
-            border: 1px solid var(--glass-border); cursor: zoom-in;
+            width: 80px; height: 80px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--glass-border);
+            cursor: zoom-in;
+            transition: transform 0.2s var(--transition-bounce), box-shadow 0.2s ease;
+        }
+        .case-gallery img:hover {
+            transform: scale(1.07);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.4);
         }
 
-        #lightbox { padding: 15px; cursor: zoom-out; }
-        #lightbox img { max-width: 100%; max-height: 90vh; border-radius: var(--radius-md); box-shadow: 0 10px 40px rgba(0,0,0,0.8); object-fit: contain; }
+        /* Lightbox */
+        #lightbox { padding: 16px; cursor: zoom-out; }
+        #lightbox.show { display: flex; }
+        #lightbox img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: var(--radius-md);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.85);
+            object-fit: contain;
+        }
 
-        /* ============ RESPONSIVE ============ */
+        /* ============================================================
+           RESPONSIVE — Mobile First
+        ============================================================ */
         @media (max-width: 600px) {
-            body { padding: 15px 10px; }
-            .container { padding: 25px 20px; border-radius: 20px; }
+            body { padding: 12px 10px 50px; }
+
+            .container {
+                padding: 24px 18px;
+                border-radius: var(--radius-lg);
+            }
+
+            /* Stack charts vertically */
             .charts-wrapper { grid-template-columns: 1fr; }
-            .kpi-cards { grid-template-columns: 1fr 1fr; gap: 10px; }
+
+            /* KPI: 2 cols, last one full width */
+            .kpi-cards {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
             .kpi-cards .kpi-card:last-child { grid-column: span 2; }
-            .filter-grid { grid-template-columns: 1fr; gap: 10px; }
-            
-            .home-title h1 { font-size: 1.45rem; }
-            .page-header h2 { font-size: 1.25rem; }
-            .kpi-value { font-size: 1.5rem; }
-            .kpi-title { font-size: 0.75rem; letter-spacing: -0.2px;}
-            
-            th, td { padding: 10px 6px; font-size: 0.8rem; }
-            .status-badge { padding: 3px 6px; font-size: 0.7rem; }
+
+            /* Filter: single column */
+            .filter-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+
+            /* Risk/type form grid → single col */
+            .form-grid-2 { grid-template-columns: 1fr; }
+
+            .home-title h1 { font-size: 1.4rem; }
+            .page-header h2 { font-size: 1.2rem; }
+            .kpi-value { font-size: 1.6rem; }
+            .kpi-title { font-size: 0.73rem; }
+
+            th, td { padding: 9px 7px; font-size: 0.78rem; }
+            .status-badge { font-size: 0.68rem; padding: 3px 7px; }
+
+            .modal-card { padding: 28px 20px; }
+            .case-modal-content { padding: 22px 16px; }
+        }
+
+        @media (max-width: 380px) {
+            .filter-grid { grid-template-columns: 1fr; }
+            .kpi-value { font-size: 1.4rem; }
         }
     </style>
 </head>
@@ -276,37 +750,44 @@
 
 <div class="bg-shape shape-1"></div>
 <div class="bg-shape shape-2"></div>
+<div class="bg-shape shape-3"></div>
 
+<!-- Loading Overlay -->
 <div id="loadingOverlay">
     <div style="text-align: center;">
         <div class="spinner"></div>
-        <p id="loadingMsg" style="color: var(--gold-light); font-weight: 500;">กำลังโหลดข้อมูล...</p>
+        <p id="loadingMsg" style="color: var(--gold-light); font-weight: 500; font-size: 0.95rem;">กำลังโหลดข้อมูล...</p>
     </div>
 </div>
 
+<!-- Success Popup -->
 <div id="successPopup">
     <div class="modal-card">
         <span class="modal-icon">✅</span>
         <h3>บันทึกสำเร็จ</h3>
         <p id="successMsg">ข้อมูลจุดเสี่ยงถูกบันทึกเข้าระบบเรียบร้อยแล้ว</p>
-        <button class="btn-primary" onclick="closeSuccessPopup()" style="margin: 0; padding: 12px;">ตกลง</button>
+        <button class="btn-primary" onclick="closeSuccessPopup()" style="margin: 0; padding: 13px;">ตกลง</button>
     </div>
 </div>
 
-<div id="lightbox" onclick="closeLightbox()"><img id="lightboxImg" src=""></div>
+<!-- Lightbox -->
+<div id="lightbox" onclick="closeLightbox()"><img id="lightboxImg" src="" alt=""></div>
 
+<!-- Case History Modal -->
 <div id="caseModal">
     <div class="case-modal-content">
         <button class="close-modal" onclick="closeCaseModal()">✕</button>
-        <div class="page-header" style="margin-bottom: 15px; border-bottom: none; padding-bottom: 0;">
-            <h2 id="modalEmpName" style="font-size: 1.3rem;">ประวัติการแจ้ง</h2>
+        <div class="page-header" style="margin-bottom: 14px; border-bottom: none; padding-bottom: 0;">
+            <h2 id="modalEmpName" style="font-size: 1.25rem;">ประวัติการแจ้ง</h2>
         </div>
         <div id="modalCaseList"></div>
     </div>
 </div>
 
+<!-- ── MAIN APP ── -->
 <div class="container">
 
+    <!-- HOME -->
     <div id="viewHome" class="view active">
         <div class="home-header">
             <div class="helmet-wrap">
@@ -316,11 +797,16 @@
                             <stop offset="0%" stop-color="#f2dbab" />
                             <stop offset="100%" stop-color="#b8924b" />
                         </linearGradient>
+                        <linearGradient id="helmetShine" x1="0%" y1="0%" x2="40%" y2="60%">
+                            <stop offset="0%" stop-color="rgba(255,255,255,0.45)" />
+                            <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+                        </linearGradient>
                     </defs>
                     <path d="M55 15 C30 15, 12 34, 12 56 L12 66 L98 66 L98 56 C98 34, 80 15, 55 15 Z" fill="url(#helmetGrad)" />
-                    <text x="55" y="52" font-family="'Arial', sans-serif" font-size="20" font-weight="900" fill="#10333e" text-anchor="middle" letter-spacing="1">CPF</text>
+                    <path d="M55 15 C30 15, 12 34, 12 56 L12 66 L65 66 L65 56 C65 34, 62 16, 55 15 Z" fill="url(#helmetShine)" opacity="0.4" />
+                    <text x="55" y="52" font-family="'Arial', sans-serif" font-size="18" font-weight="900" fill="#0d2f3a" text-anchor="middle" letter-spacing="1.5">CPF</text>
                     <rect x="5" y="62" width="100" height="8" rx="4" fill="#8c6a2e" />
-                    <path d="M40 25 Q55 20 70 25" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    <path d="M40 25 Q55 20 70 25" stroke="rgba(255,255,255,0.45)" stroke-width="2" fill="none" stroke-linecap="round"/>
                 </svg>
             </div>
             <div class="home-title">
@@ -334,6 +820,7 @@
         </div>
     </div>
 
+    <!-- FORM -->
     <div id="viewForm" class="view">
         <div class="page-header">
             <h2>ส่งรายงานจุดเสี่ยง</h2>
@@ -343,8 +830,8 @@
         <div class="form-group"><label>หน่วยงาน</label><select id="department"><option value="">กำลังโหลด...</option></select></div>
         <div class="form-group"><label>ชื่อพนักงาน</label><select id="employee" disabled><option value="">เลือกพนักงาน</option></select></div>
         <div class="form-group"><label>สถานที่พบความเสี่ยง</label><textarea id="locationText" placeholder="ระบุรายละเอียดสถานที่..."></textarea></div>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+
+        <div class="form-grid-2">
             <div class="form-group"><label>ประเภทความเสี่ยง</label><select id="riskType"></select></div>
             <div class="form-group"><label>ระดับความเสี่ยง</label><select id="riskLevel"></select></div>
         </div>
@@ -355,14 +842,15 @@
             <div class="preview" id="preview"></div>
         </div>
         <div class="form-group"><label>หมายเหตุเพิ่มเติม (ถ้ามี)</label><textarea id="note" placeholder="รายละเอียดอื่นๆ..."></textarea></div>
-        
-        <div style="margin-top: 25px;">
+
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 24px;">
             <button id="submitBtn" class="btn-primary">บันทึกข้อมูล</button>
             <button class="btn-secondary" onclick="switchView('viewHome')">ย้อนกลับ</button>
         </div>
         <div id="status"></div>
     </div>
 
+    <!-- LOGIN -->
     <div id="viewLogin" class="view">
         <div class="page-header">
             <h2>เข้าสู่ระบบ</h2>
@@ -370,14 +858,15 @@
         </div>
         <div class="form-group"><label>ชื่อผู้ใช้งาน</label><input type="text" id="loginUser" placeholder="Username"></div>
         <div class="form-group"><label>รหัสผ่าน</label><input type="password" id="loginPass" placeholder="Password"></div>
-        
-        <div style="margin-top: 25px;">
+
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 24px;">
             <button id="btnLogin" class="btn-primary">เข้าสู่ระบบ</button>
             <button class="btn-secondary" onclick="switchView('viewHome')">ย้อนกลับ</button>
         </div>
         <div id="loginStatus"></div>
     </div>
 
+    <!-- DASHBOARD -->
     <div id="viewDashboard" class="view">
         <div class="page-header">
             <h2>Dashboard ภาพรวม</h2>
@@ -406,7 +895,7 @@
                 </select>
             </div>
         </div>
-        
+
         <div class="kpi-cards">
             <div class="kpi-card"><div class="kpi-title">แจ้งแล้ว (เรื่อง)</div><div class="kpi-value" id="kpiActual">0</div></div>
             <div class="kpi-card"><div class="kpi-title" id="kpiTargetTitle">เป้าโรงงาน</div><div class="kpi-value" id="kpiTarget">0</div></div>
@@ -422,8 +911,8 @@
             <div class="charts-wrapper">
                 <div class="chart-container"><canvas id="deptChart"></canvas></div>
                 <div class="chart-container" style="display:flex; flex-direction:column; justify-content: center;">
-                    <label style="text-align:center; display:block; margin-bottom:10px;">ระดับความเสี่ยง</label>
-                    <div style="height: 230px; width: 100%; position: relative;">
+                    <label style="text-align:center; display:block; margin-bottom:10px; color: var(--gold-light);">ระดับความเสี่ยง</label>
+                    <div style="height: 220px; width: 100%; position: relative;">
                         <canvas id="riskDonutChart"></canvas>
                     </div>
                 </div>
@@ -446,7 +935,7 @@
             </div>
         </div>
 
-        <button class="btn-danger" onclick="switchView('viewHome')" style="margin-top: 25px;">ออกจากระบบ</button>
+        <button class="btn-danger" onclick="switchView('viewHome')" style="margin-top: 24px;">ออกจากระบบ</button>
     </div>
 
 </div>
@@ -474,7 +963,8 @@ function switchView(viewId) {
     document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
     document.getElementById('loginStatus').innerHTML = "";
-    document.getElementById('loginPass').value = ""; window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('loginPass').value = "";
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function toggleDashView(mode) {
@@ -485,14 +975,19 @@ function toggleDashView(mode) {
 
 // ============ MASTER DATA ============
 window.onload = async () => {
-    try { const res = await fetch(API_URL + "?action=master"); const data = await res.json(); if (data.success) { masterData = data; setupDropdowns(); } } catch(e) {}
+    try {
+        const res = await fetch(API_URL + "?action=master");
+        const data = await res.json();
+        if (data.success) { masterData = data; setupDropdowns(); }
+    } catch(e) {}
 };
 
 function setupDropdowns() {
     const dept = document.getElementById("department");
     masterData.departments.forEach(d => dept.innerHTML += `<option value="${d}">${d}</option>`);
     dept.onchange = () => {
-        const emp = document.getElementById("employee"); emp.innerHTML = '<option value="">เลือกพนักงาน</option>';
+        const emp = document.getElementById("employee");
+        emp.innerHTML = '<option value="">เลือกพนักงาน</option>';
         if (!dept.value) { emp.disabled = true; return; }
         emp.disabled = false;
         masterData.staffs.filter(s => s.department === dept.value).forEach(s => emp.innerHTML += `<option value="${s.name}" data-id="${s.empId}">${s.name}</option>`);
@@ -504,40 +999,66 @@ function setupDropdowns() {
 // ============ FORM HANDLING ============
 document.getElementById("images").onchange = function() {
     const preview = document.getElementById("preview"); preview.innerHTML = "";
-    [...this.files].forEach(file => { const r = new FileReader(); r.onload = e => { const i = document.createElement("img"); i.src = e.target.result; preview.appendChild(i); }; r.readAsDataURL(file); });
+    [...this.files].forEach(file => {
+        const r = new FileReader();
+        r.onload = e => { const i = document.createElement("img"); i.src = e.target.result; preview.appendChild(i); };
+        r.readAsDataURL(file);
+    });
 };
+
 async function compressFile(file) {
     return new Promise(res => {
-        const img = new Image(); const r = new FileReader(); r.readAsDataURL(file); r.onload = e => img.src = e.target.result;
+        const img = new Image(); const r = new FileReader();
+        r.readAsDataURL(file);
+        r.onload = e => img.src = e.target.result;
         img.onload = () => {
-            const cvs = document.createElement("canvas"); let w = img.width, h = img.height; if (w > 1200) { h *= 1200 / w; w = 1200; }
-            cvs.width = w; cvs.height = h; cvs.getContext("2d").drawImage(img, 0, 0, w, h); res(cvs.toDataURL("image/jpeg", 0.7).split(',')[1]);
+            const cvs = document.createElement("canvas");
+            let w = img.width, h = img.height;
+            if (w > 1200) { h *= 1200 / w; w = 1200; }
+            cvs.width = w; cvs.height = h;
+            cvs.getContext("2d").drawImage(img, 0, 0, w, h);
+            res(cvs.toDataURL("image/jpeg", 0.7).split(',')[1]);
         };
     });
 }
+
 document.getElementById("submitBtn").onclick = async function() {
     const emp = document.getElementById("employee"); const imgIn = document.getElementById("images");
-    if (!emp.value || !document.getElementById("locationText").value || imgIn.files.length === 0) return alert("กรุณากรอกข้อมูลและแนบรูปให้ครบ");
-    this.disabled = true; 
+    if (!emp.value || !document.getElementById("locationText").value || imgIn.files.length === 0)
+        return alert("กรุณากรอกข้อมูลและแนบรูปให้ครบ");
+    this.disabled = true;
     try {
         const empId = emp.options[emp.selectedIndex].getAttribute("data-id"); const d = new Date();
         const imgBase = empId + String(d.getDate()).padStart(2,'0') + String(d.getMonth()+1).padStart(2,'0') + String(d.getFullYear()).slice(-2);
-        
+
         showLoading("กำลังบันทึกข้อมูล...");
-        const r1 = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "saveForm", reporter: emp.value, department: document.getElementById("department").value, location: document.getElementById("locationText").value, riskType: document.getElementById("riskType").value, riskLevel: document.getElementById("riskLevel").value, note: document.getElementById("note").value, totalImages: imgIn.files.length, imageId: imgBase }) });
+        const r1 = await fetch(API_URL, { method: "POST", body: JSON.stringify({
+            action: "saveForm",
+            reporter: emp.value, department: document.getElementById("department").value,
+            location: document.getElementById("locationText").value,
+            riskType: document.getElementById("riskType").value,
+            riskLevel: document.getElementById("riskLevel").value,
+            note: document.getElementById("note").value,
+            totalImages: imgIn.files.length, imageId: imgBase
+        })});
         const textRes = await r1.json(); if (!textRes.success) throw new Error(textRes.error);
-        
+
         for (let i = 0; i < imgIn.files.length; i++) {
             showLoading(`อัปโหลดภาพ ${i+1} / ${imgIn.files.length}...`);
-            await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "uploadImage", base64: await compressFile(imgIn.files[i]), rowNumber: textRes.rowNumber, imageId: imgBase + "_" + (i+1) }) });
+            await fetch(API_URL, { method: "POST", body: JSON.stringify({
+                action: "uploadImage", base64: await compressFile(imgIn.files[i]),
+                rowNumber: textRes.rowNumber, imageId: imgBase + "_" + (i+1)
+            })});
         }
-        
+
         hideLoading();
-        ["locationText", "note", "images", "department"].forEach(id => document.getElementById(id).value = "");
-        document.getElementById("preview").innerHTML = ""; document.getElementById("employee").innerHTML = '<option value="">เลือกพนักงาน</option>'; document.getElementById("employee").disabled = true;
-        
+        ["locationText","note","images","department"].forEach(id => document.getElementById(id).value = "");
+        document.getElementById("preview").innerHTML = "";
+        document.getElementById("employee").innerHTML = '<option value="">เลือกพนักงาน</option>';
+        document.getElementById("employee").disabled = true;
         showSuccess("ข้อมูลถูกส่งเข้าระบบเรียบร้อยแล้ว");
-    } catch (e) { hideLoading(); alert("เกิดข้อผิดพลาด: " + e.message); } finally { this.disabled = false; }
+    } catch (e) { hideLoading(); alert("เกิดข้อผิดพลาด: " + e.message); }
+    finally { this.disabled = false; }
 };
 
 // ============ DASHBOARD & LOGIN ============
@@ -546,24 +1067,24 @@ document.getElementById("btnLogin").onclick = async function() {
     if(!u || !p) return; this.disabled = true; document.getElementById("loginStatus").innerHTML = "";
     try {
         showLoading("ตรวจสอบข้อมูล...");
-        const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "checkLogin", user: u, pass: p }) });
+        const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "checkLogin", user: u, pass: p })});
         const d = await res.json();
-        if(d.success) { 
+        if(d.success) {
             showLoading("กำลังโหลดรายงาน...");
-            await loadDash(); hideLoading(); switchView('viewDashboard'); 
+            await loadDash(); hideLoading(); switchView('viewDashboard');
         } else { hideLoading(); document.getElementById("loginStatus").innerHTML = d.message; }
     } catch(e) { hideLoading(); } finally { this.disabled = false; }
 };
 
 async function loadDash() {
-    const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getDashboard" }) });
+    const res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "getDashboard" })});
     const d = await res.json();
     if(d.success) {
         dashboardData = d.records; dashboardTargets = d.targets;
         let years = [...new Set(dashboardData.map(r => r.year))].filter(y => y !== "N/A").sort().reverse();
         const ySel = document.getElementById("dashYear"); ySel.innerHTML = "";
         years.forEach(y => ySel.innerHTML += `<option value="${y}">${y}</option>`);
-        
+
         const dpSel = document.getElementById("dashDept"); dpSel.innerHTML = '<option value="all">รวมทั้งหมด</option>';
         [...new Set(masterData.staffs.map(s => s.department))].sort().forEach(dp => dpSel.innerHTML += `<option value="${dp}">${dp}</option>`);
         renderDashboard();
@@ -571,17 +1092,22 @@ async function loadDash() {
 }
 
 function renderDashboard() {
-    const selY = document.getElementById("dashYear").value; const selM = document.getElementById("dashMonth").value; const selD = document.getElementById("dashDept").value; const selS = document.getElementById("dashStatus").value;
-    const tFactory = (selM === "all") ? dashboardTargets.factoryYear : dashboardTargets.factoryMonth;
-    const tPerson  = (selM === "all") ? dashboardTargets.personYear  : dashboardTargets.personMonth;
+    const selY = document.getElementById("dashYear").value;
+    const selM = document.getElementById("dashMonth").value;
+    const selD = document.getElementById("dashDept").value;
+    const selS = document.getElementById("dashStatus").value;
+    const tFactory = (selM === "all") ? dashboardTargets.factoryYear  : dashboardTargets.factoryMonth;
+    const tPerson  = (selM === "all") ? dashboardTargets.personYear   : dashboardTargets.personMonth;
 
     document.getElementById("kpiTargetTitle").innerText = (selM === "all") ? "เป้าหมาย (ปี)" : "เป้าหมาย (เดือน)";
     document.getElementById("kpiTarget").innerText = tFactory;
 
-    let staffCount = {}; let staffInFocus = masterData.staffs.filter(s => selD === "all" || s.department === selD);
+    let staffCount = {};
+    let staffInFocus = masterData.staffs.filter(s => selD === "all" || s.department === selD);
     staffInFocus.forEach(s => { staffCount[s.department] = (staffCount[s.department] || 0) + 1; });
 
-    let filtered = dashboardData.filter(d => d.year === selY && (selM === "all" || d.month === selM) && (selD === "all" || d.dept === selD));
+    let filtered = dashboardData.filter(d =>
+        d.year === selY && (selM === "all" || d.month === selM) && (selD === "all" || d.dept === selD));
     let reportsByDept = {}; let reportsByPerson = {}; let riskLevelCount = {};
     filtered.forEach(d => {
         reportsByDept[d.dept] = (reportsByDept[d.dept] || 0) + 1;
@@ -589,58 +1115,55 @@ function renderDashboard() {
         if(d.riskLevel) riskLevelCount[d.riskLevel] = (riskLevelCount[d.riskLevel] || 0) + 1;
     });
 
-    // --- กราฟแท่ง (เปลี่ยนสีตาม Theme) ---
     let labels = [], dataVals = [], bgColors = [], targetVals = [];
     (selD === "all" ? Object.keys(staffCount) : [selD]).forEach(dept => {
         let actual = reportsByDept[dept] || 0; let expected = (staffCount[dept] || 0) * tPerson;
         labels.push(dept); dataVals.push(actual); targetVals.push(expected);
         const ratio = expected > 0 ? actual / expected : 1;
-        if (ratio >= 1) { bgColors.push('rgba(223, 187, 118, 0.9)'); } // ทอง (ผ่าน)
-        else if (ratio >= 0.6) { bgColors.push('rgba(217, 119, 6, 0.8)'); } // ส้ม (ปานกลาง)
-        else { bgColors.push('rgba(220, 38, 38, 0.8)'); } // แดง (ตก)
+        if      (ratio >= 1)   bgColors.push('rgba(223,187,118,0.85)');
+        else if (ratio >= 0.6) bgColors.push('rgba(217,119,6,0.8)');
+        else                   bgColors.push('rgba(220,38,38,0.8)');
     });
 
-    Chart.defaults.color = '#a3c1cc';
+    Chart.defaults.color = '#8fb5c4';
     Chart.defaults.font.family = "'Noto Sans Thai', sans-serif";
 
     if(barChartInstance) barChartInstance.destroy();
-    barChartInstance = new Chart(document.getElementById('deptChart'), { 
-        type: 'bar', 
-        data: { labels, datasets: [ 
-            { type: 'line', label: 'เป้าหมาย', data: targetVals, borderColor: '#fca5a5', borderWidth: 2, borderDash: [4,4], pointRadius: 0, fill: false, tension: 0.1, order: 1 }, 
-            { type: 'bar', label: 'ส่งจริง', data: dataVals, backgroundColor: bgColors, borderRadius: 4, order: 2, barPercentage: 0.7 } 
-        ]}, 
-        options: { 
-            responsive: true, 
-            plugins: { 
-                legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } }, 
-                datalabels: { display: false } 
-            }, 
-            scales: { 
-                y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, border: { display: false } }, 
-                x: { grid: { display: false }, border: { display: false }, ticks: {maxRotation: 45, minRotation: 0} } 
-            } 
-        } 
+    barChartInstance = new Chart(document.getElementById('deptChart'), {
+        type: 'bar',
+        data: { labels, datasets: [
+            { type: 'line', label: 'เป้าหมาย', data: targetVals, borderColor: '#fca5a5', borderWidth: 2, borderDash: [4,4], pointRadius: 0, fill: false, tension: 0.1, order: 1 },
+            { type: 'bar',  label: 'ส่งจริง',  data: dataVals, backgroundColor: bgColors, borderRadius: 6, order: 2, barPercentage: 0.65 }
+        ]},
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } },
+                datalabels: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, border: { display: false } },
+                x: { grid: { display: false }, border: { display: false }, ticks: { maxRotation: 45, minRotation: 0 } }
+            }
+        }
     });
 
-    // --- กราฟโดนัท (ใช้สี ทอง ส้ม แดง) ---
     let riskLabels = Object.keys(riskLevelCount); let riskData = Object.values(riskLevelCount);
     let riskColors = riskLabels.map(l => l.includes('สูง') ? '#ef4444' : l.includes('กลาง') ? '#f59e0b' : '#2dd4bf');
 
     if(donutChartInstance) donutChartInstance.destroy();
     donutChartInstance = new Chart(document.getElementById('riskDonutChart'), {
         type: 'doughnut',
-        data: { labels: riskLabels, datasets: [{ data: riskData, backgroundColor: riskColors, borderWidth: 0, hoverOffset: 4 }] },
+        data: { labels: riskLabels, datasets: [{ data: riskData, backgroundColor: riskColors, borderWidth: 0, hoverOffset: 5 }] },
         options: {
             responsive: true, maintainAspectRatio: false, cutout: '70%',
             plugins: {
-                legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 8, font: {size: 11} } },
-                datalabels: { color: '#fff', font: { weight: 'bold', size: 14 }, formatter: (value) => value > 0 ? value : '' }
+                legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 8, font: { size: 11 } } },
+                datalabels: { color: '#fff', font: { weight: 'bold', size: 13 }, formatter: (value) => value > 0 ? value : '' }
             }
         }
     });
 
-    // --- ตาราง ---
     let tbody = "", passCount = 0;
     staffInFocus.forEach(s => {
         let actual = reportsByPerson[s.name] || 0; let isPass = actual >= tPerson;
@@ -648,10 +1171,10 @@ function renderDashboard() {
         if(selS === "pass" && !isPass) return; if(selS === "fail" && isPass) return;
         let cls = isPass ? 'status-pass' : 'status-fail'; let txt = isPass ? 'ผ่านเป้า' : 'ไม่ผ่าน';
         tbody += `<tr>
-            <td><div style="font-weight:500;">${s.name}</div><div style="font-size:0.75rem; color:var(--text-muted);">${selD === 'all' ? s.department : ''}</div></td>
+            <td><div style="font-weight:500;">${s.name}</div><div style="font-size:0.73rem; color:var(--text-muted);">${selD === 'all' ? s.department : ''}</div></td>
             <td style="text-align:center;">${actual} <span style="font-size:0.8em; color:var(--text-muted);">/ ${tPerson}</span></td>
             <td style="text-align:center;"><span class="status-badge ${cls}">${txt}</span></td>
-            <td style="text-align:center;"><button class="btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; border-radius:8px;" onclick="viewEmployeeCases('${s.name}')">ดู</button></td>
+            <td style="text-align:center;"><button class="btn-secondary btn-row" onclick="viewEmployeeCases('${s.name}')">ดู</button></td>
         </tr>`;
     });
     document.getElementById("dashTableBody").innerHTML = tbody || '<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding: 20px;">ไม่พบข้อมูล</td></tr>';
@@ -659,32 +1182,43 @@ function renderDashboard() {
     document.getElementById("kpiPass").innerText = passCount;
 }
 
-// ============ แสดงรูปภาพด้วย Thumbnail API ============
+// ============ Drive Thumbnail ============
 function getDirectDriveLink(url) {
     if (!url) return ""; let fileId = "";
     let match = url.match(/(?:id=|v=|vi=|v\/|vi\/|youtu\.be\/|\/d\/)([a-zA-Z0-9_-]{25,33})/);
-    if (match && match[1]) fileId = match[1]; else { match = url.match(/id=([a-zA-Z0-9_-]+)/); if (match && match[1]) fileId = match[1]; }
+    if (match && match[1]) fileId = match[1];
+    else { match = url.match(/id=([a-zA-Z0-9_-]+)/); if (match && match[1]) fileId = match[1]; }
     return fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000` : url;
 }
 
 function viewEmployeeCases(empName) {
-    const selY = document.getElementById("dashYear").value; const selM = document.getElementById("dashMonth").value; const selD = document.getElementById("dashDept").value;
-    let empCases = dashboardData.filter(d => d.reporter === empName && d.year === selY && (selM === "all" || d.month === selM) && (selD === "all" || d.dept === selD));
+    const selY = document.getElementById("dashYear").value;
+    const selM = document.getElementById("dashMonth").value;
+    const selD = document.getElementById("dashDept").value;
+    let empCases = dashboardData.filter(d =>
+        d.reporter === empName && d.year === selY &&
+        (selM === "all" || d.month === selM) && (selD === "all" || d.dept === selD));
     empCases.sort((a, b) => b.timestamp - a.timestamp);
 
     document.getElementById("modalEmpName").innerText = `ประวัติ: ${empName}`;
     let html = "";
-    if(empCases.length === 0) { html = "<p style='text-align:center; color: var(--text-muted); padding: 15px;'>ไม่พบข้อมูลการแจ้ง</p>"; } 
-    else {
+    if(empCases.length === 0) {
+        html = "<p style='text-align:center; color:var(--text-muted); padding:16px;'>ไม่พบข้อมูลการแจ้ง</p>";
+    } else {
         empCases.forEach((c, idx) => {
             let dateStr = c.timestamp ? new Date(c.timestamp).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }) : "ไม่ระบุเวลา";
-            let imgsHtml = (c.images && c.images.length > 0) ? c.images.map(imgUrl => {
-                let directUrl = getDirectDriveLink(imgUrl);
-                return `<img src="${directUrl}" onclick="openLightbox('${directUrl}')" onerror="this.onerror=null; this.src='https://placehold.co/100x100/10333e/dfbb76?text=Image';">`;
-            }).join('') : "<span style='color: var(--text-muted); font-size: 0.8rem;'>ไม่มีภาพแนบ</span>";
-            
+            let imgsHtml = (c.images && c.images.length > 0)
+                ? c.images.map(imgUrl => {
+                    let directUrl = getDirectDriveLink(imgUrl);
+                    return `<img src="${directUrl}" onclick="openLightbox('${directUrl}')" onerror="this.onerror=null; this.src='https://placehold.co/100x100/0d2f3a/dfbb76?text=img';">`;
+                }).join('')
+                : "<span style='color:var(--text-muted); font-size:0.8rem;'>ไม่มีภาพแนบ</span>";
+
             html += `<div class="case-card">
-                <div class="case-header"><h4>เคสที่ ${empCases.length - idx}</h4><span style="color: var(--text-muted); font-size: 0.8rem;">${dateStr}</span></div>
+                <div class="case-header">
+                    <h4>เคสที่ ${empCases.length - idx}</h4>
+                    <span style="color:var(--text-muted); font-size:0.8rem;">${dateStr}</span>
+                </div>
                 <div class="case-detail"><b>📍 สถานที่:</b> ${c.location || '-'}</div>
                 <div class="case-detail"><b>⚠️ ความเสี่ยง:</b> ${c.riskLevel || '-'} (${c.riskType || '-'})</div>
                 <div class="case-detail"><b>📝 หมายเหตุ:</b> ${c.note || '-'}</div>
