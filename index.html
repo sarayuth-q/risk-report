@@ -7,6 +7,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" />
+    
     <style>
         /* ============================================================
            LIQUID GLASS — iOS 18 INSPIRED DESIGN SYSTEM
@@ -52,6 +54,14 @@
             margin: 0; padding: 0;
         }
 
+        /* Material Icons Setup */
+        .material-symbols-rounded {
+            vertical-align: middle;
+            font-size: 1.25rem;
+            margin-right: 6px;
+            margin-top: -3px;
+        }
+
         /* ── BODY & AMBIENT LIGHT ── */
         body {
             background-color: var(--bg-deep);
@@ -59,7 +69,6 @@
             display: flex;
             justify-content: center;
             align-items: center !important;
-            /*align-items: flex-start;*/
             min-height: 100vh;
             padding: 24px 16px 60px;
             line-height: 1.55;
@@ -67,34 +76,12 @@
             overflow-x: hidden;
         }
 
-        /* Ambient orbs — fixed behind everything */
-        .bg-shape {
-            position: fixed;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-        }
-        .shape-1 {
-            top: -15%; left: -15%;
-            width: 55vw; height: 55vw;
-            background: radial-gradient(circle, rgba(223,187,118,0.18) 0%, transparent 65%);
-            filter: blur(60px);
-            animation: orb-drift 18s ease-in-out infinite alternate;
-        }
-        .shape-2 {
-            bottom: -20%; right: -15%;
-            width: 65vw; height: 65vw;
-            background: radial-gradient(circle, rgba(32, 120, 160, 0.15) 0%, transparent 65%);
-            filter: blur(80px);
-            animation: orb-drift 24s ease-in-out infinite alternate-reverse;
-        }
-        .shape-3 {
-            top: 45%; left: 40%;
-            width: 30vw; height: 30vw;
-            background: radial-gradient(circle, rgba(100, 180, 220, 0.08) 0%, transparent 70%);
-            filter: blur(50px);
-            animation: orb-drift 14s ease-in-out infinite alternate;
-        }
+        /* Ambient orbs */
+        .bg-shape { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+        .shape-1 { top: -15%; left: -15%; width: 55vw; height: 55vw; background: radial-gradient(circle, rgba(223,187,118,0.18) 0%, transparent 65%); filter: blur(60px); animation: orb-drift 18s ease-in-out infinite alternate; }
+        .shape-2 { bottom: -20%; right: -15%; width: 65vw; height: 65vw; background: radial-gradient(circle, rgba(32, 120, 160, 0.15) 0%, transparent 65%); filter: blur(80px); animation: orb-drift 24s ease-in-out infinite alternate-reverse; }
+        .shape-3 { top: 45%; left: 40%; width: 30vw; height: 30vw; background: radial-gradient(circle, rgba(100, 180, 220, 0.08) 0%, transparent 70%); filter: blur(50px); animation: orb-drift 14s ease-in-out infinite alternate; }
+        
         @keyframes orb-drift {
             from { transform: translate(0, 0) scale(1); }
             to   { transform: translate(4%, 6%) scale(1.08); }
@@ -115,37 +102,21 @@
             box-shadow: var(--glass-shadow), var(--glass-inset);
             position: relative;
             z-index: 1;
-            /* Prevent children from overflowing */
             overflow: hidden;
         }
 
-        /* Subtle inner shine rim */
         .container::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: linear-gradient(135deg,
-                rgba(255,255,255,0.06) 0%,
-                transparent 50%,
-                rgba(0,0,0,0.04) 100%);
-            pointer-events: none;
-            z-index: 0;
+            content: ''; position: absolute; inset: 0; border-radius: inherit;
+            background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%, rgba(0,0,0,0.04) 100%);
+            pointer-events: none; z-index: 0;
         }
         .container > * { position: relative; z-index: 1; }
 
         h1, h2, h3, h4 { color: var(--gold-light); font-weight: 600; line-height: 1.3; }
 
         /* ── VIEW TRANSITIONS ── */
-        .view {
-            display: none;
-            opacity: 0;
-            transform: translateY(12px) scale(0.99);
-        }
-        .view.active {
-            display: block;
-            animation: view-enter 0.45s var(--transition-smooth) forwards;
-        }
+        .view { display: none; opacity: 0; transform: translateY(12px) scale(0.99); }
+        .view.active { display: block; animation: view-enter 0.45s var(--transition-smooth) forwards; }
         @keyframes view-enter {
             from { opacity: 0; transform: translateY(14px) scale(0.985); }
             to   { opacity: 1; transform: translateY(0) scale(1); }
@@ -154,616 +125,251 @@
         /* ============================================================
            HOME PAGE
         ============================================================ */
-        .home-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-bottom: 32px;
-            text-align: center;
-            gap: 18px;
-        }
-
-        /* Liquid glass helmet badge */
-        .helmet-wrap {
-            position: relative;
-            width: 96px; height: 96px;
-        }
+        .home-header { display: flex; flex-direction: column; align-items: center; padding-bottom: 32px; text-align: center; gap: 18px; }
+        .helmet-wrap { position: relative; width: 96px; height: 96px; }
         .helmet-wrap::before {
-            content: '';
-            position: absolute;
-            inset: -8px;
-            border-radius: 50%;
-            background: var(--gold-glow);
-            filter: blur(14px);
-            animation: pulse-glow 3s ease-in-out infinite;
+            content: ''; position: absolute; inset: -8px; border-radius: 50%;
+            background: var(--gold-glow); filter: blur(14px); animation: pulse-glow 3s ease-in-out infinite;
         }
         @keyframes pulse-glow {
             0%, 100% { opacity: 0.6; transform: scale(1); }
             50%       { opacity: 1;   transform: scale(1.08); }
         }
-        .helmet-wrap svg {
-            width: 100%; height: 100%;
-            position: relative; z-index: 1;
-            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.5))
-                    drop-shadow(0 2px 6px rgba(223,187,118,0.3));
-        }
+        .helmet-wrap svg { width: 100%; height: 100%; position: relative; z-index: 1; filter: drop-shadow(0 8px 20px rgba(0,0,0,0.5)) drop-shadow(0 2px 6px rgba(223,187,118,0.3)); }
 
-        .home-title h1 {
-            font-size: 1.75rem;
-            letter-spacing: -0.2px;
-            background: linear-gradient(135deg, #fff 30%, var(--gold-main));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .home-title p {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        .home-btns {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-width: 380px;
-            margin: 0 auto;
-            width: 100%;
-        }
+        .home-title h1 { font-size: 1.75rem; letter-spacing: -0.2px; background: linear-gradient(135deg, #fff 30%, var(--gold-main)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .home-title p { font-size: 0.95rem; color: var(--text-muted); margin-top: 4px; }
+        .home-btns { display: flex; flex-direction: column; gap: 12px; max-width: 380px; margin: 0 auto; width: 100%; }
 
         /* ============================================================
            PAGE HEADERS
         ============================================================ */
-        .page-header {
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.07);
-        }
-        .page-header h2 {
-            font-size: 1.4rem;
-            color: var(--gold-main);
-        }
-        .page-header p {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-top: 3px;
-        }
+        .page-header { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+        .page-header h2 { font-size: 1.4rem; color: var(--gold-main); display: flex; align-items: center; }
+        .page-header p { font-size: 0.9rem; color: var(--text-muted); margin-top: 3px; }
 
         /* ============================================================
-           LIQUID GLASS BUTTONS
+           BUTTONS
         ============================================================ */
         button {
-            width: 100%;
-            padding: 15px 20px;
-            border: none;
-            border-radius: var(--radius-md);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition:
-                transform   0.25s var(--transition-bounce),
-                box-shadow  0.25s var(--transition-smooth),
-                background  0.2s  var(--transition-fast),
-                opacity     0.2s  ease;
-            backdrop-filter: var(--blur-sm);
-            -webkit-backdrop-filter: var(--blur-sm);
-            position: relative;
-            overflow: hidden;
-            /* Prevent button from overflowing container */
-            max-width: 100%;
+            width: 100%; padding: 15px 20px; border: none; border-radius: var(--radius-md); font-size: 1rem; font-weight: 600; cursor: pointer;
+            transition: transform 0.25s var(--transition-bounce), box-shadow 0.25s var(--transition-smooth), background 0.2s var(--transition-fast), opacity 0.2s ease;
+            backdrop-filter: var(--blur-sm); -webkit-backdrop-filter: var(--blur-sm); position: relative; overflow: hidden; max-width: 100%;
+            display: flex; align-items: center; justify-content: center;
         }
-
-        /* Shimmer effect on buttons */
         button::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 60%; height: 100%;
+            content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
-            transform: skewX(-20deg);
-            transition: left 0.5s ease;
-            pointer-events: none;
+            transform: skewX(-20deg); transition: left 0.5s ease; pointer-events: none;
         }
         button:hover:not(:disabled)::after { left: 140%; }
 
-        .btn-primary {
-            background: linear-gradient(140deg, var(--gold-light) 0%, var(--gold-main) 55%, var(--gold-dark) 100%);
-            color: var(--bg-darker);
-            box-shadow: 0 4px 18px rgba(223,187,118,0.35), inset 0 1px 0 rgba(255,255,255,0.4);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px) scale(1.01);
-            box-shadow: 0 8px 32px rgba(223,187,118,0.5), inset 0 1px 0 rgba(255,255,255,0.5);
-        }
-        .btn-primary:active:not(:disabled) {
-            transform: translateY(0) scale(0.99);
-        }
+        .btn-primary { background: linear-gradient(140deg, var(--gold-light) 0%, var(--gold-main) 55%, var(--gold-dark) 100%); color: var(--bg-darker); box-shadow: 0 4px 18px rgba(223,187,118,0.35), inset 0 1px 0 rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.2); }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px) scale(1.01); box-shadow: 0 8px 32px rgba(223,187,118,0.5), inset 0 1px 0 rgba(255,255,255,0.5); }
+        .btn-primary:active:not(:disabled) { transform: translateY(0) scale(0.99); }
         .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .btn-secondary {
-            background: rgba(255,255,255,0.07);
-            border: 1px solid var(--glass-border);
-            border-top-color: rgba(255,255,255,0.18);
-            color: var(--text-main);
-            box-shadow: var(--glass-inset), 0 2px 8px rgba(0,0,0,0.15);
-        }
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.12);
-            border-color: rgba(255,255,255,0.2);
-            transform: translateY(-1px);
-        }
+        .btn-secondary { background: rgba(255,255,255,0.07); border: 1px solid var(--glass-border); border-top-color: rgba(255,255,255,0.18); color: var(--text-main); box-shadow: var(--glass-inset), 0 2px 8px rgba(0,0,0,0.15); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); transform: translateY(-1px); }
 
-        .btn-danger {
-            background: rgba(239,68,68,0.12);
-            border: 1px solid rgba(239,68,68,0.25);
-            color: #fca5a5;
-        }
-        .btn-danger:hover {
-            background: rgba(239,68,68,0.2);
-            border-color: rgba(239,68,68,0.4);
-        }
+        .btn-danger { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.25); color: #fca5a5; }
+        .btn-danger:hover { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.4); }
 
         /* ============================================================
-           FORMS & INPUTS — Liquid Glass
+           FORMS & INPUTS
         ============================================================ */
         .form-group { margin-bottom: 18px; }
-
-        label {
-            display: block;
-            margin-bottom: 7px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--gold-light);
-            letter-spacing: 0.1px;
-        }
+        label { display: flex; align-items: center; margin-bottom: 7px; font-size: 0.9rem; font-weight: 500; color: var(--gold-light); letter-spacing: 0.1px; }
+        label .material-symbols-rounded { font-size: 1.1rem; color: var(--gold-dark); margin-right: 6px; }
 
         input, select, textarea {
-            width: 100%;
-            padding: 13px 15px;
-            background: rgba(0,0,0,0.18);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-top-color: rgba(255,255,255,0.06);
-            border-radius: var(--radius-sm);
-            color: var(--text-main);
-            font-size: 0.97rem;
-            backdrop-filter: var(--blur-sm);
-            -webkit-backdrop-filter: var(--blur-sm);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-            outline: none;
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.2), inset 0 -1px 0 rgba(255,255,255,0.04);
-            /* CRITICAL: prevent overflow */
-            max-width: 100%;
-            min-width: 0;
+            width: 100%; padding: 13px 15px; background: rgba(0,0,0,0.18); border: 1px solid rgba(255,255,255,0.1); border-top-color: rgba(255,255,255,0.06);
+            border-radius: var(--radius-sm); color: var(--text-main); font-size: 0.97rem; backdrop-filter: var(--blur-sm); -webkit-backdrop-filter: var(--blur-sm);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; outline: none; box-shadow: inset 0 2px 6px rgba(0,0,0,0.2), inset 0 -1px 0 rgba(255,255,255,0.04);
+            max-width: 100%; min-width: 0;
         }
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--gold-main);
-            background: rgba(0,0,0,0.25);
-            box-shadow:
-                0 0 0 3px rgba(223,187,118,0.15),
-                inset 0 2px 6px rgba(0,0,0,0.2);
-        }
+        input:focus, select:focus, textarea:focus { border-color: var(--gold-main); background: rgba(0,0,0,0.25); box-shadow: 0 0 0 3px rgba(223,187,118,0.15), inset 0 2px 6px rgba(0,0,0,0.2); }
         input::placeholder, textarea::placeholder { color: var(--text-sub); }
         select option { background-color: #0d2f3a; color: var(--text-main); }
         textarea { resize: vertical; min-height: 88px; }
-        input[type="file"] {
-            padding: 10px 14px;
-            color: var(--text-muted);
-            font-size: 0.88rem;
-            cursor: pointer;
-        }
+        input[type="file"] { padding: 10px 14px; color: var(--text-muted); font-size: 0.88rem; cursor: pointer; }
         input[type="file"]::-webkit-file-upload-button {
-            background: rgba(223,187,118,0.15);
-            border: 1px solid rgba(223,187,118,0.3);
-            border-radius: var(--radius-xs);
-            color: var(--gold-light);
-            padding: 5px 12px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            margin-right: 10px;
+            background: rgba(223,187,118,0.15); border: 1px solid rgba(223,187,118,0.3); border-radius: var(--radius-xs);
+            color: var(--gold-light); padding: 5px 12px; font-size: 0.85rem; cursor: pointer; margin-right: 10px; font-weight: 500;
         }
 
-        /* ── GRID LAYOUTS (overflow-safe) ── */
-        .form-grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
+        .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
         /* ============================================================
            IMAGE PREVIEW
         ============================================================ */
-        .preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 12px;
-        }
-        .preview img {
-            width: 76px; height: 76px;
-            object-fit: cover;
-            border-radius: var(--radius-sm);
-            border: 1.5px solid var(--gold-dark);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.35);
-            transition: transform 0.2s var(--transition-bounce);
-        }
+        .preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+        .preview img { width: 76px; height: 76px; object-fit: cover; border-radius: var(--radius-sm); border: 1.5px solid var(--gold-dark); box-shadow: 0 4px 12px rgba(0,0,0,0.35); transition: transform 0.2s var(--transition-bounce); }
         .preview img:hover { transform: scale(1.08); }
 
-        #status, #loginStatus {
-            text-align: center;
-            font-size: 0.9rem;
-            margin-top: 10px;
-            min-height: 22px;
-            color: var(--gold-light);
-        }
+        #status, #loginStatus { text-align: center; font-size: 0.9rem; margin-top: 10px; min-height: 22px; color: var(--gold-light); }
         #loginStatus { color: #fca5a5; }
 
         /* ============================================================
            DASHBOARD — KPI CARDS
         ============================================================ */
-        .filter-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+        .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
         .filter-grid .form-group { margin: 0; }
+        .filter-grid label .material-symbols-rounded { font-size: 1rem; }
 
-        .kpi-cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 22px;
-        }
+        .kpi-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 22px; }
         .kpi-card {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--glass-border);
-            border-top-color: rgba(255,255,255,0.12);
-            border-radius: var(--radius-md);
-            padding: 16px 12px;
-            text-align: center;
-            box-shadow: var(--glass-inset), 0 4px 16px rgba(0,0,0,0.15);
+            background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); border-top-color: rgba(255,255,255,0.12);
+            border-radius: var(--radius-md); padding: 16px 12px; text-align: center; box-shadow: var(--glass-inset), 0 4px 16px rgba(0,0,0,0.15);
             transition: transform 0.25s var(--transition-bounce), box-shadow 0.25s ease;
         }
-        .kpi-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--glass-inset), 0 8px 24px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.08);
-        }
-        .kpi-title {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-            font-weight: 500;
-            word-break: break-word;
-            line-height: 1.3;
-        }
-        .kpi-value {
-            font-size: 1.9rem;
-            font-weight: 700;
-            color: var(--gold-main);
-            line-height: 1;
-            letter-spacing: -0.5px;
-        }
+        .kpi-card:hover { transform: translateY(-2px); box-shadow: var(--glass-inset), 0 8px 24px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.08); }
+        .kpi-title { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; word-break: break-word; line-height: 1.3; display: flex; align-items: center; justify-content: center; gap:4px; }
+        .kpi-value { font-size: 1.9rem; font-weight: 700; color: var(--gold-main); line-height: 1; letter-spacing: -0.5px; }
 
-        /* ── SEGMENTED CONTROL (iOS toggle) ── */
-        .view-toggle {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 20px;
-            background: rgba(0,0,0,0.25);
-            padding: 4px;
-            border-radius: var(--radius-md);
-            border: 1px solid rgba(255,255,255,0.06);
-        }
+        /* ── SEGMENTED CONTROL ── */
+        .view-toggle { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 20px; background: rgba(0,0,0,0.25); padding: 4px; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.06); }
         .toggle-btn {
-            flex: 1;
-            padding: 10px;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            border-radius: var(--radius-sm);
-            font-weight: 500;
-            font-size: 0.9rem;
-            margin-bottom: 0;
-            transition: all 0.25s var(--transition-smooth);
-            letter-spacing: 0.1px;
+            flex: 1; min-width: 100px; padding: 10px 4px; background: transparent; border: none; color: var(--text-muted); border-radius: var(--radius-sm);
+            font-weight: 500; font-size: 0.85rem; margin-bottom: 0; transition: all 0.25s var(--transition-smooth); letter-spacing: 0.1px;
+            display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px;
         }
+        .toggle-btn .material-symbols-rounded { margin-right: 0; margin-top: 0; font-size: 1.3rem; }
         .toggle-btn.active {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: var(--blur-sm);
-            color: var(--gold-light);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.1); backdrop-filter: var(--blur-sm); color: var(--gold-light);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.1);
         }
 
         .dash-section { display: none; animation: view-enter 0.3s var(--transition-smooth); }
         .dash-section.active { display: block; }
 
         /* ── CHARTS ── */
-        .charts-wrapper {
-            display: grid;
-            grid-template-columns: 1.8fr 1fr;
-            gap: 14px;
-            margin-bottom: 20px;
-            /* Contain within container width */
-            min-width: 0;
-        }
-        .chart-container {
-            background: rgba(0,0,0,0.15);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            min-width: 0; /* prevent flex/grid blowout */
-            overflow: hidden;
-        }
+        .charts-wrapper { display: grid; grid-template-columns: 1.8fr 1fr; gap: 14px; margin-bottom: 20px; min-width: 0; }
+        .chart-container { background: rgba(0,0,0,0.15); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 16px; min-width: 0; overflow: hidden; }
 
-        /* ============================================================
-           TABLE (overflow-safe, fixed layout)
-        ============================================================ */
-        .table-responsive {
-            width: 100%;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--glass-border);
-            background: rgba(0,0,0,0.12);
-            overflow: hidden;
-            margin-top: 10px;
+        /* ── RISK BREAKDOWN GRID ── */
+        .risk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+        .risk-col { background: rgba(0,0,0,0.15); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+        .risk-col-header { padding: 10px; border-radius: var(--radius-sm); text-align: center; font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        
+        .risk-high .risk-col-header { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+        .risk-med .risk-col-header { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); color: #fcd34d; }
+        .risk-low .risk-col-header { background: rgba(45,212,191,0.15); border: 1px solid rgba(45,212,191,0.3); color: #5eead4; }
+
+        .risk-item {
+            background: rgba(255,255,255,0.05); padding: 10px; border-radius: var(--radius-sm); border: 1px solid transparent;
+            cursor: pointer; transition: all 0.2s var(--transition-bounce); display: flex; align-items: center; gap: 12px;
         }
-        .table-container {
-            width: 100%;
-            overflow-x: auto; /* allow horizontal scroll on very small screens */
-            -webkit-overflow-scrolling: touch;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.88rem;
-            table-layout: fixed;
-        }
-        th, td {
-            padding: 12px 10px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            vertical-align: middle;
-        }
-        th {
-            color: var(--gold-main);
-            font-weight: 500;
-            font-size: 0.82rem;
-            background: rgba(0,0,0,0.2);
-            letter-spacing: 0.2px;
-        }
+        .risk-item:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .risk-item img { width: 44px; height: 44px; object-fit: cover; border-radius: var(--radius-xs); box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+        .risk-item-none { width: 44px; height: 44px; background: rgba(0,0,0,0.2); border-radius: var(--radius-xs); display: flex; align-items: center; justify-content: center; color: var(--text-sub); font-size: 1.2rem; }
+        .risk-item-info { flex: 1; min-width: 0; }
+        .risk-item-loc { font-size: 0.88rem; color: var(--text-main); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .risk-item-type { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+        /* ── TABLE ── */
+        .table-responsive { width: 100%; border-radius: var(--radius-md); border: 1px solid var(--glass-border); background: rgba(0,0,0,0.12); overflow: hidden; margin-top: 10px; }
+        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; table-layout: fixed; }
+        th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
+        th { color: var(--gold-main); font-weight: 500; font-size: 0.82rem; background: rgba(0,0,0,0.2); letter-spacing: 0.2px; }
         tr:last-child td { border-bottom: none; }
-        tr:hover td {
-            background: rgba(255,255,255,0.025);
-            transition: background 0.15s ease;
-        }
+        tr:hover td { background: rgba(255,255,255,0.025); transition: background 0.15s ease; }
 
-        /* Inline table action button */
-        .btn-row {
-            padding: 5px 12px !important;
-            font-size: 0.78rem !important;
-            border-radius: 20px !important;
-            width: auto !important;
-        }
+        .btn-row { padding: 5px 12px !important; font-size: 0.78rem !important; border-radius: 20px !important; width: auto !important; height: auto; }
 
-        .status-badge {
-            padding: 4px 9px;
-            border-radius: var(--radius-pill);
-            font-size: 0.73rem;
-            font-weight: 600;
-            display: inline-block;
-            white-space: nowrap;
-            letter-spacing: 0.2px;
-        }
-        .status-pass {
-            background: rgba(16,185,129,0.12);
-            color: #34d399;
-            border: 1px solid rgba(16,185,129,0.25);
-        }
-        .status-fail {
-            background: rgba(245,158,11,0.12);
-            color: #fbbf24;
-            border: 1px solid rgba(245,158,11,0.25);
-        }
+        .status-badge { padding: 4px 9px; border-radius: var(--radius-pill); font-size: 0.73rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; letter-spacing: 0.2px; }
+        .status-badge .material-symbols-rounded { font-size: 0.9rem; margin: 0; }
+        .status-pass { background: rgba(16,185,129,0.12); color: #34d399; border: 1px solid rgba(16,185,129,0.25); }
+        .status-fail { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); }
 
         /* ============================================================
-           MODALS & OVERLAYS — Liquid Glass iOS
+           MODALS & OVERLAYS (PERFECT CENTER)
         ============================================================ */
-        #loadingOverlay, #successPopup, #caseModal {
+        #loadingOverlay, #successPopup, #caseModal, #lightbox {
             display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: rgba(8,30,38,0.65);
-            backdrop-filter: blur(16px) saturate(160%);
-            -webkit-backdrop-filter: blur(16px) saturate(160%);
-            justify-content: center;
-            align-items: center !important;
-        }
-        #lightbox {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 99999;
-            background: rgba(8,30,38,0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(8,30,38,0.75);
+            backdrop-filter: blur(12px) saturate(160%);
+            -webkit-backdrop-filter: blur(12px) saturate(160%);
+            /* CSS Flexbox for Perfect Centering */
             justify-content: center;
             align-items: center;
         }
-        #loadingOverlay.show{
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        },
-        #successPopup.show,
-        #caseModal.show /*{ display: flex; animation: fade-in 0.3s ease; }*/
-        { 
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        animation: fade-in 0.3s ease;}
+        #lightbox { z-index: 99999; background: rgba(8,30,38,0.9); }
+        
+        /* When class .show is added, display as flex to enable centering */
+        #loadingOverlay.show, #successPopup.show, #caseModal.show, #lightbox.show {
+            display: flex;
+            animation: fade-in 0.3s ease;
+        }
         @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Spinner */
-        .spinner {
-            width: 44px; height: 44px;
-            border: 3px solid rgba(255,255,255,0.08);
-            border-top-color: var(--gold-main);
-            border-radius: 50%;
-            animation: spin 0.75s linear infinite;
-            margin-bottom: 14px;
-        }
+        /* Loading Inner */
+        .loading-content { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+        .spinner { width: 44px; height: 44px; border: 3px solid rgba(255,255,255,0.08); border-top-color: var(--gold-main); border-radius: 50%; animation: spin 0.75s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         /* Success/info modal card */
-        .modal-card {
-            background: rgba(255,255,255,0.09);
-            border: 1px solid var(--glass-shine);
-            border-top-color: rgba(255,255,255,0.3);
-            border-radius: var(--radius-xl);
-            padding: 36px 28px;
-            width: 90%;
-            max-width: 360px;
-            text-align: center;
-            box-shadow: 0 32px 64px rgba(0,0,0,0.55), var(--glass-inset);
-            animation: modal-pop 0.35s var(--transition-bounce);
-        }
-        @keyframes modal-pop {
-            from { opacity: 0; transform: scale(0.92) translateY(10px); }
-            to   { opacity: 1; transform: scale(1)    translateY(0); }
-        }
-        .modal-icon {
-            font-size: 3.2rem;
-            margin-bottom: 14px;
-            display: inline-block;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
-        }
+        .modal-card { background: rgba(255,255,255,0.09); border: 1px solid var(--glass-shine); border-top-color: rgba(255,255,255,0.3); border-radius: var(--radius-xl); padding: 36px 28px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 32px 64px rgba(0,0,0,0.55), var(--glass-inset); animation: modal-pop 0.35s var(--transition-bounce); }
+        @keyframes modal-pop { from { opacity: 0; transform: scale(0.92) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .modal-icon { font-size: 3.5rem; margin-bottom: 14px; display: inline-block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4)); color: #34d399; }
         .modal-card h3 { font-size: 1.45rem; margin-bottom: 8px; color: var(--gold-main); }
         .modal-card p  { color: var(--text-main); margin-bottom: 24px; font-size: 0.93rem; line-height: 1.5; }
 
         /* Case history modal */
-        #caseModal { padding: 16px; align-items: center; }
+        #caseModal { padding: 16px; }
         .case-modal-content {
-            background: rgba(13,47,58,0.88);
-            border: 1px solid var(--glass-shine);
-            backdrop-filter: var(--blur-lg);
-            -webkit-backdrop-filter: var(--blur-lg);
-            border-radius: var(--radius-xl);
-            padding: 28px 24px;
-            width: 100%;
-            max-width: 680px;
-            max-height: 87vh;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: var(--glass-shadow);
-            animation: modal-pop 0.35s var(--transition-bounce);
+            background: rgba(13,47,58,0.92); border: 1px solid var(--glass-shine); backdrop-filter: var(--blur-lg); -webkit-backdrop-filter: var(--blur-lg);
+            border-radius: var(--radius-xl); padding: 28px 24px; width: 100%; max-width: 680px; max-height: 87vh; overflow-y: auto; position: relative;
+            box-shadow: var(--glass-shadow); animation: modal-pop 0.35s var(--transition-bounce);
         }
         .close-modal {
-            position: absolute; top: 14px; right: 14px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.15);
-            color: #fff;
-            font-size: 1rem;
-            width: 32px; height: 32px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            border-radius: 50%;
-            backdrop-filter: var(--blur-sm);
-            transition: background 0.2s ease, transform 0.2s var(--transition-bounce);
+            position: absolute; top: 14px; right: 14px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 1.2rem;
+            width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 50%; backdrop-filter: var(--blur-sm); transition: background 0.2s ease, transform 0.2s var(--transition-bounce);
         }
         .close-modal:hover { background: #ef4444; transform: scale(1.1); }
 
-        .case-card {
-            background: rgba(0,0,0,0.18);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-top-color: rgba(255,255,255,0.12);
-            border-radius: var(--radius-md);
-            padding: 18px;
-            margin-bottom: 14px;
-        }
-        .case-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            padding-bottom: 9px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-        .case-header h4 { font-size: 1rem; color: var(--gold-light); margin: 0; }
-        .case-detail { color: var(--text-main); font-size: 0.88rem; margin-bottom: 5px; line-height: 1.5; }
-        .case-detail b { color: var(--gold-main); font-weight: 500; }
+        .case-card { background: rgba(0,0,0,0.18); border: 1px solid rgba(255,255,255,0.08); border-top-color: rgba(255,255,255,0.12); border-radius: var(--radius-md); padding: 18px; margin-bottom: 14px; }
+        .case-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 9px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .case-header h4 { font-size: 1rem; color: var(--gold-light); margin: 0; display:flex; align-items:center; gap:6px; }
+        .case-detail { color: var(--text-main); font-size: 0.88rem; margin-bottom: 6px; line-height: 1.5; display:flex; align-items:flex-start; gap:6px;}
+        .case-detail .material-symbols-rounded { font-size: 1.1rem; color: var(--gold-main); flex-shrink: 0; margin-top: 1px;}
 
         .case-gallery { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-        .case-gallery img {
-            width: 80px; height: 80px;
-            object-fit: cover;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--glass-border);
-            cursor: zoom-in;
-            transition: transform 0.2s var(--transition-bounce), box-shadow 0.2s ease;
-        }
-        .case-gallery img:hover {
-            transform: scale(1.07);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-        }
+        .case-gallery img { width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); cursor: zoom-in; transition: transform 0.2s var(--transition-bounce), box-shadow 0.2s ease; }
+        .case-gallery img:hover { transform: scale(1.07); box-shadow: 0 6px 16px rgba(0,0,0,0.4); }
 
         /* Lightbox */
         #lightbox { padding: 16px; cursor: zoom-out; }
-        #lightbox.show { display: flex; animation: fade-in 0.3s ease; }
-        #lightbox img {
-            max-width: 100%;
-            max-height: 90vh;
-            border-radius: var(--radius-md);
-            box-shadow: 0 12px 48px rgba(0,0,0,0.85);
-            object-fit: contain;
-        }
+        #lightbox img { max-width: 100%; max-height: 90vh; border-radius: var(--radius-md); box-shadow: 0 12px 48px rgba(0,0,0,0.85); object-fit: contain; }
 
         /* ============================================================
-           RESPONSIVE — Mobile First
+           RESPONSIVE
         ============================================================ */
-        @media (max-width: 600px) {
+        @media (max-width: 650px) {
             body { padding: 12px 10px 50px; }
-
-            .container {
-                padding: 24px 18px;
-                border-radius: var(--radius-lg);
-            }
-
-            /* Stack charts vertically */
+            .container { padding: 24px 18px; border-radius: var(--radius-lg); }
             .charts-wrapper { grid-template-columns: 1fr; }
-
-            /* KPI: 2 cols, last one full width */
-            .kpi-cards {
-                grid-template-columns: 1fr 1fr;
-                gap: 8px;
-            }
+            .kpi-cards { grid-template-columns: 1fr 1fr; gap: 8px; }
             .kpi-cards .kpi-card:last-child { grid-column: span 2; }
-
-            /* Filter: single column */
             .filter-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-
-            /* Risk/type form grid → single col */
             .form-grid-2 { grid-template-columns: 1fr; }
-
             .home-title h1 { font-size: 1.4rem; }
             .page-header h2 { font-size: 1.2rem; }
             .kpi-value { font-size: 1.6rem; }
             .kpi-title { font-size: 0.73rem; }
-
             th, td { padding: 9px 7px; font-size: 0.78rem; }
             .status-badge { font-size: 0.68rem; padding: 3px 7px; }
-
             .modal-card { padding: 28px 20px; }
             .case-modal-content { padding: 22px 16px; }
+            .toggle-btn { flex-direction: row; padding: 8px; font-size: 0.8rem; }
+            .toggle-btn .material-symbols-rounded { font-size: 1.1rem; }
         }
-
         @media (max-width: 380px) {
             .filter-grid { grid-template-columns: 1fr; }
             .kpi-value { font-size: 1.4rem; }
+            .view-toggle { flex-direction: column; }
         }
     </style>
 </head>
@@ -773,42 +379,36 @@
 <div class="bg-shape shape-2"></div>
 <div class="bg-shape shape-3"></div>
 
-<!-- Loading Overlay -->
 <div id="loadingOverlay">
-    <div style="text-align: center; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <div class="loading-content">
         <div class="spinner"></div>
         <p id="loadingMsg" style="color: var(--gold-light); font-weight: 500; font-size: 0.95rem;">กำลังโหลดข้อมูล...</p>
     </div>
 </div>
 
-<!-- Success Popup -->
 <div id="successPopup">
     <div class="modal-card">
-        <span class="modal-icon">✅</span>
+        <span class="material-symbols-rounded modal-icon">check_circle</span>
         <h3>บันทึกสำเร็จ</h3>
         <p id="successMsg">ข้อมูลจุดเสี่ยงถูกบันทึกเข้าระบบเรียบร้อยแล้ว</p>
         <button class="btn-primary" onclick="closeSuccessPopup()" style="margin: 0; padding: 13px;">ตกลง</button>
     </div>
 </div>
 
-<!-- Lightbox -->
 <div id="lightbox" onclick="closeLightbox()"><img id="lightboxImg" src="" alt=""></div>
 
-<!-- Case History Modal -->
 <div id="caseModal">
     <div class="case-modal-content">
-        <button class="close-modal" onclick="closeCaseModal()">✕</button>
+        <button class="close-modal" onclick="closeCaseModal()"><span class="material-symbols-rounded" style="margin:0;">close</span></button>
         <div class="page-header" style="margin-bottom: 14px; border-bottom: none; padding-bottom: 0;">
-            <h2 id="modalEmpName" style="font-size: 1.25rem;">ประวัติการแจ้ง</h2>
+            <h2 id="modalEmpName" style="font-size: 1.25rem;"><span class="material-symbols-rounded">history</span> ประวัติการแจ้ง</h2>
         </div>
         <div id="modalCaseList"></div>
     </div>
 </div>
 
-<!-- ── MAIN APP ── -->
 <div class="container">
 
-    <!-- HOME -->
     <div id="viewHome" class="view active">
         <div class="home-header">
             <div class="helmet-wrap">
@@ -836,68 +436,65 @@
             </div>
         </div>
         <div class="home-btns">
-            <button class="btn-primary" onclick="switchView('viewForm')">ส่งรายงานจุดเสี่ยง</button>
-            <button class="btn-secondary" onclick="switchView('viewLogin')">เข้าสู่ระบบ (Dashboard)</button>
+            <button class="btn-primary" onclick="switchView('viewForm')"><span class="material-symbols-rounded">add_a_photo</span> ส่งรายงานจุดเสี่ยง</button>
+            <button class="btn-secondary" onclick="switchView('viewLogin')"><span class="material-symbols-rounded">dashboard</span> เข้าสู่ระบบ (Dashboard)</button>
         </div>
     </div>
 
-    <!-- FORM -->
     <div id="viewForm" class="view">
         <div class="page-header">
-            <h2>ส่งรายงานจุดเสี่ยง</h2>
+            <h2><span class="material-symbols-rounded">report</span> ส่งรายงานจุดเสี่ยง</h2>
             <p>กรอกข้อมูลและแนบรูปภาพเพื่อแจ้งประเมิน</p>
         </div>
 
-        <div class="form-group"><label>หน่วยงาน</label><select id="department"><option value="">กำลังโหลด...</option></select></div>
-        <div class="form-group"><label>ชื่อพนักงาน</label><select id="employee" disabled><option value="">เลือกพนักงาน</option></select></div>
-        <div class="form-group"><label>สถานที่พบความเสี่ยง</label><textarea id="locationText" placeholder="ระบุรายละเอียดสถานที่..."></textarea></div>
+        <div class="form-group"><label><span class="material-symbols-rounded">domain</span> หน่วยงาน</label><select id="department"><option value="">กำลังโหลด...</option></select></div>
+        <div class="form-group"><label><span class="material-symbols-rounded">person</span> ชื่อพนักงาน</label><select id="employee" disabled><option value="">เลือกพนักงาน</option></select></div>
+        <div class="form-group"><label><span class="material-symbols-rounded">location_on</span> สถานที่พบความเสี่ยง</label><textarea id="locationText" placeholder="ระบุรายละเอียดสถานที่..."></textarea></div>
 
         <div class="form-grid-2">
-            <div class="form-group"><label>ประเภทความเสี่ยง</label><select id="riskType"></select></div>
-            <div class="form-group"><label>ระดับความเสี่ยง</label><select id="riskLevel"></select></div>
+            <div class="form-group"><label><span class="material-symbols-rounded">category</span> ประเภทความเสี่ยง</label><select id="riskType"></select></div>
+            <div class="form-group"><label><span class="material-symbols-rounded">warning</span> ระดับความเสี่ยง</label><select id="riskLevel"></select></div>
         </div>
 
         <div class="form-group">
-            <label>แนบรูปภาพหลักฐาน</label>
+            <label><span class="material-symbols-rounded">imagesmode</span> แนบรูปภาพหลักฐาน</label>
             <input type="file" id="images" multiple accept="image/*" />
             <div class="preview" id="preview"></div>
         </div>
-        <div class="form-group"><label>หมายเหตุเพิ่มเติม (ถ้ามี)</label><textarea id="note" placeholder="รายละเอียดอื่นๆ..."></textarea></div>
+        <div class="form-group"><label><span class="material-symbols-rounded">notes</span> หมายเหตุเพิ่มเติม (ถ้ามี)</label><textarea id="note" placeholder="รายละเอียดอื่นๆ..."></textarea></div>
 
         <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 24px;">
-            <button id="submitBtn" class="btn-primary">บันทึกข้อมูล</button>
-            <button class="btn-secondary" onclick="switchView('viewHome')">ย้อนกลับ</button>
+            <button id="submitBtn" class="btn-primary"><span class="material-symbols-rounded">send</span> บันทึกข้อมูล</button>
+            <button class="btn-secondary" onclick="switchView('viewHome')"><span class="material-symbols-rounded">arrow_back</span> ย้อนกลับ</button>
         </div>
         <div id="status"></div>
     </div>
 
-    <!-- LOGIN -->
     <div id="viewLogin" class="view">
         <div class="page-header">
-            <h2>เข้าสู่ระบบ</h2>
+            <h2><span class="material-symbols-rounded">admin_panel_settings</span> เข้าสู่ระบบ</h2>
             <p>สำหรับผู้บริหารและเจ้าหน้าที่</p>
         </div>
-        <div class="form-group"><label>ชื่อผู้ใช้งาน</label><input type="text" id="loginUser" placeholder="Username"></div>
-        <div class="form-group"><label>รหัสผ่าน</label><input type="password" id="loginPass" placeholder="Password"></div>
+        <div class="form-group"><label><span class="material-symbols-rounded">account_circle</span> ชื่อผู้ใช้งาน</label><input type="text" id="loginUser" placeholder="Username"></div>
+        <div class="form-group"><label><span class="material-symbols-rounded">lock</span> รหัสผ่าน</label><input type="password" id="loginPass" placeholder="Password"></div>
 
         <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 24px;">
-            <button id="btnLogin" class="btn-primary">เข้าสู่ระบบ</button>
-            <button class="btn-secondary" onclick="switchView('viewHome')">ย้อนกลับ</button>
+            <button id="btnLogin" class="btn-primary"><span class="material-symbols-rounded">login</span> เข้าสู่ระบบ</button>
+            <button class="btn-secondary" onclick="switchView('viewHome')"><span class="material-symbols-rounded">arrow_back</span> ย้อนกลับ</button>
         </div>
         <div id="loginStatus"></div>
     </div>
 
-    <!-- DASHBOARD -->
     <div id="viewDashboard" class="view">
         <div class="page-header">
-            <h2>Dashboard ภาพรวม</h2>
+            <h2><span class="material-symbols-rounded">analytics</span> Dashboard ภาพรวม</h2>
             <p>รายงานสรุปสถิติเทียบเป้าหมาย</p>
         </div>
 
         <div class="filter-grid">
-            <div class="form-group" style="margin:0;"><label>ปี</label><select id="dashYear" onchange="renderDashboard()"></select></div>
+            <div class="form-group" style="margin:0;"><label><span class="material-symbols-rounded">calendar_today</span> ปี</label><select id="dashYear" onchange="renderDashboard()"></select></div>
             <div class="form-group" style="margin:0;">
-                <label>เดือน</label>
+                <label><span class="material-symbols-rounded">event</span> เดือน</label>
                 <select id="dashMonth" onchange="renderDashboard()">
                     <option value="all">รวมทั้งปี</option>
                     <option value="1">ม.ค.</option><option value="2">ก.พ.</option><option value="3">มี.ค.</option>
@@ -906,9 +503,9 @@
                     <option value="10">ต.ค.</option><option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
                 </select>
             </div>
-            <div class="form-group" style="margin:0;"><label>หน่วยงาน</label><select id="dashDept" onchange="renderDashboard()"></select></div>
+            <div class="form-group" style="margin:0;"><label><span class="material-symbols-rounded">domain</span> หน่วยงาน</label><select id="dashDept" onchange="renderDashboard()"></select></div>
             <div class="form-group" style="margin:0;">
-                <label>สถานะรายบุคคล</label>
+                <label><span class="material-symbols-rounded">rule</span> สถานะรายบุคคล</label>
                 <select id="dashStatus" onchange="renderDashboard()">
                     <option value="all">ทั้งหมด</option>
                     <option value="pass">ผ่านเกณฑ์</option>
@@ -918,21 +515,22 @@
         </div>
 
         <div class="kpi-cards">
-            <div class="kpi-card"><div class="kpi-title">แจ้งแล้ว (เรื่อง)</div><div class="kpi-value" id="kpiActual">0</div></div>
-            <div class="kpi-card"><div class="kpi-title" id="kpiTargetTitle">เป้าโรงงาน</div><div class="kpi-value" id="kpiTarget">0</div></div>
-            <div class="kpi-card"><div class="kpi-title">ผ่านเป้า (คน)</div><div class="kpi-value" id="kpiPass">0</div></div>
+            <div class="kpi-card"><div class="kpi-title"><span class="material-symbols-rounded" style="color:var(--text-muted);font-size:1.1rem;">receipt_long</span> แจ้งแล้ว (เรื่อง)</div><div class="kpi-value" id="kpiActual">0</div></div>
+            <div class="kpi-card"><div class="kpi-title" id="kpiTargetTitle"><span class="material-symbols-rounded" style="color:var(--text-muted);font-size:1.1rem;">flag</span> เป้าโรงงาน</div><div class="kpi-value" id="kpiTarget">0</div></div>
+            <div class="kpi-card"><div class="kpi-title"><span class="material-symbols-rounded" style="color:var(--text-muted);font-size:1.1rem;">check_circle</span> ผ่านเป้า (คน)</div><div class="kpi-value" id="kpiPass">0</div></div>
         </div>
 
         <div class="view-toggle">
-            <button class="toggle-btn active" id="btnGraph" onclick="toggleDashView('graph')">ดูกราฟ</button>
-            <button class="toggle-btn" id="btnTable" onclick="toggleDashView('table')">ตารางรายบุคคล</button>
+            <button class="toggle-btn active" id="btnGraph" onclick="toggleDashView('graph')"><span class="material-symbols-rounded">bar_chart</span> ดูกราฟ</button>
+            <button class="toggle-btn" id="btnTable" onclick="toggleDashView('table')"><span class="material-symbols-rounded">groups</span> ตารางรายบุคคล</button>
+            <button class="toggle-btn" id="btnRisk" onclick="toggleDashView('risk')"><span class="material-symbols-rounded">warning</span> แยกตามความเสี่ยง</button>
         </div>
 
         <div id="secGraph" class="dash-section active">
             <div class="charts-wrapper">
                 <div class="chart-container"><canvas id="deptChart"></canvas></div>
                 <div class="chart-container" style="display:flex; flex-direction:column; justify-content: center;">
-                    <label style="text-align:center; display:block; margin-bottom:10px; color: var(--gold-light);">ระดับความเสี่ยง</label>
+                    <label style="text-align:center; display:block; margin-bottom:10px; color: var(--gold-light);">สัดส่วนระดับความเสี่ยง</label>
                     <div style="height: 220px; width: 100%; position: relative;">
                         <canvas id="riskDonutChart"></canvas>
                     </div>
@@ -956,7 +554,24 @@
             </div>
         </div>
 
-        <button class="btn-danger" onclick="switchView('viewHome')" style="margin-top: 24px;">ออกจากระบบ</button>
+        <div id="secRisk" class="dash-section">
+            <div class="risk-grid">
+                <div class="risk-col risk-high">
+                    <div class="risk-col-header"><span class="material-symbols-rounded">error</span> ความเสี่ยงสูง</div>
+                    <div id="listHigh"></div>
+                </div>
+                <div class="risk-col risk-med">
+                    <div class="risk-col-header"><span class="material-symbols-rounded">warning</span> ความเสี่ยงปานกลาง</div>
+                    <div id="listMed"></div>
+                </div>
+                <div class="risk-col risk-low">
+                    <div class="risk-col-header"><span class="material-symbols-rounded">info</span> ความเสี่ยงต่ำ</div>
+                    <div id="listLow"></div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-danger" onclick="switchView('viewHome')" style="margin-top: 24px;"><span class="material-symbols-rounded">logout</span> ออกจากระบบ</button>
     </div>
 
 </div>
@@ -971,14 +586,15 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwnwYsX_ii5HaHFx8Qdhx52
 
 let masterData = {}; let dashboardData = []; let dashboardTargets = {};
 let barChartInstance = null; let donutChartInstance = null;
+let currentFilteredData = []; // เก็บข้อมูลที่ผ่านการ filter เพื่อใช้ตอนคลิกดูทีละเคส
 
 // ============ UI & OVERLAYS ============
 function showLoading(msg) { document.getElementById('loadingMsg').textContent = msg || 'กำลังโหลด...'; document.getElementById('loadingOverlay').classList.add('show'); }
 function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
 function showSuccess(msg) { if(msg) document.getElementById('successMsg').textContent = msg; document.getElementById('successPopup').classList.add('show'); }
 function closeSuccessPopup() { document.getElementById('successPopup').classList.remove('show'); switchView('viewHome'); }
-function openLightbox(url) { document.getElementById('lightboxImg').src = url; document.getElementById('lightbox').style.display = 'flex'; }
-function closeLightbox() { document.getElementById('lightbox').style.display = 'none'; document.getElementById('lightboxImg').src = ''; }
+function openLightbox(url) { document.getElementById('lightboxImg').src = url; document.getElementById('lightbox').classList.add('show'); }
+function closeLightbox() { document.getElementById('lightbox').classList.remove('show'); document.getElementById('lightboxImg').src = ''; }
 
 function switchView(viewId) {
     document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
@@ -989,9 +605,11 @@ function switchView(viewId) {
 }
 
 function toggleDashView(mode) {
-    ['btnGraph','btnTable','secGraph','secTable'].forEach(id => document.getElementById(id).classList.remove('active'));
-    document.getElementById(mode === 'graph' ? 'btnGraph' : 'btnTable').classList.add('active');
-    document.getElementById(mode === 'graph' ? 'secGraph' : 'secTable').classList.add('active');
+    ['btnGraph','btnTable','btnRisk','secGraph','secTable','secRisk'].forEach(id => document.getElementById(id).classList.remove('active'));
+    let btnId = mode === 'graph' ? 'btnGraph' : mode === 'table' ? 'btnTable' : 'btnRisk';
+    let secId = mode === 'graph' ? 'secGraph' : mode === 'table' ? 'secTable' : 'secRisk';
+    document.getElementById(btnId).classList.add('active');
+    document.getElementById(secId).classList.add('active');
 }
 
 // ============ MASTER DATA ============
@@ -1093,7 +711,7 @@ document.getElementById("btnLogin").onclick = async function() {
         if(d.success) {
             showLoading("กำลังโหลดรายงาน...");
             await loadDash(); hideLoading(); switchView('viewDashboard');
-        } else { hideLoading(); document.getElementById("loginStatus").innerHTML = d.message; }
+        } else { hideLoading(); document.getElementById("loginStatus").innerHTML = `<span class="material-symbols-rounded" style="font-size:1.1rem;">error</span> ${d.message}`; }
     } catch(e) { hideLoading(); } finally { this.disabled = false; }
 };
 
@@ -1120,7 +738,7 @@ function renderDashboard() {
     const tFactory = (selM === "all") ? dashboardTargets.factoryYear  : dashboardTargets.factoryMonth;
     const tPerson  = (selM === "all") ? dashboardTargets.personYear   : dashboardTargets.personMonth;
 
-    document.getElementById("kpiTargetTitle").innerText = (selM === "all") ? "เป้าหมาย (ปี)" : "เป้าหมาย (เดือน)";
+    document.getElementById("kpiTargetTitle").innerHTML = (selM === "all") ? "<span class='material-symbols-rounded' style='color:var(--text-muted);font-size:1.1rem;'>flag</span> เป้าหมาย (ปี)" : "<span class='material-symbols-rounded' style='color:var(--text-muted);font-size:1.1rem;'>flag</span> เป้าหมาย (เดือน)";
     document.getElementById("kpiTarget").innerText = tFactory;
 
     let staffCount = {};
@@ -1129,12 +747,43 @@ function renderDashboard() {
 
     let filtered = dashboardData.filter(d =>
         d.year === selY && (selM === "all" || d.month === selM) && (selD === "all" || d.dept === selD));
+    
+    // เรียงลำดับจากใหม่ไปเก่า
+    filtered.sort((a, b) => b.timestamp - a.timestamp);
+    currentFilteredData = filtered; // เก็บใส่ global เพื่อให้คลิกดูได้
+
     let reportsByDept = {}; let reportsByPerson = {}; let riskLevelCount = {};
-    filtered.forEach(d => {
+    
+    let htmlHigh = "", htmlMed = "", htmlLow = "";
+
+    filtered.forEach((d, index) => {
         reportsByDept[d.dept] = (reportsByDept[d.dept] || 0) + 1;
         if(d.reporter) reportsByPerson[d.reporter] = (reportsByPerson[d.reporter] || 0) + 1;
         if(d.riskLevel) riskLevelCount[d.riskLevel] = (riskLevelCount[d.riskLevel] || 0) + 1;
+
+        // สร้างรายการสำหรับ Section ความเสี่ยง
+        let directUrl = (d.images && d.images.length > 0) ? getDirectDriveLink(d.images[0]) : "";
+        let imgThumb = directUrl ? `<img src="${directUrl}" loading="lazy">` : `<div class="risk-item-none"><span class="material-symbols-rounded" style="margin:0;">hide_image</span></div>`;
+        
+        let riskItemHtml = `
+        <div class="risk-item" onclick="viewSingleCaseByIndex(${index})">
+            ${imgThumb}
+            <div class="risk-item-info">
+                <div class="risk-item-loc">${d.location || 'ไม่ระบุสถานที่'}</div>
+                <div class="risk-item-type">${d.riskType || '-'}</div>
+            </div>
+        </div>`;
+
+        if (d.riskLevel && d.riskLevel.includes('สูง')) htmlHigh += riskItemHtml;
+        else if (d.riskLevel && d.riskLevel.includes('กลาง')) htmlMed += riskItemHtml;
+        else htmlLow += riskItemHtml;
     });
+
+    // อัปเดต Section แยกความเสี่ยง
+    let emptyMsg = '<p style="text-align:center; font-size:0.8rem; color:var(--text-muted); padding:10px 0;">ไม่มีข้อมูล</p>';
+    document.getElementById("listHigh").innerHTML = htmlHigh || emptyMsg;
+    document.getElementById("listMed").innerHTML = htmlMed || emptyMsg;
+    document.getElementById("listLow").innerHTML = htmlLow || emptyMsg;
 
     let labels = [], dataVals = [], bgColors = [], targetVals = [];
     (selD === "all" ? Object.keys(staffCount) : [selD]).forEach(dept => {
@@ -1190,7 +839,8 @@ function renderDashboard() {
         let actual = reportsByPerson[s.name] || 0; let isPass = actual >= tPerson;
         if(isPass) passCount++;
         if(selS === "pass" && !isPass) return; if(selS === "fail" && isPass) return;
-        let cls = isPass ? 'status-pass' : 'status-fail'; let txt = isPass ? 'ผ่านเป้า' : 'ไม่ผ่าน';
+        let cls = isPass ? 'status-pass' : 'status-fail'; 
+        let txt = isPass ? '<span class="material-symbols-rounded">check</span> ผ่านเป้า' : '<span class="material-symbols-rounded">close</span> ไม่ผ่าน';
         tbody += `<tr>
             <td><div style="font-weight:500;">${s.name}</div><div style="font-size:0.73rem; color:var(--text-muted);">${selD === 'all' ? s.department : ''}</div></td>
             <td style="text-align:center;">${actual} <span style="font-size:0.8em; color:var(--text-muted);">/ ${tPerson}</span></td>
@@ -1212,6 +862,8 @@ function getDirectDriveLink(url) {
     return fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000` : url;
 }
 
+// ============ View Case Modals ============
+// ดูเคสของบุคคล (จากตารางรายบุคคล)
 function viewEmployeeCases(empName) {
     const selY = document.getElementById("dashYear").value;
     const selM = document.getElementById("dashMonth").value;
@@ -1221,34 +873,51 @@ function viewEmployeeCases(empName) {
         (selM === "all" || d.month === selM) && (selD === "all" || d.dept === selD));
     empCases.sort((a, b) => b.timestamp - a.timestamp);
 
-    document.getElementById("modalEmpName").innerText = `ประวัติ: ${empName}`;
+    document.getElementById("modalEmpName").innerHTML = `<span class="material-symbols-rounded">history</span> ประวัติ: ${empName}`;
     let html = "";
     if(empCases.length === 0) {
         html = "<p style='text-align:center; color:var(--text-muted); padding:16px;'>ไม่พบข้อมูลการแจ้ง</p>";
     } else {
         empCases.forEach((c, idx) => {
-            let dateStr = c.timestamp ? new Date(c.timestamp).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }) : "ไม่ระบุเวลา";
-            let imgsHtml = (c.images && c.images.length > 0)
-                ? c.images.map(imgUrl => {
-                    let directUrl = getDirectDriveLink(imgUrl);
-                    return `<img src="${directUrl}" onclick="openLightbox('${directUrl}')" onerror="this.onerror=null; this.src='https://placehold.co/100x100/0d2f3a/dfbb76?text=img';">`;
-                }).join('')
-                : "<span style='color:var(--text-muted); font-size:0.8rem;'>ไม่มีภาพแนบ</span>";
-
-            html += `<div class="case-card">
-                <div class="case-header">
-                    <h4>เคสที่ ${empCases.length - idx}</h4>
-                    <span style="color:var(--text-muted); font-size:0.8rem;">${dateStr}</span>
-                </div>
-                <div class="case-detail"><b>📍 สถานที่:</b> ${c.location || '-'}</div>
-                <div class="case-detail"><b>⚠️ ความเสี่ยง:</b> ${c.riskLevel || '-'} (${c.riskType || '-'})</div>
-                <div class="case-detail"><b>📝 หมายเหตุ:</b> ${c.note || '-'}</div>
-                <div class="case-gallery">${imgsHtml}</div>
-            </div>`;
+            html += generateCaseCardHtml(c, `เคสที่ ${empCases.length - idx}`);
         });
     }
     document.getElementById("modalCaseList").innerHTML = html;
     document.getElementById("caseModal").classList.add("show");
+}
+
+// ดูเคสแบบเดี่ยว (จากแท็บความเสี่ยง)
+function viewSingleCaseByIndex(index) {
+    let c = currentFilteredData[index];
+    if(!c) return;
+    
+    document.getElementById("modalEmpName").innerHTML = `<span class="material-symbols-rounded">info</span> รายละเอียดจุดเสี่ยง`;
+    let html = generateCaseCardHtml(c, `ผู้แจ้ง: ${c.reporter}`);
+    
+    document.getElementById("modalCaseList").innerHTML = html;
+    document.getElementById("caseModal").classList.add("show");
+}
+
+// ฟังก์ชันสร้าง HTML สำหรับ Card ประวัติ เพื่อใช้ซ้ำ
+function generateCaseCardHtml(c, titleText) {
+    let dateStr = c.timestamp ? new Date(c.timestamp).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }) : "ไม่ระบุเวลา";
+    let imgsHtml = (c.images && c.images.length > 0)
+        ? c.images.map(imgUrl => {
+            let directUrl = getDirectDriveLink(imgUrl);
+            return `<img src="${directUrl}" onclick="openLightbox('${directUrl}')" onerror="this.onerror=null; this.src='https://placehold.co/100x100/0d2f3a/dfbb76?text=img';">`;
+        }).join('')
+        : "<span style='color:var(--text-muted); font-size:0.8rem;'>ไม่มีภาพแนบ</span>";
+
+    return `<div class="case-card">
+        <div class="case-header">
+            <h4><span class="material-symbols-rounded">person</span> ${titleText}</h4>
+            <span style="color:var(--text-muted); font-size:0.8rem;">${dateStr}</span>
+        </div>
+        <div class="case-detail"><span class="material-symbols-rounded">location_on</span> <b>สถานที่:</b> &nbsp;${c.location || '-'}</div>
+        <div class="case-detail"><span class="material-symbols-rounded">warning</span> <b>ความเสี่ยง:</b> &nbsp;${c.riskLevel || '-'} (${c.riskType || '-'})</div>
+        <div class="case-detail"><span class="material-symbols-rounded">notes</span> <b>หมายเหตุ:</b> &nbsp;${c.note || '-'}</div>
+        <div class="case-gallery">${imgsHtml}</div>
+    </div>`;
 }
 
 function closeCaseModal() { document.getElementById("caseModal").classList.remove("show"); }
