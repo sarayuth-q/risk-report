@@ -594,7 +594,11 @@
             justify-content: center;
             align-items: center;
         }
-        #loadingOverlay.show,
+        #loadingOverlay.show{
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        },
         #successPopup.show,
         #caseModal.show /*{ display: flex; animation: fade-in 0.3s ease; }*/
         { 
