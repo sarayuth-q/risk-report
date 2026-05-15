@@ -581,7 +581,7 @@
             backdrop-filter: blur(16px) saturate(160%);
             -webkit-backdrop-filter: blur(16px) saturate(160%);
             justify-content: center;
-            align-items: center;
+            align-items: center !important;
         }
         #lightbox {
             display: none;
@@ -1132,7 +1132,7 @@ function renderDashboard() {
         let actual = reportsByDept[dept] || 0; let expected = (staffCount[dept] || 0) * tPerson;
         labels.push(dept); dataVals.push(actual); targetVals.push(expected);
         const ratio = expected > 0 ? actual / expected : 1;
-        if      (ratio >= 1)   bgColors.push('rgba(223,187,118,0.85)');
+        if      (ratio >= 1)   bgColors.push('rgba(45,212,191,0.85)');
         else if (ratio >= 0.6) bgColors.push('rgba(217,119,6,0.8)');
         else                   bgColors.push('rgba(220,38,38,0.8)');
     });
