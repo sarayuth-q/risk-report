@@ -594,7 +594,7 @@
             justify-content: center;
             align-items: center;
         }
-        #loadingOverlay.show,
+        #loadingOverlay.show,{align-items: center;} /*..แก้ไข Center Loading..*/
         #successPopup.show,
         #caseModal.show { display: flex; animation: fade-in 0.3s ease; }
         @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
