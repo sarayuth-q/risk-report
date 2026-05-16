@@ -195,14 +195,43 @@
         .case-gallery img { width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); cursor: zoom-in; transition: transform 0.2s var(--transition-bounce); }
         .case-gallery img:hover { transform: scale(1.07); }
 
-        /* 🌟 2. Pixel Loading ตอนส่งอัปเดตงานแก้ไข 🌟 */
-        #pixelLoadingOverlay { display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(8,30,38,0.95); justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(10px); }
-        #pixelLoadingOverlay.show { display: flex; }
-        .pixel-text { font-family: 'Courier New', monospace; font-size: 2.2rem; font-weight: 900; color: #34d399; text-align: center; text-shadow: 4px 4px 0px #064e3b, -2px -2px 0px #064e3b; letter-spacing: 4px; animation: pixelBlink 0.8s infinite step-start; margin-bottom: 20px; line-height: 1.4; }
-        .pixel-bar-container { width: 250px; height: 24px; border: 4px solid #fff; padding: 2px; background: #000; box-shadow: 4px 4px 0 rgba(0,0,0,0.5); }
-        .pixel-fill { height: 100%; background: #dfbb76; width: 0%; animation: pixelLoad 2s infinite steps(10); }
-        @keyframes pixelBlink { 50% { opacity: 0.3; } }
-        @keyframes pixelLoad { 0% { width: 0%; } 100% { width: 100%; } }
+        /* 🌟 แอนิเมชันตอนโหลดภาพแก้ไข (มือถือประแจขันน๊อต) 🌟 */
+        #wrenchLoadingOverlay { 
+            display: none; position: fixed; inset: 0; z-index: 99999; 
+            background: rgba(8,30,38,0.95); justify-content: center; 
+            align-items: center; flex-direction: column; backdrop-filter: blur(10px); 
+        }
+        #wrenchLoadingOverlay.show { display: flex; animation: fadeIn 0.3s ease; }
+        
+        .wrench-loader { margin-bottom: 24px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
+        
+        /* ตั้งค่าการหมุน */
+        .anim-nut { animation: nutTurn 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        .anim-wrench { animation: wrenchTurn 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        
+        /* แอคชันขันประแจ (กดลง -> ยกออก -> ดึงกลับ -> สวมใหม่) */
+        @keyframes wrenchTurn {
+            0% { transform: rotate(-20deg); }
+            35% { transform: rotate(40deg); } 
+            45% { transform: rotate(40deg) scale(1.08); opacity: 0.5; } 
+            80% { transform: rotate(-20deg) scale(1.08); opacity: 0.5; } 
+            90% { transform: rotate(-20deg) scale(1); opacity: 1; } 
+            100% { transform: rotate(-20deg); }
+        }
+        
+        /* แอคชันน๊อต (หมุนตามตอนขัน -> ค้างไว้ตอนดึงประแจกลับ) */
+        @keyframes nutTurn {
+            0% { transform: rotate(-20deg); }
+            35% { transform: rotate(40deg); } 
+            100% { transform: rotate(40deg); } 
+        }
+        
+        .loading-text-wrench { 
+            font-size: 1.3rem; font-weight: 600; color: var(--gold-light); 
+            letter-spacing: 0.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.4); 
+        }
+        .dots::after { content: ''; animation: loadingDots 1.5s infinite steps(4, end); }
+        @keyframes loadingDots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } 100% { content: ''; } }
 
         @media (max-width: 650px) {
             body { padding: 12px 10px 50px; }
@@ -230,9 +259,26 @@
 <div id="successPopup"><div class="modal-card"><span class="material-symbols-rounded modal-icon">check_circle</span><h3>บันทึกสำเร็จ</h3><p id="successMsg">ข้อมูลจุดเสี่ยงถูกบันทึกเข้าระบบเรียบร้อยแล้ว</p><button class="btn-primary" onclick="closeSuccessPopup()" style="margin: 0; padding: 13px;">ตกลง</button></div></div>
 <div id="lightbox" onclick="closeLightbox()"><img id="lightboxImg" src="" alt=""></div>
 
-<div id="pixelLoadingOverlay">
-    <div class="pixel-text">LOADING<br>SAFETY RISK</div>
-    <div class="pixel-bar-container"><div class="pixel-fill"></div></div>
+<div id="wrenchLoadingOverlay">
+    <div class="wrench-loader">
+        <svg viewBox="0 0 150 100" width="160" height="110" style="overflow:visible;">
+            <g class="anim-nut" style="transform-origin: 30px 50px;">
+                <polygon points="30,25 51.6,37.5 51.6,62.5 30,75 8.4,62.5 8.4,37.5" fill="#8fb5c4" />
+                <circle cx="30" cy="50" r="12" fill="#0d2f3a" />
+            </g>
+            <g class="anim-wrench" style="transform-origin: 30px 50px;">
+                <rect x="40" y="42" width="90" height="16" rx="8" fill="#dfbb76" />
+                <path d="M30,16 C48.7,16 64,31.2 64,50 C64,68.7 48.7,84 30,84 C21,84 12,79 7,72 C12,70 18,65 18,50 C18,35 12,30 7,28 C12,21 21,16 30,16 Z" fill="#dfbb76" />
+                <g transform="translate(85, 50)">
+                    <rect x="-15" y="-20" width="34" height="40" rx="12" fill="#f2dbab" /> 
+                    <rect x="-12" y="-16" width="8" height="32" rx="4" fill="#b8924b" opacity="0.6" /> 
+                    <rect x="-2" y="-18" width="8" height="36" rx="4" fill="#b8924b" opacity="0.6" /> 
+                    <rect x="8" y="-16" width="8" height="32" rx="4" fill="#b8924b" opacity="0.6" /> 
+                </g>
+            </g>
+        </svg>
+    </div>
+    <div class="loading-text-wrench">กำลังบันทึกข้อมูลการแก้ไข<span class="dots"></span></div>
 </div>
 
 <div id="caseModal">
@@ -456,7 +502,6 @@ function toggleDashView(mode) {
     document.getElementById(btnId).classList.add('active'); document.getElementById(secId).classList.add('active');
 }
 
-// 🌟 3. ฟังก์ชันดึงไอคอนตามประเภทความเสี่ยง 🌟
 function getRiskIcon(type) {
     if(!type) return 'report_problem';
     if(type.includes('ไฟ') || type.includes('ช็อต')) return 'bolt';
@@ -609,7 +654,6 @@ function renderUserPortal() {
     document.getElementById("upCaseList").innerHTML = html;
 }
 
-// 🌟 Manager Dashboard: แสดง %, กรองสถานะ, จัดไอคอน 🌟
 function renderDashboard() {
     const selY = document.getElementById("dashYear").value, selM = document.getElementById("dashMonth").value;
     const selD = document.getElementById("dashDept").value, selS = document.getElementById("dashStatus").value;
@@ -625,7 +669,6 @@ function renderDashboard() {
     let staffCount = {}; let staffInFocus = masterData.staffs.filter(s => selD === "all" || s.department === selD);
     staffInFocus.forEach(s => { staffCount[s.department] = (staffCount[s.department] || 0) + 1; });
 
-    // ประมวลผลข้อมูลตามตัวกรองทั้งหมด
     let filtered = dashboardData.filter(d => 
         d.year === selY && (selM === "all" || d.month === selM) && (selD === "all" || d.dept === selD) &&
         (selRes === "all" || (selRes === "resolved" && d.resolveStatus) || (selRes === "pending" && !d.resolveStatus))
@@ -655,7 +698,7 @@ function renderDashboard() {
 
         let directUrl = (d.images && d.images.length > 0) ? getDirectDriveLink(d.images[0]) : "";
         let imgThumb = directUrl ? `<img src="${directUrl}" loading="lazy">` : `<div class="risk-item-none"><span class="material-symbols-rounded" style="margin:0;">hide_image</span></div>`;
-        let riskIcon = getRiskIcon(d.riskType); // เรียกใช้ Icon
+        let riskIcon = getRiskIcon(d.riskType);
         
         let riskItemHtml = `<div class="risk-item" onclick="viewSingleCaseByIndex(${index})">${imgThumb}<div class="risk-item-info"><div class="risk-item-loc">${d.location || 'ไม่ระบุสถานที่'}</div><div class="risk-item-type" style="display:flex; align-items:center; gap:4px; margin-top:4px;"><span class="material-symbols-rounded" style="font-size:1.05rem; margin:0;">${riskIcon}</span> ${d.riskType || '-'} ${d.resolveStatus ? '<span style="color:#34d399;font-weight:bold;margin-left:4px;">(แก้แล้ว)</span>':''}</div></div></div>`;
 
@@ -669,7 +712,6 @@ function renderDashboard() {
     let emptyMsg = '<p style="text-align:center; font-size:0.8rem; color:var(--text-muted); padding:10px 0;">ไม่มีข้อมูล</p>';
     document.getElementById("listHigh").innerHTML = htmlHigh || emptyMsg; document.getElementById("listMed").innerHTML = htmlMed || emptyMsg; document.getElementById("listLow").innerHTML = htmlLow || emptyMsg;
 
-    // คำนวณ % การแก้ไขรายระดับความเสี่ยง
     let hT = riskLevelCount['ความเสี่ยงสูง']||riskLevelCount['สูง']||0, hR = resolvedLevelCount['ความเสี่ยงสูง']||resolvedLevelCount['สูง']||0;
     let mT = riskLevelCount['ความเสี่ยงปานกลาง']||riskLevelCount['กลาง']||0, mR = resolvedLevelCount['ความเสี่ยงปานกลาง']||resolvedLevelCount['กลาง']||0;
     let lT = riskLevelCount['ความเสี่ยงต่ำ']||riskLevelCount['ต่ำ']||0, lR = resolvedLevelCount['ความเสี่ยงต่ำ']||resolvedLevelCount['ต่ำ']||0;
@@ -678,7 +720,6 @@ function renderDashboard() {
     document.getElementById("headMed").innerHTML = `<span class="material-symbols-rounded">warning</span> ความเสี่ยงปานกลาง <span style="font-size:0.75rem; background:rgba(0,0,0,0.4); padding:3px 6px; border-radius:10px; margin-left:6px; color:#fff;">แก้ ${mT>0 ? Math.round((mR/mT)*100) : 0}%</span>`;
     document.getElementById("headLow").innerHTML = `<span class="material-symbols-rounded">info</span> ความเสี่ยงต่ำ <span style="font-size:0.75rem; background:rgba(0,0,0,0.4); padding:3px 6px; border-radius:10px; margin-left:6px; color:#fff;">แก้ ${lT>0 ? Math.round((lR/lT)*100) : 0}%</span>`;
 
-    // คำนวณ % การแก้ไขรายประเภทความเสี่ยง
     let riskTypeGridHtml = "";
     Object.keys(htmlByType).forEach(type => { 
         let tT = riskTypeCount[type] || 0; let tR = resolvedTypeCount[type] || 0;
@@ -799,7 +840,6 @@ function openResolveModal(rowNum, riskLevel) {
 }
 function closeResolveModal() { document.getElementById("resolveModal").classList.remove("show"); }
 
-// 🌟 2. อัปเดตงานแก้ไขพร้อมเปิดแอนิเมชัน Pixel 🌟
 async function submitResolve() {
     const rowNum = document.getElementById("resRowNum").value;
     const riskLevel = document.getElementById("resRiskLevel").value;
@@ -809,8 +849,8 @@ async function submitResolve() {
     
     document.getElementById("btnSaveResolve").disabled = true;
     
-    // เปิด Pixel Loading
-    document.getElementById("pixelLoadingOverlay").classList.add("show");
+    // 🌟 เปิดแอนิเมชันประแจขันน๊อต 🌟
+    document.getElementById("wrenchLoadingOverlay").classList.add("show");
     
     try {
         let payload = { action: "resolveCase", rowNum: rowNum };
@@ -840,7 +880,8 @@ async function submitResolve() {
         } else { throw new Error(data.error); }
     } catch (e) { alert("เกิดข้อผิดพลาด: " + e.message); } 
     finally { 
-        document.getElementById("pixelLoadingOverlay").classList.remove("show");
+        // 🌟 ปิดแอนิเมชันประแจขันน๊อต 🌟
+        document.getElementById("wrenchLoadingOverlay").classList.remove("show");
         document.getElementById("btnSaveResolve").disabled = false; 
     }
 }
