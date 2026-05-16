@@ -138,11 +138,13 @@
         .charts-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         .chart-container { background: rgba(0,0,0,0.15); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 16px; overflow: hidden; }
 
-        .risk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+        /* การรวม Grid สำหรับหน้าระดับความเสี่ยง และ ประเภทความเสี่ยง */
+        .risk-grid, #riskTypeGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+        
         .risk-col { background: rgba(0,0,0,0.15); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
         .risk-col-header { padding: 10px; border-radius: var(--radius-sm); text-align: center; font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 6px; }
         
-        /* 🌟 อัปเดตสีตัวอักษรและความชัดเจนให้หน้าความเสี่ยง 🌟 */
+        /* 🌟 เน้นสีคำว่าระดับความเสี่ยง สูง ปานกลาง ต่ำ 🌟 */
         .risk-high .risk-col-header { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; font-weight: 700; text-shadow: 0 0 10px rgba(239,68,68,0.4); }
         .risk-med .risk-col-header { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); color: #f59e0b; font-weight: 700; text-shadow: 0 0 10px rgba(245,158,11,0.4); }
         .risk-low .risk-col-header { background: rgba(45,212,191,0.1); border: 1px solid rgba(45,212,191,0.3); color: #34d399; font-weight: 700; text-shadow: 0 0 10px rgba(45,212,191,0.4); }
@@ -193,7 +195,7 @@
         .case-gallery img { width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); cursor: zoom-in; transition: transform 0.2s var(--transition-bounce); }
         .case-gallery img:hover { transform: scale(1.07); }
 
-        /* 🌟 อัปเดตแอนิเมชัน Pixel Loading 🌟 */
+        /* 🌟 2. Pixel Loading ตอนส่งอัปเดตงานแก้ไข 🌟 */
         #pixelLoadingOverlay { display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(8,30,38,0.95); justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(10px); }
         #pixelLoadingOverlay.show { display: flex; }
         .pixel-text { font-family: 'Courier New', monospace; font-size: 2.2rem; font-weight: 900; color: #34d399; text-align: center; text-shadow: 4px 4px 0px #064e3b, -2px -2px 0px #064e3b; letter-spacing: 4px; animation: pixelBlink 0.8s infinite step-start; margin-bottom: 20px; line-height: 1.4; }
@@ -224,18 +226,15 @@
 <div class="bg-shape shape-2"></div>
 <div class="bg-shape shape-3"></div>
 
-<!-- Overlays ทั่วไป -->
 <div id="loadingOverlay"><div class="loading-content"><div class="spinner"></div><p id="loadingMsg" style="color: var(--gold-light); font-weight: 500;">กำลังโหลดข้อมูล...</p></div></div>
 <div id="successPopup"><div class="modal-card"><span class="material-symbols-rounded modal-icon">check_circle</span><h3>บันทึกสำเร็จ</h3><p id="successMsg">ข้อมูลจุดเสี่ยงถูกบันทึกเข้าระบบเรียบร้อยแล้ว</p><button class="btn-primary" onclick="closeSuccessPopup()" style="margin: 0; padding: 13px;">ตกลง</button></div></div>
 <div id="lightbox" onclick="closeLightbox()"><img id="lightboxImg" src="" alt=""></div>
 
-<!-- 🌟 ส่วน Pixel Loading สำหรับบันทึกการแก้ไข 🌟 -->
 <div id="pixelLoadingOverlay">
     <div class="pixel-text">LOADING<br>SAFETY RISK</div>
     <div class="pixel-bar-container"><div class="pixel-fill"></div></div>
 </div>
 
-<!-- Modal สำหรับดูประวัติ/เคส -->
 <div id="caseModal">
     <div class="case-modal-content">
         <button class="close-modal" onclick="closeCaseModal()"><span class="material-symbols-rounded" style="margin:0;">close</span></button>
@@ -246,7 +245,6 @@
     </div>
 </div>
 
-<!-- Modal สำหรับแนบภาพการแก้ไข -->
 <div id="resolveModal">
     <div class="case-modal-content" style="max-width: 400px; text-align: left;">
         <button class="close-modal" onclick="closeResolveModal()"><span class="material-symbols-rounded" style="margin:0;">close</span></button>
@@ -287,7 +285,6 @@
         </div>
     </div>
 
-    <!-- ฟอร์มส่งรายงาน -->
     <div id="viewForm" class="view">
         <div class="page-header"><h2><span class="material-symbols-rounded">report</span> ส่งรายงานจุดเสี่ยง</h2><p>กรอกข้อมูลและแนบรูปภาพเพื่อแจ้งประเมิน</p></div>
         <div class="form-group"><label><span class="material-symbols-rounded">domain</span> หน่วยงาน</label><select id="department"><option value="">กำลังโหลด...</option></select></div>
@@ -306,7 +303,6 @@
         <div id="status"></div>
     </div>
 
-    <!-- หน้าต่าง Login -->
     <div id="viewLogin" class="view">
         <div class="page-header"><h2><span class="material-symbols-rounded">admin_panel_settings</span> เข้าสู่ระบบ</h2></div>
         <div class="form-group"><label>ชื่อผู้ใช้งาน</label><input type="text" id="loginUser" placeholder="Username"></div>
@@ -318,7 +314,6 @@
         <div id="loginStatus"></div>
     </div>
 
-    <!-- หน้าเลือกชื่อสำหรับพนักงานทั่วไป -->
     <div id="viewUserSelect" class="view">
         <div class="page-header"><h2><span class="material-symbols-rounded">badge</span> ยืนยันตัวตนพนักงาน</h2><p>เลือกหน่วยงานและชื่อของคุณเพื่อเข้าสู่แดชบอร์ด</p></div>
         <div class="form-group"><label><span class="material-symbols-rounded">domain</span> หน่วยงาน</label><select id="userSelDept"><option value="">เลือกหน่วยงาน</option></select></div>
@@ -329,7 +324,6 @@
         </div>
     </div>
 
-    <!-- Dashboard ของพนักงานทั่วไป -->
     <div id="viewUserPortal" class="view">
         <div class="page-header"><h2><span class="material-symbols-rounded">account_circle</span> แดชบอร์ดพนักงาน</h2><p id="userPortalSubtitle">ข้อมูลของคุณ</p></div>
         <div class="filter-grid" style="grid-template-columns: 1fr 1fr;">
@@ -352,17 +346,14 @@
         <button class="btn-danger" onclick="logoutUser()" style="margin-top: 24px;"><span class="material-symbols-rounded">logout</span> ออกจากระบบ</button>
     </div>
 
-    <!-- Manager Dashboard -->
     <div id="viewDashboard" class="view">
         <div class="page-header"><h2><span class="material-symbols-rounded">analytics</span> Dashboard ภาพรวม</h2></div>
-        
         <div class="filter-grid">
             <div class="form-group" style="margin:0;"><label><span class="material-symbols-rounded">calendar_today</span> ปี</label><select id="dashYear" onchange="renderDashboard()"></select></div>
             <div class="form-group" style="margin:0;"><label><span class="material-symbols-rounded">event</span> เดือน</label><select id="dashMonth" onchange="renderDashboard()"><option value="all">รวมทั้งปี</option><option value="1">ม.ค.</option><option value="2">ก.พ.</option><option value="3">มี.ค.</option><option value="4">เม.ย.</option><option value="5">พ.ค.</option><option value="6">มิ.ย.</option><option value="7">ก.ค.</option><option value="8">ส.ค.</option><option value="9">ก.ย.</option><option value="10">ต.ค.</option><option value="11">พ.ย.</option><option value="12">ธ.ค.</option></select></div>
             <div class="form-group" style="margin:0;"><label><span class="material-symbols-rounded">domain</span> หน่วยงาน</label><select id="dashDept" onchange="renderDashboard()"></select></div>
-            <div class="form-group" style="margin:0;"><label><span class="material-symbols-rounded">rule</span> ผ่านเป้าหมาย</label><select id="dashStatus" onchange="renderDashboard()"><option value="all">ทั้งหมด</option><option value="pass">ผ่านเกณฑ์</option><option value="fail">ยังไม่ผ่าน</option></select></div>
+            <div class="form-group" style="margin:0;"><label><span class="material-symbols-rounded">rule</span> ผ่านเกณฑ์</label><select id="dashStatus" onchange="renderDashboard()"><option value="all">ทั้งหมด</option><option value="pass">ผ่านเกณฑ์</option><option value="fail">ยังไม่ผ่าน</option></select></div>
             
-            <!-- 🌟 เพิ่ม Dropdown กรองสถานะการแก้ไข 🌟 -->
             <div class="form-group" style="margin:0;">
                 <label><span class="material-symbols-rounded">filter_alt</span> การแก้ไข</label>
                 <select id="dashResolveStatus" onchange="renderDashboard()">
@@ -372,7 +363,6 @@
                 </select>
             </div>
         </div>
-
         <div class="kpi-cards">
             <div class="kpi-card"><div class="kpi-title"><span class="material-symbols-rounded">receipt_long</span> แจ้งแล้ว (เรื่อง)</div><div class="kpi-value" id="kpiActual">0</div></div>
             <div class="kpi-card"><div class="kpi-title" id="kpiTargetTitle"><span class="material-symbols-rounded">flag</span> เป้าหมาย</div><div class="kpi-value" id="kpiTarget">0</div></div>
@@ -411,7 +401,6 @@
 
         <div id="secRisk" class="dash-section">
             <div class="risk-grid">
-                <!-- 🌟 เพิ่ม ID ให้ Head เพื่อยัด % กลับมา 🌟 -->
                 <div class="risk-col risk-high"><div class="risk-col-header" id="headHigh"><span class="material-symbols-rounded">error</span> ความเสี่ยงสูง</div><div id="listHigh"></div></div>
                 <div class="risk-col risk-med"><div class="risk-col-header" id="headMed"><span class="material-symbols-rounded">warning</span> ความเสี่ยงปานกลาง</div><div id="listMed"></div></div>
                 <div class="risk-col risk-low"><div class="risk-col-header" id="headLow"><span class="material-symbols-rounded">info</span> ความเสี่ยงต่ำ</div><div id="listLow"></div></div>
@@ -428,16 +417,19 @@ Chart.register(ChartDataLabels);
 
 // ==========================================
 // *** ใส่ Web App URL ของคุณตรงนี้ ***
-const API_URL = "https://script.google.com/macros/s/AKfycbxuWFV6KfCEjehBp1UR4E3s8UP1cLF1ABsa8oAZBD3NfDKb0QauRZPUeaKsxGnY-J6I/exec"; // << เปลี่ยนตรงนี้
+const API_URL = "https://script.google.com/macros/s/AKfycbz4hvS-F5E--f8NVapC6eEF_f0RJVUJGkVvgN2mxA6DGkRM4bJauvozn4fCksW6POUJ/exec";
 // ==========================================
 
-// ตัวแปรควบคุมส่วนต่างๆ
 let masterData = {}; let dashboardData = []; let dashboardTargets = {};
 let barChartInstance = null; let donutChartInstance = null; let typePieChartInstance = null;
 let currentFilteredData = []; 
-let loggedInRole = ''; let activeModalContext = null; 
-let currentUserDept = ''; let currentUserName = ''; let goHomeOnSuccess = true;
 
+let loggedInRole = ''; 
+let activeModalContext = null; 
+let currentUserDept = '';
+let currentUserName = '';
+
+let goHomeOnSuccess = true;
 function showLoading(msg) { document.getElementById('loadingMsg').textContent = msg || 'กำลังโหลด...'; document.getElementById('loadingOverlay').classList.add('show'); }
 function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
 function showSuccess(msg, goHome = true) { goHomeOnSuccess = goHome; if(msg) document.getElementById('successMsg').textContent = msg; document.getElementById('successPopup').classList.add('show'); }
@@ -452,7 +444,10 @@ function switchView(viewId) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function logoutUser() { loggedInRole = ''; currentUserDept = ''; currentUserName = ''; switchView('viewHome'); }
+function logoutUser() {
+    loggedInRole = ''; currentUserDept = ''; currentUserName = '';
+    switchView('viewHome');
+}
 
 function toggleDashView(mode) {
     ['btnGraph','btnTable','btnRisk','btnRiskType','secGraph','secTable','secRisk','secRiskType'].forEach(id => document.getElementById(id).classList.remove('active'));
@@ -461,7 +456,7 @@ function toggleDashView(mode) {
     document.getElementById(btnId).classList.add('active'); document.getElementById(secId).classList.add('active');
 }
 
-// 🌟 ฟังก์ชันจับคู่ไอคอนกับประเภทความเสี่ยง 🌟
+// 🌟 3. ฟังก์ชันดึงไอคอนตามประเภทความเสี่ยง 🌟
 function getRiskIcon(type) {
     if(!type) return 'report_problem';
     if(type.includes('ไฟ') || type.includes('ช็อต')) return 'bolt';
@@ -543,11 +538,19 @@ document.getElementById("btnLogin").onclick = async function() {
         
         if(d.success) { 
             loggedInRole = d.role || 'manager';
-            showLoading("กำลังโหลดรายงาน..."); await loadDash(); hideLoading(); 
+            showLoading("กำลังโหลดรายงาน..."); 
+            await loadDash(); 
+            hideLoading(); 
             
-            if (loggedInRole === 'user') { setupUserSelectDropdowns(); switchView('viewUserSelect'); } 
-            else { switchView('viewDashboard'); }
-        } else { hideLoading(); document.getElementById("loginStatus").innerHTML = `<span class="material-symbols-rounded">error</span> ${d.message}`; }
+            if (loggedInRole === 'user') {
+                setupUserSelectDropdowns();
+                switchView('viewUserSelect');
+            } else {
+                switchView('viewDashboard'); 
+            }
+        } else { 
+            hideLoading(); document.getElementById("loginStatus").innerHTML = `<span class="material-symbols-rounded">error</span> ${d.message}`; 
+        }
     } catch(e) { hideLoading(); } finally { this.disabled = false; }
 };
 
@@ -568,7 +571,8 @@ async function loadDash() {
 }
 
 function setupUserSelectDropdowns() {
-    const dept = document.getElementById("userSelDept"); dept.innerHTML = '<option value="">เลือกหน่วยงาน</option>';
+    const dept = document.getElementById("userSelDept");
+    dept.innerHTML = '<option value="">เลือกหน่วยงาน</option>';
     masterData.departments.forEach(d => dept.innerHTML += `<option value="${d}">${d}</option>`);
     dept.onchange = () => {
         const emp = document.getElementById("userSelName"); emp.innerHTML = '<option value="">เลือกพนักงาน</option>';
@@ -578,10 +582,12 @@ function setupUserSelectDropdowns() {
 }
 
 function enterUserPortal() {
-    currentUserDept = document.getElementById("userSelDept").value; currentUserName = document.getElementById("userSelName").value;
+    currentUserDept = document.getElementById("userSelDept").value;
+    currentUserName = document.getElementById("userSelName").value;
     if(!currentUserDept || !currentUserName) return alert("กรุณาเลือกข้อมูลของคุณให้ครบ");
     document.getElementById("userPortalSubtitle").innerText = `คุณ ${currentUserName} (${currentUserDept})`;
-    renderUserPortal(); switchView('viewUserPortal');
+    renderUserPortal();
+    switchView('viewUserPortal');
 }
 
 function renderUserPortal() {
@@ -591,7 +597,9 @@ function renderUserPortal() {
     let empCases = dashboardData.filter(d => d.reporter === currentUserName && d.year === selY && (selM === "all" || d.month === selM));
     empCases.sort((a, b) => b.timestamp - a.timestamp);
     
-    document.getElementById("upTarget").innerText = tPerson; document.getElementById("upActual").innerText = empCases.length;
+    document.getElementById("upTarget").innerText = tPerson;
+    document.getElementById("upActual").innerText = empCases.length;
+    
     let isPass = empCases.length >= tPerson;
     document.getElementById("upStatus").innerHTML = isPass ? '<span class="status-badge status-pass"><span class="material-symbols-rounded">check</span> ผ่านเป้า</span>' : '<span class="status-badge status-fail"><span class="material-symbols-rounded">close</span> ไม่ผ่าน</span>';
     
@@ -601,7 +609,7 @@ function renderUserPortal() {
     document.getElementById("upCaseList").innerHTML = html;
 }
 
-// 🌟 Manager Dashboard (มีระบบคำนวณ % และ Filter) 🌟
+// 🌟 Manager Dashboard: แสดง %, กรองสถานะ, จัดไอคอน 🌟
 function renderDashboard() {
     const selY = document.getElementById("dashYear").value, selM = document.getElementById("dashMonth").value;
     const selD = document.getElementById("dashDept").value, selS = document.getElementById("dashStatus").value;
@@ -617,6 +625,7 @@ function renderDashboard() {
     let staffCount = {}; let staffInFocus = masterData.staffs.filter(s => selD === "all" || s.department === selD);
     staffInFocus.forEach(s => { staffCount[s.department] = (staffCount[s.department] || 0) + 1; });
 
+    // ประมวลผลข้อมูลตามตัวกรองทั้งหมด
     let filtered = dashboardData.filter(d => 
         d.year === selY && (selM === "all" || d.month === selM) && (selD === "all" || d.dept === selD) &&
         (selRes === "all" || (selRes === "resolved" && d.resolveStatus) || (selRes === "pending" && !d.resolveStatus))
@@ -646,7 +655,7 @@ function renderDashboard() {
 
         let directUrl = (d.images && d.images.length > 0) ? getDirectDriveLink(d.images[0]) : "";
         let imgThumb = directUrl ? `<img src="${directUrl}" loading="lazy">` : `<div class="risk-item-none"><span class="material-symbols-rounded" style="margin:0;">hide_image</span></div>`;
-        let riskIcon = getRiskIcon(d.riskType);
+        let riskIcon = getRiskIcon(d.riskType); // เรียกใช้ Icon
         
         let riskItemHtml = `<div class="risk-item" onclick="viewSingleCaseByIndex(${index})">${imgThumb}<div class="risk-item-info"><div class="risk-item-loc">${d.location || 'ไม่ระบุสถานที่'}</div><div class="risk-item-type" style="display:flex; align-items:center; gap:4px; margin-top:4px;"><span class="material-symbols-rounded" style="font-size:1.05rem; margin:0;">${riskIcon}</span> ${d.riskType || '-'} ${d.resolveStatus ? '<span style="color:#34d399;font-weight:bold;margin-left:4px;">(แก้แล้ว)</span>':''}</div></div></div>`;
 
@@ -660,14 +669,16 @@ function renderDashboard() {
     let emptyMsg = '<p style="text-align:center; font-size:0.8rem; color:var(--text-muted); padding:10px 0;">ไม่มีข้อมูล</p>';
     document.getElementById("listHigh").innerHTML = htmlHigh || emptyMsg; document.getElementById("listMed").innerHTML = htmlMed || emptyMsg; document.getElementById("listLow").innerHTML = htmlLow || emptyMsg;
 
+    // คำนวณ % การแก้ไขรายระดับความเสี่ยง
     let hT = riskLevelCount['ความเสี่ยงสูง']||riskLevelCount['สูง']||0, hR = resolvedLevelCount['ความเสี่ยงสูง']||resolvedLevelCount['สูง']||0;
     let mT = riskLevelCount['ความเสี่ยงปานกลาง']||riskLevelCount['กลาง']||0, mR = resolvedLevelCount['ความเสี่ยงปานกลาง']||resolvedLevelCount['กลาง']||0;
     let lT = riskLevelCount['ความเสี่ยงต่ำ']||riskLevelCount['ต่ำ']||0, lR = resolvedLevelCount['ความเสี่ยงต่ำ']||resolvedLevelCount['ต่ำ']||0;
     
-    document.getElementById("headHigh").innerHTML = `<span class="material-symbols-rounded">error</span> ความเสี่ยงสูง <span style="font-size:0.75rem; background:rgba(0,0,0,0.4); padding:3px 6px; border-radius:10px; margin-left:6px;">แก้ ${hT>0 ? Math.round((hR/hT)*100) : 0}%</span>`;
-    document.getElementById("headMed").innerHTML = `<span class="material-symbols-rounded">warning</span> ความเสี่ยงปานกลาง <span style="font-size:0.75rem; background:rgba(0,0,0,0.4); padding:3px 6px; border-radius:10px; margin-left:6px;">แก้ ${mT>0 ? Math.round((mR/mT)*100) : 0}%</span>`;
-    document.getElementById("headLow").innerHTML = `<span class="material-symbols-rounded">info</span> ความเสี่ยงต่ำ <span style="font-size:0.75rem; background:rgba(0,0,0,0.4); padding:3px 6px; border-radius:10px; margin-left:6px;">แก้ ${lT>0 ? Math.round((lR/lT)*100) : 0}%</span>`;
+    document.getElementById("headHigh").innerHTML = `<span class="material-symbols-rounded">error</span> ความเสี่ยงสูง <span style="font-size:0.75rem; background:rgba(0,0,0,0.4); padding:3px 6px; border-radius:10px; margin-left:6px; color:#fff;">แก้ ${hT>0 ? Math.round((hR/hT)*100) : 0}%</span>`;
+    document.getElementById("headMed").innerHTML = `<span class="material-symbols-rounded">warning</span> ความเสี่ยงปานกลาง <span style="font-size:0.75rem; background:rgba(0,0,0,0.4); padding:3px 6px; border-radius:10px; margin-left:6px; color:#fff;">แก้ ${mT>0 ? Math.round((mR/mT)*100) : 0}%</span>`;
+    document.getElementById("headLow").innerHTML = `<span class="material-symbols-rounded">info</span> ความเสี่ยงต่ำ <span style="font-size:0.75rem; background:rgba(0,0,0,0.4); padding:3px 6px; border-radius:10px; margin-left:6px; color:#fff;">แก้ ${lT>0 ? Math.round((lR/lT)*100) : 0}%</span>`;
 
+    // คำนวณ % การแก้ไขรายประเภทความเสี่ยง
     let riskTypeGridHtml = "";
     Object.keys(htmlByType).forEach(type => { 
         let tT = riskTypeCount[type] || 0; let tR = resolvedTypeCount[type] || 0;
@@ -699,7 +710,8 @@ function renderDashboard() {
 
     let tbody = "", passCount = 0;
     staffInFocus.forEach(s => {
-        let actual = reportsByPerson[s.name] || 0; let resolved = resolvedByPerson[s.name] || 0;
+        let actual = reportsByPerson[s.name] || 0; 
+        let resolved = resolvedByPerson[s.name] || 0;
         let pct = actual > 0 ? Math.round((resolved/actual)*100) : 0;
         
         let isPass = actual >= tPerson;
@@ -787,7 +799,7 @@ function openResolveModal(rowNum, riskLevel) {
 }
 function closeResolveModal() { document.getElementById("resolveModal").classList.remove("show"); }
 
-// 🌟 ระบบบันทึกการแก้ไข (มีจอ Pixel โหลด) 🌟
+// 🌟 2. อัปเดตงานแก้ไขพร้อมเปิดแอนิเมชัน Pixel 🌟
 async function submitResolve() {
     const rowNum = document.getElementById("resRowNum").value;
     const riskLevel = document.getElementById("resRiskLevel").value;
@@ -796,6 +808,8 @@ async function submitResolve() {
     if (riskLevel.includes("สูง") && fileInput.files.length === 0) { alert("ความเสี่ยงระดับสูง จำเป็นต้องแนบภาพหลังการแก้ไข!"); return; }
     
     document.getElementById("btnSaveResolve").disabled = true;
+    
+    // เปิด Pixel Loading
     document.getElementById("pixelLoadingOverlay").classList.add("show");
     
     try {
