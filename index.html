@@ -734,30 +734,36 @@ async function submitResolve() {
     if (riskLevel.includes("สูง") && fileInput.files.length === 0) { alert("ความเสี่ยงระดับสูง จำเป็นต้องแนบภาพหลังการแก้ไข!"); return; }
     
     document.getElementById("btnSaveResolve").disabled = true;
-    showLoading("กำลังบันทึกสถานะการแก้ไข...");
+    showLoading("กำลังเตรียมข้อมูล..."); 
     
     try {
         let payload = { action: "resolveCase", rowNum: rowNum };
-        if (fileInput.files.length > 0) payload.base64 = await compressFile(fileInput.files[0]);
+        
+        // --- เริ่มส่วนที่แก้ไข: แจ้งเตือนสถานะการอัปโหลดภาพ ---
+        if (fileInput.files.length > 0) {
+            showLoading("กำลังบีบอัดและอัปโหลดภาพแก้ไข (อาจใช้เวลาสักครู่)...");
+            payload.base64 = await compressFile(fileInput.files[0]);
+            showLoading("กำลังบันทึกข้อมูลเข้าระบบ...");
+        } else {
+            showLoading("กำลังบันทึกสถานะการแก้ไข...");
+        }
+        // --- จบส่วนที่แก้ไข ---
         
         const res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
         const data = await res.json();
         
         if (data.success) {
             closeResolveModal(); 
-            // เปลี่ยน parameter อันที่ 2 เป็น false หมายถึงไม่ต้องเด้งกลับหน้าแรก
             showSuccess("บันทึกการแก้ไขเรียบร้อยแล้ว", false); 
             
             showLoading("กำลังอัปเดตข้อมูล...");
-            await loadDash(); // ดึงข้อมูลใหม่
+            await loadDash(); 
             hideLoading();
             
-            // รีเฟรชหน้าปัจจุบัน (Manager หรือ User Portal)
             if (loggedInRole === 'user') {
                 renderUserPortal();
             } else {
                 renderDashboard();
-                // ถ้า Modal ของ Manager เดิมเปิดอยู่ ให้โหลดข้อมูลข้างในใหม่
                 if (document.getElementById("caseModal").classList.contains("show") && activeModalContext) {
                     if (activeModalContext.type === 'emp') viewEmployeeCases(activeModalContext.name);
                     else if (activeModalContext.type === 'single') {
